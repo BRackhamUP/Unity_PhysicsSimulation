@@ -575,8 +575,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fee79a3c1adc1a64ca2fb3919c8eaa63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: -9.81
-  rb: {fileID: 1087105620}
+  globalGravity: {x: 0, y: -9.81, z: 0}
+  physicsObjects:
+  - {fileID: 1087105620}
 --- !u!1 &1271132031
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,6 +589,7 @@ GameObject:
   - component: {fileID: 1271132034}
   - component: {fileID: 1271132033}
   - component: {fileID: 1271132032}
+  - component: {fileID: 1271132035}
   m_Layer: 3
   m_Name: Terrain
   m_TagString: Untagged
@@ -670,6 +672,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1271132035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1271132031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e55c3cc7873b46549be1d46ecffe12aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frictionCoefficient: 0.8
 --- !u!1 &1614058152
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,6 +700,8 @@ GameObject:
   - component: {fileID: 1614058154}
   - component: {fileID: 1614058153}
   - component: {fileID: 1614058159}
+  - component: {fileID: 1614058161}
+  - component: {fileID: 1614058160}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -704,8 +721,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fee79a3c1adc1a64ca2fb3919c8eaa63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: -9.81
-  rb: {fileID: 1614058154}
+  globalGravity: {x: 0, y: -9.81, z: 0}
+  physicsObjects:
+  - {fileID: 1614058154}
 --- !u!54 &1614058154
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -714,7 +732,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1614058152}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 70
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -836,10 +854,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe089eb0d66a62047b434197133bec40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 500
+  physicsManager: {fileID: 1614058153}
+  speed: 20
   jumpHeight: 5
   isRagdolled: 0
   fixedRotation: 0
+  desiredHeight: 2
+  springStrength: 1000
+  damping: 400
+  baseFriciton: 0.5
+--- !u!114 &1614058160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1614058152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23c9fcede5fa4484cb827c717065be01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dragCoefficient: 0.1
+--- !u!114 &1614058161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1614058152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e55c3cc7873b46549be1d46ecffe12aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frictionCoefficient: 0.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1,0 +1,13 @@
+using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody))]
+public class PhysicsObject : MonoBehaviour
+{
+    public float dragCoefficient = 0.1f; //air resistance
+
+    public void ApplyingAirDrag(Rigidbody rb)
+    {
+        Vector3 drag = -rb.linearVelocity * dragCoefficient;
+        rb.AddForce(drag, ForceMode.Force);
+    }
+}
