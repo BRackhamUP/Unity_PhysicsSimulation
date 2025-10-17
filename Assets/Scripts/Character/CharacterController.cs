@@ -6,7 +6,7 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private PhysicsManager physicsManager;
     [SerializeField] public float speed = 50f;
     [SerializeField] public float sprintSpeed = 150;
-    [SerializeField] public float jumpHeight = 5f;
+    [SerializeField] public float jumpHeight = 100f;
     [SerializeField] protected bool isRagdolled = false;
     [SerializeField] protected bool isSprinting = false;
     [SerializeField] protected bool isJumping = false;
@@ -14,8 +14,8 @@ public class CharacterController : MonoBehaviour
     public float fixedRotation = 0f;
 
     [Header("Hover Settings")]
-    [SerializeField] private float desiredHeight = 2f;
-    [SerializeField] private float springStrength = 1000f;
+    [SerializeField] private float desiredHeight = 1.5f;
+    [SerializeField] private float springStrength = 5000f;
     [SerializeField] private float damping = 400f;
 
     [Header("Friction")]
