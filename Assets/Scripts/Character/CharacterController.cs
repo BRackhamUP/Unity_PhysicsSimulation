@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class CharacterController : MonoBehaviour
@@ -7,6 +8,9 @@ public class CharacterController : MonoBehaviour
     [SerializeField] public float jumpHeight = 5f;
     [SerializeField] public bool isRagdolled = false;
     public float fixedRotation = 0f;
+    [SerializeField] private float desiredHeight = 1.5f;
+    [SerializeField] private float springStrength = 300f;
+    [SerializeField] private float damping = 50f;
 
     private void Start()
     {
@@ -16,6 +20,8 @@ public class CharacterController : MonoBehaviour
     void FixedUpdate()
     {
         CharacterMovement();
+        UpwardForce();
+        ApplyFriciton();
     }
 
     private void Update()
@@ -33,7 +39,7 @@ public class CharacterController : MonoBehaviour
 
         if (movement.magnitude > 0f)
         {
-            rb.AddForce(movement * speed * Time.fixedDeltaTime);
+            rb.AddForce(movement * speed, ForceMode.Acceleration);
         }
 
     }
@@ -65,5 +71,46 @@ public class CharacterController : MonoBehaviour
 
         }
 
+    }
+
+    private void UpwardForce()
+    {
+        if (isRagdolled)
+        {
+            return;
+        }
+
+        RaycastHit hit;
+        int groundLayerMask = LayerMask.GetMask("Ground");
+
+        bool hasHit = Physics.Raycast(rb.position, -transform.up, out hit, 1.5f, groundLayerMask, QueryTriggerInteraction.Collide);
+
+        //debug for checking if it is hitting ground
+        Color rayColor = hasHit ? Color.green : Color.red;
+        Debug.DrawRay(rb.position, -transform.up * 1.5f, rayColor, 0.1f);
+
+        if (hasHit)
+        {
+            float distance = hit.distance;
+            float displacement = desiredHeight - distance;
+            float upwardVelocity = Vector3.Dot(rb.linearVelocity, transform.up);
+            float force = ((displacement * springStrength) - (upwardVelocity * damping)) * rb.mass;
+
+            rb.AddForce(transform.up * force, ForceMode.Force);
+        }
+
+    }
+
+    private void ApplyFriciton()
+    {
+
+        float frictionCoefficient = 10f;
+
+        if (!isRagdolled)
+        {
+            Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+            Vector3 frictionForce = -horizontalVelocity * frictionCoefficient * rb.mass;
+            rb.AddForce(frictionForce, ForceMode.Force);
+        }
     }
 }
