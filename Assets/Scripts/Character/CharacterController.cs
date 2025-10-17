@@ -7,8 +7,10 @@ public class CharacterController : MonoBehaviour
     [SerializeField] public float speed = 50f;
     [SerializeField] public float sprintSpeed = 150;
     [SerializeField] public float jumpHeight = 5f;
-    [SerializeField] public bool isRagdolled = false;
-    [SerializeField] private bool isSprinting = false;
+    [SerializeField] protected bool isRagdolled = false;
+    [SerializeField] protected bool isSprinting = false;
+    [SerializeField] protected bool isJumping = false;
+    [SerializeField] protected bool isGrounded = false;
     public float fixedRotation = 0f;
 
     [Header("Hover Settings")]
@@ -32,6 +34,7 @@ public class CharacterController : MonoBehaviour
 
     void FixedUpdate()
     {
+        isGrounded = Physics.Raycast(rb.position, -transform.up, desiredHeight + 0.1f, LayerMask.GetMask("Ground"));
         CharacterMovement();
         UpwardForce();
         ApplyFriciton();
@@ -64,6 +67,13 @@ public class CharacterController : MonoBehaviour
         else
         {
             rb.AddForce(movement * sprintSpeed, ForceMode.Acceleration);
+        }
+
+        isJumping = Input.GetKey(KeyCode.Space);
+
+        if (isJumping && isGrounded)
+        {
+            rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
         }
 
     }

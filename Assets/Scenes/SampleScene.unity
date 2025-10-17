@@ -389,7 +389,6 @@ GameObject:
   - component: {fileID: 619158033}
   - component: {fileID: 619158032}
   - component: {fileID: 619158031}
-  - component: {fileID: 619158030}
   m_Layer: 3
   m_Name: Cube
   m_TagString: Untagged
@@ -397,33 +396,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!54 &619158030
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 619158026}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!65 &619158031
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -993,12 +965,14 @@ MonoBehaviour:
   physicsManager: {fileID: 1614058153}
   speed: 50
   sprintSpeed: 150
-  jumpHeight: 5
+  jumpHeight: 100
   isRagdolled: 0
   isSprinting: 0
+  isJumping: 0
+  isGrounded: 0
   fixedRotation: 0
-  desiredHeight: 2
-  springStrength: 1000
+  desiredHeight: 1.5
+  springStrength: 5000
   damping: 400
   baseFriciton: 0.5
 --- !u!114 &1614058160
