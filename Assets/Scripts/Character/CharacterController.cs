@@ -4,9 +4,11 @@ public class CharacterController : MonoBehaviour
 {//
     private Rigidbody rb;
     [SerializeField] private PhysicsManager physicsManager;
-    [SerializeField] public float speed = 20f;
+    [SerializeField] public float speed = 50f;
+    [SerializeField] public float sprintSpeed = 150;
     [SerializeField] public float jumpHeight = 5f;
     [SerializeField] public bool isRagdolled = false;
+    [SerializeField] private bool isSprinting = false;
     public float fixedRotation = 0f;
 
     [Header("Hover Settings")]
@@ -53,9 +55,15 @@ public class CharacterController : MonoBehaviour
         // normalise the vector to prevent travelling faster then intended speeds
         Vector3 movement = new Vector3(horizontal, 0, vertical).normalized;
 
-        if (movement.magnitude > 0f)
+        isSprinting = Input.GetKey(KeyCode.LeftShift);
+
+        if (movement.magnitude > 0f && !isSprinting)
         {
             rb.AddForce(movement * speed, ForceMode.Acceleration);
+        }
+        else
+        {
+            rb.AddForce(movement * sprintSpeed, ForceMode.Acceleration);
         }
 
     }
