@@ -3,18 +3,27 @@ using UnityEngine;
 public class CharacterController : MonoBehaviour
 {
     private Rigidbody rb;
-    [SerializeField] public float speed = 5f;
+    [SerializeField] public float speed = 250f;
+    [SerializeField] public float jumpHeight = 5f;
     [SerializeField] public bool isRagdolled = false;
     public float fixedRotation = 0f;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-
-
     }
 
     void FixedUpdate()
+    {
+        CharacterMovement();
+    }
+
+    private void Update()
+    {
+        ConstrainRotation();
+    }
+
+    private void CharacterMovement()
     {
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
@@ -22,13 +31,11 @@ public class CharacterController : MonoBehaviour
         // normalise the vector to prevent travelling faster then intended speeds
         Vector3 movement = new Vector3(horizontal, 0, vertical).normalized;
 
-        rb.MovePosition(rb.position + movement * speed * Time.fixedDeltaTime);
+        if (movement.magnitude > 0f)
+        {
+            rb.AddForce(movement * speed * Time.fixedDeltaTime);
+        }
 
-    }
-
-    private void Update()
-    {
-        ConstrainRotation();
     }
 
     private void Ragdolled()
