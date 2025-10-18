@@ -55,21 +55,28 @@ public class CharacterController : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
+        Transform cam = Camera.main.transform;
+
+        Vector3 camForward = cam.forward;
+        Vector3 camRight = cam.right;
+
+        camForward.y = 0f;
+        camRight.y = 0f;
+
         // normalise the vector to prevent travelling faster then intended speeds
-        Vector3 movement = new Vector3(horizontal, 0, vertical).normalized;
+        Vector3 movement = (camForward * vertical + camRight * horizontal).normalized;
 
         isSprinting = Input.GetKey(KeyCode.LeftShift);
-
-        if (movement.magnitude > 0f && !isSprinting)
-        {
-            rb.AddForce(movement * speed, ForceMode.Acceleration);
-        }
-        else
-        {
-            rb.AddForce(movement * sprintSpeed, ForceMode.Acceleration);
-        }
-
         isJumping = Input.GetKey(KeyCode.Space);
+
+        if (movement.magnitude > 0f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(movement);
+            rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, Time.deltaTime * 10f));
+
+            float currentSpeed = isSprinting ? sprintSpeed : speed;
+            rb.AddForce(movement * currentSpeed, ForceMode.Acceleration);
+        }
 
         if (isJumping && isGrounded)
         {
