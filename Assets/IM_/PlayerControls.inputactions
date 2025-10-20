@@ -154,6 +154,62 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "CameraControls",
+            "id": "341f2157-24ff-4bd1-99e2-b4171d668a89",
+            "actions": [
+                {
+                    "name": "ZoomToggle",
+                    "type": "Button",
+                    "id": "18c6411e-5946-41a5-80cd-4b719ee2787e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "eb5fd988-5d95-4eb2-9fc7-fbbad9e2adac",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ZoomToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "UI",
+            "id": "973c5eb4-3010-43e5-9d62-b5d9578a7bc7",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "43653483-aad2-439b-a254-2f769194045d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c752a578-dfc4-4bcc-a7c8-31cc6cde6260",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

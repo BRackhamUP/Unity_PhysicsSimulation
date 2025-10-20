@@ -1,30 +1,58 @@
+using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] public float turnSpeed = 4f;
-    [SerializeField] public GameObject target;
-    [SerializeField] private float targetDistance;
+    [Header("Zoom Presets")]
+    [SerializeField] private float[] zoomLevels = { 4f, 6f, 9f };
+    private int currentZoomIndex = 0;
 
-    [SerializeField] public float minTurnAngle = -90f;
-    [SerializeField] public float maxTurnAngle = 0f;
-    [SerializeField] private float rotX;
+    private PlayerControls controls;
+    private CinemachineOrbitalFollow orbital;
+    private float zoomLerpSpeed = 5f;
+    private float targetZoom;
 
+    private void Awake()
+    {
+        controls = new PlayerControls();
+        controls.CameraControls.ZoomToggle.performed += _ => CycleZoom();
+
+    }
+
+    private void OnEnable() => controls.Enable();
+    private void OnDisable() => controls.Disable();
 
     void Start()
     {
-        targetDistance = Vector3.Distance(transform.position, target.transform.forward);
+        orbital = GetComponent<CinemachineOrbitalFollow>();
+
+        if (orbital == null)
+        {
+            Debug.LogError("CinemachineOrbitalFollow component not found on camera!");
+            return;
+        }
+
+        targetZoom = orbital.Radius;
     }
 
-    void Update()
+    private void Update()
     {
-        float y = Input.GetAxis("Mouse X") * turnSpeed;
-        rotX += Input.GetAxis("Mouse Y") * turnSpeed;
-
-        rotX = Mathf.Clamp(rotX, minTurnAngle, maxTurnAngle);
-
-        transform.eulerAngles = new Vector3(-rotX, transform.eulerAngles.y + y, 0);
-
-        transform.position = target.transform.position - (transform.forward * targetDistance);
+        if (orbital != null)
+        {
+            orbital.Radius = Mathf.Lerp(orbital.Radius, targetZoom, Time.deltaTime * zoomLerpSpeed);
+        }
     }
+
+    private void CycleZoom()
+    {
+        currentZoomIndex ++;
+        if (currentZoomIndex >= zoomLevels.Length)
+        {
+            currentZoomIndex = 0;
+        }
+
+        targetZoom = zoomLevels[currentZoomIndex];
+    }
+
 }
