@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 public class CameraController : MonoBehaviour
 {
     [Header("Zoom Presets")]
-    [SerializeField] private float[] zoomLevels = { 4f, 6f, 9f };
+    [SerializeField] private float[] zoomLevels = { 5f, 6f, 8f };
     private int currentZoomIndex = 0;
 
     private PlayerControls controls;
