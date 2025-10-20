@@ -1,15 +1,20 @@
+using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CharacterController : MonoBehaviour
 {//
     private Rigidbody rb;
+    private PlayerControls controls;
+    private Vector2 moveInput;
+    private bool jumpPressed;
+    private bool sprintPressed;
+
     [SerializeField] private PhysicsManager physicsManager;
     [SerializeField] public float speed = 50f;
     [SerializeField] public float sprintSpeed = 150;
     [SerializeField] public float jumpHeight = 100f;
     [SerializeField] protected bool isRagdolled = false;
-    [SerializeField] protected bool isSprinting = false;
-    [SerializeField] protected bool isJumping = false;
     [SerializeField] protected bool isGrounded = false;
     public float fixedRotation = 0f;
 
@@ -20,6 +25,25 @@ public class CharacterController : MonoBehaviour
 
     [Header("Friction")]
     [SerializeField] private float baseFriciton = 0.5f;
+
+    private void Awake()
+    {
+        controls = new PlayerControls();
+
+        controls.Gameplay.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+        controls.Gameplay.Move.canceled += ctx => moveInput = Vector2.zero;
+
+        controls.Gameplay.Jump.performed += ctx => jumpPressed = true;
+        controls.Gameplay.Jump.canceled += ctx => jumpPressed = false;
+
+        controls.Gameplay.Jump.performed += ctx => sprintPressed = true;
+        controls.Gameplay.Jump.canceled += ctx => sprintPressed = false;
+
+        controls.Gameplay.Ragdoll.performed += ctx => ToggleRagdoll();
+    }
+
+    private void OnEnable() => controls.Enable();
+    private void OnDisable() => controls.Disable();
 
     private void Start()
     {
@@ -39,10 +63,6 @@ public class CharacterController : MonoBehaviour
         UpwardForce();
         ApplyFriciton();
     }
-    private void Update()
-    {
-        HandleRagdoll();
-    }
 
     #region Movement 
     private void CharacterMovement()
@@ -52,11 +72,7 @@ public class CharacterController : MonoBehaviour
             return;
         }
 
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-
         Transform cam = Camera.main.transform;
-
         Vector3 camForward = cam.forward;
         Vector3 camRight = cam.right;
 
@@ -64,55 +80,48 @@ public class CharacterController : MonoBehaviour
         camRight.y = 0f;
 
         // normalise the vector to prevent travelling faster then intended speeds
-        Vector3 movement = (camForward * vertical + camRight * horizontal).normalized;
-
-        isSprinting = Input.GetKey(KeyCode.LeftShift);
-        isJumping = Input.GetKey(KeyCode.Space);
+        Vector3 movement = (camForward * moveInput.y + camRight * moveInput.x).normalized;
 
         if (movement.magnitude > 0f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(movement);
             rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, Time.deltaTime * 10f));
 
-            float currentSpeed = isSprinting ? sprintSpeed : speed;
+            float currentSpeed = sprintPressed ? sprintSpeed : speed;
             rb.AddForce(movement * currentSpeed, ForceMode.Acceleration);
         }
 
-        if (isJumping && isGrounded)
+        if (jumpPressed && isGrounded)
         {
             rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
+            jumpPressed = false;
         }
 
     }
 
-    private void UpwardForce()
+
+
+    #endregion
+
+    #region Ragdoll
+    private void ToggleRagdoll()
     {
-        if (isRagdolled)
-        {
-            return;
-        }
+            isRagdolled = !isRagdolled;
 
-        RaycastHit hit;
-        int groundLayerMask = LayerMask.GetMask("Ground");
+            if (isRagdolled)
+            {
+                rb.constraints = RigidbodyConstraints.None;
+            }
+            else
+            {
+                // potential issue here with accessing "transform." (NEED to double check with Stephen!)
 
-        if (Physics.Raycast(rb.position, -transform.up, out hit, desiredHeight * 2f, groundLayerMask))
-        {
-            float distance = hit.distance;
-            float displacement = desiredHeight - distance;
-            float upwardVelocity = Vector3.Dot(rb.linearVelocity, transform.up);
-
-            float force = ((displacement * springStrength) - (upwardVelocity * damping));
-            rb.AddForce(transform.up * force, ForceMode.Force);
-
-            Debug.DrawRay(rb.position, -transform.up * desiredHeight, Color.green, 0.1f);
-        }
-        else
-        {
-            Debug.DrawRay(rb.position, -transform.up * desiredHeight, Color.red, 0.1f);
-        }
-
+                rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+                transform.rotation = Quaternion.Euler(fixedRotation, transform.eulerAngles.y, fixedRotation);
+            }
     }
 
+    #endregion
     private void ApplyFriciton()
     {
         if (isRagdolled)
@@ -141,33 +150,31 @@ public class CharacterController : MonoBehaviour
             rb.AddForce(frictionForce, ForceMode.Acceleration);
         }
     }
-
-    #endregion
-
-    #region Ragdoll
-    private void HandleRagdoll()
+    private void UpwardForce()
     {
-
-        if (Input.GetKeyDown(KeyCode.E))
+        if (isRagdolled)
         {
-            isRagdolled = !isRagdolled;
+            return;
+        }
 
-            if (isRagdolled)
-            {
-                rb.constraints = RigidbodyConstraints.None;
-            }
-            else
-            {
-                // potential issue here with accessing "transform." (NEED to double check with Stephen!)
+        RaycastHit hit;
+        int groundLayerMask = LayerMask.GetMask("Ground");
 
-                rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-                transform.rotation = Quaternion.Euler(fixedRotation, transform.eulerAngles.y, fixedRotation);
-            }
+        if (Physics.Raycast(rb.position, -transform.up, out hit, desiredHeight * 2f, groundLayerMask))
+        {
+            float distance = hit.distance;
+            float displacement = desiredHeight - distance;
+            float upwardVelocity = Vector3.Dot(rb.linearVelocity, transform.up);
 
+            float force = ((displacement * springStrength) - (upwardVelocity * damping));
+            rb.AddForce(transform.up * force, ForceMode.Force);
+
+            Debug.DrawRay(rb.position, -transform.up * desiredHeight, Color.green, 0.1f);
+        }
+        else
+        {
+            Debug.DrawRay(rb.position, -transform.up * desiredHeight, Color.red, 0.1f);
         }
 
     }
-
-    #endregion
-
 }
