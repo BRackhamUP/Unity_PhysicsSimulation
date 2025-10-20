@@ -1,188 +1,258 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class PlayerCharacterController : MonoBehaviour
+public class PhysicsCharacterController : MonoBehaviour
 {
+    [Header("Basic")]
+    [SerializeField] public float mass = 70f;                     // kg 
+    [SerializeField] public float walkSpeed = 3.5f;               // m/s 
+    [SerializeField] public float sprintMultiplier = 1.75f;       // sprint = walkSpeed * sprintMultiplier
+    [SerializeField] public float jumpHeight = 1.2f;              // meters
+    [SerializeField] public float rotationSpeedDegrees = 720f;    // degrees/sec rotation for facing input
+    [SerializeField] public bool freezeXZRotation = true;         // keep upright except during ragdoll
 
-    [Header("Character Settings")]
-    [SerializeField] private float mass = 70;                 // KG
-    [SerializeField] private float walkSpeed = 50f;           // m/s
-    [SerializeField] private float sprintSpeed = 100;         // m/s
-    [SerializeField] private float jumpHeight = 30f;          // meters
-    [SerializeField] private float fixedRotation = 0f;
+    [Header("Acceleration / Control")]
+    [SerializeField] public float acceleration = 50f;               // adjust acceleration
+    [SerializeField][Range(0f, 1f)] public float airControl = 0.25f;// controlling in air
 
-    [Header("Hover / Spring Settings")]
-    [SerializeField] private float desiredHoverHeight = 1.0f; // meters from ground
-    [SerializeField] private float springStrength = 50000f;
-    [SerializeField] private float damping = 30000;
-    [SerializeField] private bool autoCalculateSpring = true;
+    [Header("Ground & Slope")]
+    [SerializeField] public float groundCheckDistance = 1.2f;     // checking how far ground is from the player
+    [SerializeField] public float maxGroundAngle = 50f;           // sloope in degrees the player can walk
+    [SerializeField] public float slopeSlideMultiplier = 1.0f;    // how much gravity pulls you down a slope
 
-    [Tooltip("maximum ray length used to detect the ground.")]
-    [SerializeField, Range(0f, 5f)] private float springRayLength = 2.0f;
-
-    [Header("Friction")]
-    [SerializeField] private float baseFriciton = 0.5f;
+    [Header("Friction / Drag")]
+    [SerializeField] public float groundFriction = 8f;           // stops the player faster on ground
+    [SerializeField] public float stopThreshold = 0.05f;         // any speed below this is treated as 0 to stop the player
 
     [Header("References")]
-    [SerializeField] private PhysicsManager physicsManager;
     [SerializeField] private Transform rayOriginTransform;
+    [SerializeField] private PhysicsManager physicsManager;
 
-    private Rigidbody rb;
-    private PlayerControls controls;
+    /// <summary>
+    /// Runtime variables keeping track of movement, input and physics ststes while game is running
+    /// </summary>
+    Rigidbody rb;
+    PlayerControls controls;
+    Vector2 moveInput;
+    bool jumpPressed;
+    bool sprintPressed;
+    bool isGrounded;
+    Vector3 groundNormal = Vector3.up;    // attempting to incorporate the Force normal when dealing with slopes
+    bool isRagdolled = false;
 
-    private Vector2 moveInput;
-    private bool jumpPressed;
-    private bool sprintPressed;
-    private bool isRagdolled = false;
-    private bool isGrounded = false;
-
-    private void Awake()
+    void Awake()
     {
+        //Check with STEPHEN on uses of rigidbody.Interpolate | mass | constraintss?
         rb = GetComponent<Rigidbody>();
-
-        controls = new PlayerControls();
-        controls.Gameplay.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
-        controls.Gameplay.Move.canceled += ctx => moveInput = Vector2.zero;
-
-        controls.Gameplay.Jump.performed += ctx => jumpPressed = true;
-        controls.Gameplay.Jump.canceled += ctx => jumpPressed = false;
-
-        controls.Gameplay.Sprint.performed += ctx => sprintPressed = true;
-        controls.Gameplay.Sprint.canceled += ctx => sprintPressed = false;
-
-        controls.Gameplay.Ragdoll.performed += ctx => ToggleRagdoll();
-    }
-
-    private void OnEnable() => controls.Enable();
-    private void OnDisable() => controls.Disable();
-
-    private void Start()
-    {
         rb.mass = mass;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
 
-        if (autoCalculateSpring)
+        if (freezeXZRotation)
         {
-            springStrength = mass * 9.81f * 8f;
-            damping = 2 * Mathf.Sqrt(springStrength * mass);
+            rb.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         }
 
+        // connecting up my input manager .
+        // https://docs.unity3d.com/Packages/com.unity.inputsystem@1.8/manual/RespondingToActions.html
+        controls = new PlayerControls();
+        controls.Gameplay.Move.performed += context => moveInput = context.ReadValue<Vector2>();
+        controls.Gameplay.Move.canceled += context => moveInput = Vector2.zero;
+        controls.Gameplay.Jump.performed += context => jumpPressed = true;
+        controls.Gameplay.Sprint.performed += context => sprintPressed = true;
+        controls.Gameplay.Sprint.canceled += context => sprintPressed = false;
+        controls.Gameplay.Ragdoll.performed += context => ToggleRagdoll();
+    }
+    void OnEnable() => controls.Enable();
+    void OnDisable() => controls.Disable();
+    void Start()
+    {
+        // making sure mass matches with inspector
+        rb.mass = mass;
+
+        if (physicsManager == null)
+        {
+            physicsManager = Object.FindFirstObjectByType<PhysicsManager>();
+        }
 
         if (physicsManager != null)
         {
             physicsManager.RegisterRigidbody(rb);
         }
-    }
 
+    }
     void FixedUpdate()
     {
-        UpdateGroundedStatus();
-        CharacterMovement();
-        UpwardForce();
-        ApplyFriciton();
+        UpdateGroundState();
+        HandleMovement();
+        HandleJump();
+        HandleGroundStopping();
     }
 
-    #region Movement 
-    private void CharacterMovement()
+    #region Ground Detection
+    /// <summary>
+    /// Shooting a raycast down to see if the player is on the floor
+    /// storing the info about the hit like position and the surface normal
+    /// check collision with gorund mask
+    /// check if player is grounded
+    /// 
+    /// using ternary operators in places
+    /// https://www.w3schools.com/cs/cs_conditions_shorthand.php
+    /// </summary>
+    void UpdateGroundState()
+    {
+        Vector3 origin = rayOriginTransform != null ? rayOriginTransform.position : rb.position + Vector3.up * 0.5f;
+        Ray ray = new Ray(origin, Vector3.down);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, groundCheckDistance, LayerMask.GetMask("Ground")))
+        {
+            isGrounded = true;
+            groundNormal = hit.normal;
+        }
+        else
+        {
+            isGrounded = false;
+            groundNormal = Vector3.up;
+        }
+
+        Debug.DrawRay(origin, Vector3.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
+    }
+    #endregion
+
+    #region Movement
+    void HandleMovement()
     {
         if (isRagdolled)
         {
             return;
         }
 
-        Transform cam = Camera.main.transform;
+        // use camera transform, if not use players
+        Transform cam = Camera.main != null ? Camera.main.transform : transform;
+
+        // get forward direciotn of camera and normalise
         Vector3 camForward = cam.forward;
-        Vector3 camRight = cam.right;
-
         camForward.y = 0f;
+        camForward.Normalize();
+
+        // get right direciton of cam and normalise
+        Vector3 camRight = cam.right;
         camRight.y = 0f;
+        camRight.Normalize();
 
-        // normalise the vector to prevent travelling faster then intended speeds
-        Vector3 movement = (camForward * moveInput.y + camRight * moveInput.x).normalized;
+        // using the 2d vecotr from the input actions for forward/backward and left/right
+        Vector3 desiredDir = camForward * moveInput.y + camRight * moveInput.x;
+        float inputMagnitude = Mathf.Clamp01(desiredDir.magnitude);              // clamp movement to prevent going faster diagonally
 
-        if (movement.sqrMagnitude > 0f)
+        if (inputMagnitude > 0.01f) // ensure movement magnitude is between 0 and 0.01 to prevent slight jittering with mouse 
         {
-            Quaternion targetRotation = Quaternion.LookRotation(movement);
-            rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, Time.deltaTime * 10f));
+            desiredDir.Normalize();
+        }
+        else
+        {
+            desiredDir = Vector3.zero;
+        }
 
-            float currentSpeed = sprintPressed ? sprintSpeed : walkSpeed;
-            Vector3 desiredVelocity = movement * currentSpeed;
-            Vector3 velocityChange = desiredVelocity - new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
-            rb.AddForce(velocityChange * mass, ForceMode.Force);
+        float targetSpeed = walkSpeed * (sprintPressed ? sprintMultiplier : 1f);
+
+        Vector3 desiredVelocity;
+        if (isGrounded)
+        {
+            Vector3 moveOnPlane = Vector3.ProjectOnPlane(desiredDir, groundNormal).normalized;
+            desiredVelocity = moveOnPlane * (targetSpeed * inputMagnitude);
+
+            if (moveOnPlane.sqrMagnitude > 0.0001f)
+            {
+                RotateTowards(moveOnPlane);
+            }
+
+        }
+        else
+        {
+            desiredVelocity = desiredDir * (targetSpeed * inputMagnitude * airControl);
+            if (desiredDir.sqrMagnitude > 0.0001f)
+            {
+                RotateTowards(desiredDir);
+            }
+
+        }
+
+        Vector3 currentVel = rb.linearVelocity;
+        Vector3 currentVelOnPlane = isGrounded ? Vector3.ProjectOnPlane(currentVel, groundNormal) : new Vector3(currentVel.x, 0f, currentVel.z);
+
+        Vector3 velocityDelta = desiredVelocity - currentVelOnPlane;
+
+        float resp = Mathf.Max(0.0001f, acceleration); 
+        Vector3 force = velocityDelta * mass * resp;
+
+        if (!isGrounded)
+        {
+            force *= airControl;
+        }
+
+
+        rb.AddForce(force, ForceMode.Force);
+
+        if (isGrounded)
+        {
+            float slopeAngle = Vector3.Angle(groundNormal, Vector3.up);
+            if (slopeAngle > maxGroundAngle)
+            {
+                Vector3 downPlane = Vector3.ProjectOnPlane(Physics.gravity, groundNormal).normalized;
+                Vector3 slideForce = downPlane * mass * Physics.gravity.magnitude * slopeSlideMultiplier;
+                rb.AddForce(slideForce, ForceMode.Force);
+            }
+            else
+            {
+                Vector3 downhill = Vector3.ProjectOnPlane(Vector3.down, groundNormal);
+                rb.AddForce(downhill * mass * Physics.gravity.magnitude * slopeSlideMultiplier * 0.1f, ForceMode.Force);
+            }
+
+            Vector3 frictionForce = -currentVelOnPlane * groundFriction * mass * Time.fixedDeltaTime;
+            rb.AddForce(frictionForce, ForceMode.Force);
+        }
+    }
+    #endregion 
+
+    void RotateTowards(Vector3 direction)
+    {
+        Quaternion targetRot = Quaternion.LookRotation(direction);
+        Quaternion newRot = Quaternion.RotateTowards(rb.rotation, targetRot, rotationSpeedDegrees * Time.fixedDeltaTime);
+        rb.MoveRotation(newRot);
+    }
+
+    void HandleJump()
+    {
+        if (isRagdolled)
+        {
+            return;
         }
 
         if (jumpPressed && isGrounded)
         {
-            float jumpVelocity = Mathf.Sqrt(2 * 9.81f * jumpHeight);
-            rb.AddForce(Vector3.up * jumpVelocity, ForceMode.VelocityChange);
+            float jumpVelocity = Mathf.Sqrt(2f * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+            Vector3 v = rb.linearVelocity;
+
+            float requiredDeltaV = jumpVelocity - v.y;
+            Vector3 impulse = Vector3.up * requiredDeltaV * mass;
+            rb.AddForce(impulse, ForceMode.Impulse);
             jumpPressed = false;
         }
     }
-    #endregion
 
-    #region Hover / Spring
-    private void UpdateGroundedStatus()
+
+    void HandleGroundStopping()
     {
-        Vector3 rayOrigin = rayOriginTransform != null ? rayOriginTransform.position : rb.position + Vector3.up;
-        isGrounded = Physics.Raycast(rayOrigin, Vector3.down, desiredHoverHeight + 0.1f, LayerMask.GetMask("Ground"));
-
-        Debug.DrawRay(rayOrigin, Vector3.down * (desiredHoverHeight + 0.1f), isGrounded ? Color.green : Color.red);
+        if (!isGrounded) return;
+        Vector3 horizontalVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        if (horizontalVel.magnitude < stopThreshold)
+        {
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+        }
     }
 
-    private void UpwardForce()
-    {
-        if (isRagdolled)
-        {
-            return;
-        }
 
-        Vector3 rayOrigin = rayOriginTransform != null ? rayOriginTransform.position : rb.position + Vector3.up * 1f;
-        int groundLayerMask = LayerMask.GetMask("Ground");
-
-        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, desiredHoverHeight * 2f, groundLayerMask))
-        {
-            float distance = hit.distance;
-            float displacement = desiredHoverHeight - distance;
-            float upwardVelocity = Vector3.Dot(rb.linearVelocity, Vector3.up);
-
-            float force = (displacement * springStrength - upwardVelocity * damping);
-            rb.AddForce(Vector3.up * force, ForceMode.Force);
-
-            Debug.DrawRay(rayOrigin, Vector3.down * desiredHoverHeight, Color.green);
-        }
-    }
-    #endregion
-
-    #region Friciton
-    private void ApplyFriciton()
-    {
-        if (isRagdolled)
-        {
-            return;
-        }
-
-        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-        float friction = baseFriciton;
-
-        Vector3 rayOrigin = rayOriginTransform != null ? rayOriginTransform.position : rb.position + Vector3.up * 1f;
-        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, desiredHoverHeight * 2f, LayerMask.GetMask("Ground")))
-        {
-            if (hit.collider.TryGetComponent(out SurfaceProperties surface))
-            {
-                friction = surface.frictionCoefficient;
-            }
-        }
-        Vector3 frictionForce = -horizontalVelocity * friction * 50f;
-        rb.AddForce(frictionForce, ForceMode.Acceleration);
-
-        if (isGrounded && horizontalVelocity.magnitude < 0.1f)
-        {
-            rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
-        }
-    }
-    #endregion
-
-    #region Ragdoll
-    private void ToggleRagdoll()
+    void ToggleRagdoll()
     {
         isRagdolled = !isRagdolled;
 
@@ -192,30 +262,10 @@ public class PlayerCharacterController : MonoBehaviour
         }
         else
         {
-            // potential issue here with accessing "transform." (NEED to double check with Stephen!)
-
-            rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(fixedRotation, transform.eulerAngles.y, fixedRotation), 0.3f);
+            if (freezeXZRotation)
+                rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+            else
+                rb.constraints = RigidbodyConstraints.None;
         }
     }
-    #endregion
-
-    #region Gizmos (Hover Visuliazer)
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.cyan;
-        Vector3 rayOrigin = rayOriginTransform != null ? rayOriginTransform.position : transform.position + Vector3.up;
-
-        Gizmos.DrawLine(rayOrigin, rayOrigin + Vector3.down * springRayLength);
-
-        Gizmos.color = Color.yellow;
-        Vector3 hoverPoint = rayOrigin + Vector3.down * desiredHoverHeight;
-        Gizmos.DrawWireSphere(hoverPoint, 0.1f);
-
-        #if UNITY_EDITOR
-        UnityEditor.Handles.Label(hoverPoint + Vector3.right * 0.2f, "Hover height");
-        #endif
-    }
-
-    #endregion
 }
