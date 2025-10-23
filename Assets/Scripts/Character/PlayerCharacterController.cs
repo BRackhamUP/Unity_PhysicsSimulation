@@ -4,25 +4,25 @@ using UnityEngine.InputSystem;
 public class PhysicsCharacterController : MonoBehaviour
 {
     [Header("Basic")]
-    [SerializeField] public float mass = 70f;                     // kg 
-    [SerializeField] public float walkSpeed = 3.5f;               // m/s 
-    [SerializeField] public float sprintMultiplier = 1.75f;       // sprint = walkSpeed * sprintMultiplier
-    [SerializeField] public float jumpHeight = 1.2f;              // meters
-    [SerializeField] public float rotationSpeedDegrees = 720f;    // degrees/sec rotation for facing input
-    [SerializeField] public bool freezeXZRotation = true;         // keep upright except during ragdoll
+    public float mass = 70f;                     // kg 
+    [SerializeField] private float walkSpeed = 3.5f;               // m/s 
+    [SerializeField] private float sprintMultiplier = 1.75f;       // sprint = walkSpeed * sprintMultiplier
+    [SerializeField] private float jumpHeight = 1.2f;              // meters
+    [SerializeField] private float rotationSpeedDegrees = 720f;    // degrees/sec rotation for facing input
+    [SerializeField] private bool freezeXZRotation = true;         // keep upright except during ragdoll
 
     [Header("Acceleration / Control")]
-    [SerializeField] public float acceleration = 50f;               // adjust acceleration
-    [SerializeField][Range(0f, 1f)] public float airControl = 0.25f;// controlling in air
+    [SerializeField] private float acceleration = 50f;               // adjust acceleration
+    [SerializeField][Range(0f, 1f)] private float airControl = 0.25f;// controlling in air
 
     [Header("Ground & Slope")]
-    [SerializeField] public float groundCheckDistance = 1.2f;     // checking how far ground is from the player
-    [SerializeField] public float maxGroundAngle = 50f;           // sloope in degrees the player can walk
-    [SerializeField] public float slopeSlideMultiplier = 1.0f;    // how much gravity pulls you down a slope
+    [SerializeField] private float groundCheckDistance = 1.2f;     // checking how far ground is from the player
+    [SerializeField] private float maxGroundAngle = 50f;           // sloope in degrees the player can walk
+    [SerializeField] private float slopeSlideMultiplier = 1.0f;    // how much gravity pulls you down a slope
 
     [Header("Friction / Drag")]
-    [SerializeField] public float groundFriction = 8f;           // stops the player faster on ground
-    [SerializeField] public float stopThreshold = 0.05f;         // any speed below this is treated as 0 to stop the player
+    [SerializeField] private float groundFriction = 8f;           // stops the player faster on ground
+    [SerializeField] private float stopThreshold = 0.05f;         // any speed below this is treated as 0 to stop the player
 
     [Header("References")]
     [SerializeField] private Transform rayOriginTransform;
