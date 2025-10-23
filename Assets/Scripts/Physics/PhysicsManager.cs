@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public static class PhysicsManager
 {
 
-    /*
+    /*      relevent units
        F : Net force vector (N)
        m : mass             (kg)
        a : Acceleration     (m/s^2)
@@ -21,13 +20,10 @@ public static class PhysicsManager
 
      */
 
-    public Vector3 globalGravity = new Vector3(0, -9.81f, 0);
-
     public static void ApplyGravity(Transform obj)
     {
         Rigidbody objRb = obj.GetComponent<Rigidbody>();
-         // Gravity
-         objRb.AddForce(globalGravity, ForceMode.Acceleration);
-            
+         
+         objRb.AddForce(new Vector3(0, -9.81f, 0), ForceMode.Acceleration);       
     }
 }

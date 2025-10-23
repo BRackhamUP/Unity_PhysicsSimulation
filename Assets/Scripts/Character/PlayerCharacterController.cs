@@ -26,7 +26,6 @@ public class PhysicsCharacterController : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private Transform rayOriginTransform;
-    [SerializeField] private PhysicsManager physicsManager;
 
     /// <summary>
     /// Runtime variables keeping track of movement, input and physics ststes while game is running
@@ -68,17 +67,6 @@ public class PhysicsCharacterController : MonoBehaviour
     {
         // making sure mass matches with inspector
         rb.mass = mass;
-
-        if (physicsManager == null)
-        {
-            physicsManager = Object.FindFirstObjectByType<PhysicsManager>();
-        }
-
-        if (physicsManager != null)
-        {
-            physicsManager.RegisterRigidbody(rb);
-        }
-
     }
     void FixedUpdate()
     {
