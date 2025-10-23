@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
 public class PhysicsObject : MonoBehaviour
 {
     public float dragCoefficient = 0.1f; //air resistance
