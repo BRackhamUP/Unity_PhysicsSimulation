@@ -25,6 +25,7 @@ public class PhysicsCharacterController : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private Transform rayOriginTransform;
+    [SerializeField] private Animator animator;
 
     /// <summary>
     /// Runtime variables keeping track of movement, input and physics ststes while game is running
@@ -66,6 +67,8 @@ public class PhysicsCharacterController : MonoBehaviour
     {
         // making sure mass matches with inspector
         rb.mass = mass;
+
+        animator = GetComponent<Animator>();
     }
     void FixedUpdate()
     {
@@ -141,6 +144,7 @@ public class PhysicsCharacterController : MonoBehaviour
 
 
         float targetSpeed = walkSpeed * (sprintPressed ? sprintMultiplier : 1f);
+        animator.SetFloat("speed", rb.linearVelocity.magnitude);
 
         Vector3 desiredVelocity;
         if (isGrounded)

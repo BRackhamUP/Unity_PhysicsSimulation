@@ -210,7 +210,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 7966d979d9982a743a30e3b75a402b94, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: bdc5d5050f46bad47ba1eddb7a46346f, type: 2}
+      objectReference: {fileID: 9100000, guid: 75e3746e372a84244acdc69217658af4, type: 2}
     - target: {fileID: 5866666021909216657, guid: 7966d979d9982a743a30e3b75a402b94, type: 3}
       propertyPath: m_AnimatePhysics
       value: 0
@@ -353,7 +353,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14198716, y: 0.0024786587, z: -0.00035554095, w: 0.98986536}
+  m_LocalRotation: {x: 0.14198712, y: 0.0026102006, z: -0.00037440946, w: 0.989865}
   m_LocalPosition: {x: 11.370001, y: 5.8061275, z: -4.11699}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -616,6 +616,7 @@ MonoBehaviour:
   groundFriction: 8
   stopThreshold: 0.05
   rayOriginTransform: {fileID: 1544269970}
+  animator: {fileID: 0}
 --- !u!54 &434301995
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -940,10 +941,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.117458895
-  m_Height: 0.7139776
+  m_Radius: 0.12257485
+  m_Height: 0.6371129
   m_Direction: 1
-  m_Center: {x: 0.023892704, y: 0.47802326, z: -0.0058410894}
+  m_Center: {x: -0.0005470359, y: 0.4551153, z: 0.023715286}
 --- !u!1 &972488681 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5168695635008074109, guid: 7966d979d9982a743a30e3b75a402b94, type: 3}
@@ -1372,7 +1373,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1265117998}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14198714, y: 0.0024786585, z: -0.00035554095, w: 0.98986536}
+  m_LocalRotation: {x: 0.1419871, y: 0.0026102003, z: -0.0003744093, w: 0.98986506}
   m_LocalPosition: {x: 11.370001, y: 5.8061275, z: -4.11699}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1582,10 +1583,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.14122458
-  m_Height: 0.8014496
+  m_Radius: 0.12209819
+  m_Height: 0.63411653
   m_Direction: 1
-  m_Center: {x: 0.008362265, y: 0.47145584, z: 0.00000008034272}
+  m_Center: {x: 0.006457971, y: 0.46083662, z: 0.0449272}
 --- !u!1 &1544269969 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 827075974287967996, guid: 7966d979d9982a743a30e3b75a402b94, type: 3}
