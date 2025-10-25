@@ -1,9 +1,10 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PhysicsCharacterController : MonoBehaviour
 {
     [Header("Basic")]
-    public float mass = 70f;                     // kg 
+    public float mass = 70f;                                       // kg 
     [SerializeField] private float walkSpeed = 3.5f;               // m/s 
     [SerializeField] private float sprintMultiplier = 1.75f;       // sprint = walkSpeed * sprintMultiplier
     [SerializeField] private float jumpHeight = 1.2f;              // meters
@@ -41,7 +42,7 @@ public class PhysicsCharacterController : MonoBehaviour
 
     void Awake()
     {
-        //Check with STEPHEN on uses of rigidbody.Interpolate | mass | constraintss?
+
         rb = GetComponent<Rigidbody>();
         rb.mass = mass;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -235,6 +236,7 @@ public class PhysicsCharacterController : MonoBehaviour
     void HandleGroundStopping()
     {
         if (!isGrounded) return;
+
         Vector3 horizontalVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         if (horizontalVel.magnitude < stopThreshold)
         {
@@ -258,5 +260,32 @@ public class PhysicsCharacterController : MonoBehaviour
             else
                 rb.constraints = RigidbodyConstraints.None;
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (rb == null) return;
+        
+        Vector3 origin = rayOriginTransform != null ? rayOriginTransform.position : rb.position + Vector3.up * 0.5f;
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(origin, origin + Vector3.down * groundCheckDistance);
+
+        Gizmos.color = Color.green;
+        float arrowLength = 1f;
+        Vector3 normalEnd = origin + groundNormal * arrowLength;
+        Gizmos.DrawLine(origin, normalEnd);
+        DrawArrowHead(normalEnd, groundNormal, 0.2f);
+    }
+
+    private void DrawArrowHead(Vector3 position, Vector3 direction, float size)
+    {
+        Vector3 right = Vector3.Cross(direction, Vector3.up).normalized;
+        Vector3 up = Vector3.Cross(direction, right).normalized;
+
+        Gizmos.DrawLine(position, position - direction * size + right * size * 0.5f);
+        Gizmos.DrawLine(position, position - direction * size - right * size * 0.5f);
+        Gizmos.DrawLine(position, position - direction * size + up * size * 0.5f);
+        Gizmos.DrawLine(position, position - direction * size - up * size * 0.5f);
     }
 }
