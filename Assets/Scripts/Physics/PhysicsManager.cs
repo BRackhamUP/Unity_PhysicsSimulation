@@ -26,4 +26,11 @@ public static class PhysicsManager
          
          objRb.AddForce(new Vector3(0, -9.81f, 0), ForceMode.Acceleration);       
     }
+
+    public static void RemoveGravity(Transform obj)
+    {
+        Rigidbody objRb = obj.GetComponent<Rigidbody>();
+
+        objRb.AddForce(new Vector3(0, 0, 0), ForceMode.Acceleration);
+    }
 }

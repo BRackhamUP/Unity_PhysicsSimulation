@@ -126,6 +126,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Enter/ExitVehicle"",
+                    ""type"": ""Button"",
+                    ""id"": ""8a0d6223-56d2-497a-92b7-1188b6ff480c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -238,6 +247,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Ragdoll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dc648d46-32db-445d-ae2d-4dbbcc685104"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Enter/ExitVehicle"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -306,6 +326,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
         m_Gameplay_Sprint = m_Gameplay.FindAction("Sprint", throwIfNotFound: true);
         m_Gameplay_Ragdoll = m_Gameplay.FindAction("Ragdoll", throwIfNotFound: true);
+        m_Gameplay_EnterExitVehicle = m_Gameplay.FindAction("Enter/ExitVehicle", throwIfNotFound: true);
         // CameraControls
         m_CameraControls = asset.FindActionMap("CameraControls", throwIfNotFound: true);
         m_CameraControls_ZoomToggle = m_CameraControls.FindAction("ZoomToggle", throwIfNotFound: true);
@@ -398,6 +419,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Jump;
     private readonly InputAction m_Gameplay_Sprint;
     private readonly InputAction m_Gameplay_Ragdoll;
+    private readonly InputAction m_Gameplay_EnterExitVehicle;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -425,6 +447,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Gameplay/Ragdoll".
         /// </summary>
         public InputAction @Ragdoll => m_Wrapper.m_Gameplay_Ragdoll;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/EnterExitVehicle".
+        /// </summary>
+        public InputAction @EnterExitVehicle => m_Wrapper.m_Gameplay_EnterExitVehicle;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -463,6 +489,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Ragdoll.started += instance.OnRagdoll;
             @Ragdoll.performed += instance.OnRagdoll;
             @Ragdoll.canceled += instance.OnRagdoll;
+            @EnterExitVehicle.started += instance.OnEnterExitVehicle;
+            @EnterExitVehicle.performed += instance.OnEnterExitVehicle;
+            @EnterExitVehicle.canceled += instance.OnEnterExitVehicle;
         }
 
         /// <summary>
@@ -486,6 +515,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Ragdoll.started -= instance.OnRagdoll;
             @Ragdoll.performed -= instance.OnRagdoll;
             @Ragdoll.canceled -= instance.OnRagdoll;
+            @EnterExitVehicle.started -= instance.OnEnterExitVehicle;
+            @EnterExitVehicle.performed -= instance.OnEnterExitVehicle;
+            @EnterExitVehicle.canceled -= instance.OnEnterExitVehicle;
         }
 
         /// <summary>
@@ -746,6 +778,13 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnRagdoll(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Enter/ExitVehicle" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEnterExitVehicle(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "CameraControls" which allows adding and removing callbacks.

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class PhysicsCharacterController : MonoBehaviour
+public class PlayerCharacterController : MonoBehaviour
 {
     [Header("Basic")]
     public float mass = 70f;                                       // kg 
