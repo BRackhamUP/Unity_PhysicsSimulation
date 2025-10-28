@@ -53,12 +53,12 @@ public class PlayerVehicleInteraction : MonoBehaviour
         isInVehicle = true;
         nearbyVehicle = vehicle;
 
-        // Disable player control + visuals
+
         playerController.enabled = false;
         foreach (var r in GetComponentsInChildren<Renderer>())
             r.enabled = false;
 
-        // Disable player physics
+
         if (characterRigibody != null)
         {
             characterRigibody.isKinematic = true;
@@ -67,11 +67,9 @@ public class PlayerVehicleInteraction : MonoBehaviour
         if (characterCollider != null)
             characterCollider.enabled = false;
 
-        // Move & parent to vehicle
         transform.SetParent(vehicle.transform);
         transform.localPosition = Vector3.zero;
 
-        // Give control to vehicle
         vehicleController.EnterVehicle(vehicle);
     }
 
@@ -80,15 +78,14 @@ public class PlayerVehicleInteraction : MonoBehaviour
         isInVehicle = false;
         transform.SetParent(null);
 
-        // Place player next to car
         if (nearbyVehicle != null)
             transform.position = nearbyVehicle.transform.position + nearbyVehicle.transform.right * 2f + Vector3.up * 0.5f;
 
-        // Re-enable visuals
+
         foreach (var r in GetComponentsInChildren<Renderer>())
             r.enabled = true;
 
-        // Re-enable physics
+
         if (characterRigibody != null)
         {
             characterRigibody.isKinematic = false;
@@ -97,7 +94,6 @@ public class PlayerVehicleInteraction : MonoBehaviour
         if (characterCollider != null)
             characterCollider.enabled = true;
 
-        // Re-enable control
         playerController.enabled = true;
         vehicleController.ExitVehicle();
 

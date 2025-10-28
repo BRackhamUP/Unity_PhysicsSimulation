@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Abstract vehicle class that will have a 'has a' relationship to all vehicle parts
-/// and will be diredctly inherited by types of vehicles
+/// Abstract vehicle base class that owns all parts
+/// and defines the basic physical interface.
 /// </summary>
 public abstract class Vehicle
 {
@@ -16,9 +16,6 @@ public abstract class Vehicle
     protected Rigidbody body;
     protected Engine engine;
     protected List<Wheel> wheels;
-
-    public Vector3 velocity;
-    public Vector3 centreOfMass;
 
     public abstract void UpdatePhysics(float deltaTime);
 }

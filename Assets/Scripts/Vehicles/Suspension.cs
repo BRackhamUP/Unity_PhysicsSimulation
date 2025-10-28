@@ -7,12 +7,13 @@ public class Suspension : MonoBehaviour
     public float damperStrength = 4500f;
     public LayerMask groundMask;
 
-    [HideInInspector] public bool isGrounded;
-    [HideInInspector] public Vector3 contactPoint;
-    [HideInInspector] public Vector3 contactNormal;
+    public bool isGrounded;
+    public Vector3 contactPoint;
+    public Vector3 contactNormal = Vector3.up;
+
     private float lastLength;
 
-    public float UpdateSuspension(float deltaTime, Rigidbody body)
+    public void UpdateSuspension(float deltaTime, Rigidbody body)
     {
         isGrounded = false;
 
@@ -23,19 +24,18 @@ public class Suspension : MonoBehaviour
             contactNormal = hit.normal;
 
             float currentLength = hit.distance;
-            float compression = Mathf.Clamp01((restLength - currentLength) / restLength);
+            float compression = restLength - currentLength;
 
             float springForce = compression * springStrength;
             float damperForce = ((lastLength - currentLength) / deltaTime) * damperStrength;
-
             Vector3 totalForce = transform.up * (springForce + damperForce);
+
             body.AddForceAtPosition(totalForce, transform.position, ForceMode.Force);
-
             lastLength = currentLength;
-            return compression;
         }
-
-        lastLength = restLength;
-        return 0f;
+        else
+        {
+            lastLength = restLength;
+        }
     }
 }

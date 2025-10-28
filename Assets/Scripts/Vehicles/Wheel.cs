@@ -2,68 +2,77 @@ using UnityEngine;
 
 public class Wheel : MonoBehaviour
 {
-    public float traction = 1.0f;
-    public float brakeTorque = 300f;
     public Suspension suspension;
     public Engine engine;
-    [Tooltip("If true the wheel visually steers (front wheels).")]
-    public bool isFrontWheel = false;
-    [Tooltip("Local steering pivot (optional).")]
-    public Transform steeringPivot;
+    public bool isFrontWheel;
+    public float traction = 1f;
+    public bool isGrounded;
 
-    public void Awake()
+    public float grip = 1.5f;          
+    public float frictionCoeff = 150f;    
+    private Rigidbody rb;
+
+    private void Awake()
     {
+        rb = GetComponentInParent<Rigidbody>();
         if (suspension == null) suspension = GetComponent<Suspension>();
-        if (engine == null) engine = GetComponentInParent<Engine>(); // fallback
+        if (engine == null) engine = GetComponentInParent<Engine>();
     }
 
-    public void UpdateWheel(float deltaTime, Rigidbody rb)
+    public void UpdateWheel(float deltaTime)
     {
-        if (rb == null || suspension == null) return;
-        suspension.UpdateSuspension(deltaTime, rb);
-
-        // wheel spin visual (optional)
-        if (rb != null && rb.linearVelocity.sqrMagnitude > 0.01f)
-        {
-            transform.Rotate(Vector3.right, rb.linearVelocity.magnitude * deltaTime * 100f, Space.Self);
-        }
-    }
-
-    public void ApplyTorque(float torque, float deltaTime)
-    {
-        if (suspension == null || !suspension.isGrounded)
+        if (rb == null || suspension == null)
             return;
 
-        Rigidbody rb = GetComponentInParent<Rigidbody>();
-        if (rb == null) return;
 
-        // Tangential drive direction along the ground
-        Vector3 driveDir = Vector3.Cross(suspension.contactNormal, -transform.right).normalized;
+        suspension.UpdateSuspension(deltaTime, rb);
+        isGrounded = suspension.isGrounded;
 
-        Vector3 driveForce = driveDir * torque;
-        rb.AddForceAtPosition(driveForce, suspension.contactPoint, ForceMode.Force);
+        if (!isGrounded)
+            return;
 
-        Debug.DrawRay(suspension.contactPoint, driveForce.normalized * 3f, Color.blue);
+ 
+        Vector3 wheelVelocity = rb.GetPointVelocity(transform.position);
+
+
+        Vector3 forward = transform.forward;
+        Vector3 right = transform.right;
+
+
+        float forwardVel = Vector3.Dot(wheelVelocity, forward);
+        float sidewaysVel = Vector3.Dot(wheelVelocity, right);
+
+
+
+
+        Vector3 longForce = -forward * forwardVel * frictionCoeff * deltaTime;
+
+
+        Vector3 latForce = -right * sidewaysVel * frictionCoeff * grip * deltaTime;
+
+
+        Vector3 totalFriction = longForce + latForce;
+        rb.AddForceAtPosition(totalFriction, transform.position, ForceMode.Force);
+
+        Debug.DrawRay(transform.position, longForce.normalized * 2f, Color.red);   
+        Debug.DrawRay(transform.position, latForce.normalized * 2f, Color.green);  
     }
 
 
-    public void UpdateWheelVisual(float rpm, float steerAngle)
+    public void ApplyTorque(float torque)
     {
-        // Spin the wheel based on RPM
-        transform.Rotate(Vector3.right, rpm * Time.deltaTime, Space.Self);
+        if (!rb || !suspension || !suspension.isGrounded) return;
 
-        // Steer only front wheels
-        if (steerAngle != 0)
-            transform.localRotation = Quaternion.Euler(0f, steerAngle, 0f);
+        Vector3 driveDir = transform.forward;
+        Vector3 driveForce = driveDir * torque * traction;
+
+        rb.AddForceAtPosition(driveForce, suspension.contactPoint, ForceMode.Force);
+        Debug.DrawRay(suspension.contactPoint, driveForce.normalized * 2f, Color.blue);
     }
-
 
     public void SetSteerAngle(float angleDegrees)
     {
         if (!isFrontWheel) return;
-        if (steeringPivot != null)
-            steeringPivot.localRotation = Quaternion.Euler(0f, angleDegrees, 0f);
-        else
-            transform.localRotation = Quaternion.Euler(0f, angleDegrees, transform.localEulerAngles.z);
+        transform.localRotation = Quaternion.Euler(0f, angleDegrees, 0f);
     }
 }
