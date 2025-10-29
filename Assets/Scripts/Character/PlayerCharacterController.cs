@@ -57,7 +57,7 @@ public class PlayerCharacterController : MonoBehaviour
         controls = new PlayerControls();
         controls.Gameplay.Move.performed += context => moveInput = context.ReadValue<Vector2>();
         controls.Gameplay.Move.canceled += context => moveInput = Vector2.zero;
-        controls.Gameplay.Jump.performed += context => jumpPressed = true;
+        controls.Gameplay.JumpBrake.performed += context => jumpPressed = true;
         controls.Gameplay.Sprint.performed += context => sprintPressed = true;
         controls.Gameplay.Sprint.canceled += context => sprintPressed = false;
         controls.Gameplay.Ragdoll.performed += context => ToggleRagdoll();

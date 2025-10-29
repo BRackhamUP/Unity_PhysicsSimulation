@@ -15,6 +15,9 @@ public class VehicleController : MonoBehaviour
     {
         controls = new PlayerControls();
 
+        controls.Gameplay.JumpBrake.performed += context => brake = context.ReadValue<float>(); 
+        controls.Gameplay.JumpBrake.canceled += context => brake = 0f;
+
         controls.Gameplay.Move.performed += ctx =>
         {
             Vector2 input = ctx.ReadValue<Vector2>();
@@ -39,18 +42,22 @@ public class VehicleController : MonoBehaviour
         controls.Disable();
     }
 
-private void FixedUpdate()
-{
-    if (vehicleLogic != null)
+    private void FixedUpdate()
     {
-        vehicleLogic.UpdatePhysics(Time.fixedDeltaTime);
-
-        if (vehicleLogic is TrackCar trackCar)
+        if (vehicleLogic != null)
         {
-            trackCar.ApplyThrottle(throttle, Time.fixedDeltaTime, steer);
+            vehicleLogic.UpdatePhysics(Time.fixedDeltaTime);
+
+            if (vehicleLogic is TrackCar trackCar)
+            {
+                if (throttle > 0f)
+                    trackCar.ApplyThrottle(throttle, Time.fixedDeltaTime, steer);
+                else if (brake > 0f)
+                    trackCar.ApplyBrake(brake * 8000f, Time.fixedDeltaTime); 
+            }
         }
     }
-}
+
 
 
 
@@ -69,10 +76,4 @@ private void FixedUpdate()
         throttle = 0;
         steer = 0;
     }
-
-
-
-        // Later: call methods based on input
-        // vehicleLogic.Accelerate(throttle);
-        // vehicleLogic.Steer(steer);
 }

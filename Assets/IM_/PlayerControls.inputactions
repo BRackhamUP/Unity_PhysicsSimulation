@@ -15,7 +15,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Jump",
+                    "name": "Jump/Brake",
                     "type": "Button",
                     "id": "13461d8e-0146-4363-b729-df7364af7dd6",
                     "expectedControlType": "",
@@ -125,7 +125,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "Jump/Brake",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -136,7 +136,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "Jump/Brake",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

@@ -12,6 +12,6 @@ public class Truck : Vehicle
 
     public override void UpdatePhysics(float deltaTime)
     {
-        // Your truck’s physics implementation here
+
     }
 }
