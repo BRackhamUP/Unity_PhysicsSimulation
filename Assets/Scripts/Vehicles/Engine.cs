@@ -13,13 +13,12 @@ public class Engine : MonoBehaviour
         if (throttle > 0.1f)
             rpm += throttle * 1000f * deltaTime;
         else
-            rpm = 0;
-            //      rpm -= rpmDecayRate * deltaTime;
+            rpm -= rpmDecayRate * deltaTime;
 
         rpm = Mathf.Clamp(rpm, 0, maxRPM);
 
 
-        float torqueFactor = 1f - (rpm / maxRPM);
+        float torqueFactor = Mathf.Lerp(1f, 0.4f, rpm / maxRPM);
         float outputTorque = torque * throttle * Mathf.Clamp01(torqueFactor);
 
         return outputTorque;

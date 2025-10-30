@@ -68,7 +68,8 @@ public class PlayerVehicleInteraction : MonoBehaviour
             characterCollider.enabled = false;
 
         transform.SetParent(vehicle.transform);
-        transform.localPosition = Vector3.zero;
+        transform.localPosition = new Vector3(0, 1, 0);
+        transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 
         vehicleController.EnterVehicle(vehicle);
     }
@@ -80,7 +81,7 @@ public class PlayerVehicleInteraction : MonoBehaviour
 
         if (nearbyVehicle != null)
             transform.position = nearbyVehicle.transform.position + nearbyVehicle.transform.right * 2f + Vector3.up * 0.5f;
-
+        transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
         foreach (var r in GetComponentsInChildren<Renderer>())
             r.enabled = true;

@@ -15,7 +15,7 @@ public class VehicleController : MonoBehaviour
     {
         controls = new PlayerControls();
 
-        controls.Gameplay.JumpBrake.performed += context => brake = context.ReadValue<float>(); 
+        controls.Gameplay.JumpBrake.performed += context => brake = context.ReadValue<float>();
         controls.Gameplay.JumpBrake.canceled += context => brake = 0f;
 
         controls.Gameplay.Move.performed += ctx =>
@@ -50,11 +50,16 @@ public class VehicleController : MonoBehaviour
 
             if (vehicleLogic is TrackCar trackCar)
             {
-                if (throttle > 0f)
-                    trackCar.ApplyThrottle(throttle, Time.fixedDeltaTime, steer);
-                else if (brake > 0f)
-                    trackCar.ApplyBrake(brake * 8000f, Time.fixedDeltaTime); 
+
+                trackCar.ApplyThrottle(throttle, Time.fixedDeltaTime, steer);
+                trackCar.ApplyBrake(brake * 8000f, Time.fixedDeltaTime);
             }
+
+            else if (vehicleLogic is Truck truck)
+            {
+
+            }
+
         }
     }
 
