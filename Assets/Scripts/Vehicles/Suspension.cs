@@ -17,11 +17,14 @@ public class Suspension : MonoBehaviour
             isGrounded = true;
             contactPoint = hit.point;
             contactNormal = hit.normal;
+
             float currentLength = hit.distance;
             float compression = restLength - currentLength;
             float springForce = compression * springStrength;
             float damperForce = ((lastLength - currentLength) / deltaTime) * damperStrength;
+
             Vector3 totalForce = transform.up * (springForce + damperForce);
+
             body.AddForceAtPosition(totalForce, transform.position, ForceMode.Force);
             lastLength = currentLength;
         }
