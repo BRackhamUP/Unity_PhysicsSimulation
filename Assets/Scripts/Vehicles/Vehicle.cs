@@ -7,12 +7,6 @@ using UnityEngine;
 /// </summary>
 public abstract class Vehicle
 {
-    public float mass;
-    public float enginePower;
-    public float drag;
-    public float maxSpeed;
-    public float currentSpeed;
-
     protected Rigidbody body;
     protected Engine engine;
     protected List<Wheel> wheels;

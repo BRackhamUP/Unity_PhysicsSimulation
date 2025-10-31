@@ -473,7 +473,7 @@ GameObject:
   - component: {fileID: 261141035}
   - component: {fileID: 261141034}
   - component: {fileID: 261141033}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Terrain_(1000.00, 0.00, 0.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -668,7 +668,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1419846, y: 0.0064644744, z: -0.0009272698, w: 0.98984736}
+  m_LocalRotation: {x: 0.14198469, y: 0.0063641435, z: -0.00091287843, w: 0.989848}
   m_LocalPosition: {x: 37.65, y: 4.4261274, z: 16.870674}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -849,7 +849,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -4292154010595695564, guid: 09e7d2b6a2b271343b602a2f17bdc05f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.217
+      value: -0.017
       objectReference: {fileID: 0}
     - target: {fileID: -4292154010595695564, guid: 09e7d2b6a2b271343b602a2f17bdc05f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1049,7 +1049,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 343457782}
   serializedVersion: 4
-  m_Mass: 1300
+  m_Mass: 1200
   m_Drag: 0.02
   m_AngularDrag: 0.1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1081,12 +1081,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   suspension: {fileID: 343457798}
-  engine: {fileID: 343457801}
   isFrontWheel: 1
-  traction: 5
-  isGrounded: 0
   grip: 1.5
-  frictionCoeff: 150
+  brakeStrength: 500
 --- !u!114 &343457793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1099,7 +1096,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c9fcede5fa4484cb827c717065be01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragCoefficient: 0.1
 --- !u!4 &343457794 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 09e7d2b6a2b271343b602a2f17bdc05f, type: 3}
@@ -1173,10 +1169,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2f1adbd4c8add947a711ba305b783cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  torque: 800
-  rpm: 0
+  maxTorque: 800
   maxRPM: 7000
+  rpmIncreaseRate: 1000
   rpmDecayRate: 800
+  rpm: 0
 --- !u!114 &355026512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1211,12 +1208,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   suspension: {fileID: 355026512}
-  engine: {fileID: 0}
   isFrontWheel: 0
-  traction: 0
-  isGrounded: 0
   grip: 1000
-  frictionCoeff: 5000
+  brakeStrength: 500
 --- !u!1001 &382920196
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1494,7 +1488,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c9fcede5fa4484cb827c717065be01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragCoefficient: 0.1
 --- !u!95 &434302000 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 7966d979d9982a743a30e3b75a402b94, type: 3}
@@ -1622,7 +1615,7 @@ GameObject:
   - component: {fileID: 603388970}
   - component: {fileID: 603388969}
   - component: {fileID: 603388968}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1842,12 +1835,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   suspension: {fileID: 619596950}
-  engine: {fileID: 343457801}
   isFrontWheel: 1
-  traction: 5
-  isGrounded: 0
   grip: 1.5
-  frictionCoeff: 150
+  brakeStrength: 500
 --- !u!114 &619596950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2081,12 +2071,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   suspension: {fileID: 877915392}
-  engine: {fileID: 343457801}
   isFrontWheel: 0
-  traction: 5
-  isGrounded: 0
   grip: 1.5
-  frictionCoeff: 150
+  brakeStrength: 500
 --- !u!114 &877915392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2147,7 +2134,7 @@ GameObject:
   - component: {fileID: 949798318}
   - component: {fileID: 949798317}
   - component: {fileID: 949798316}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Terrain_(1000.00, 0.00, 1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2319,12 +2306,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   suspension: {fileID: 1043743065}
-  engine: {fileID: 0}
   isFrontWheel: 0
-  traction: 0
-  isGrounded: 0
   grip: 1000
-  frictionCoeff: 5000
+  brakeStrength: 500
 --- !u!1 &1087105619
 GameObject:
   m_ObjectHideFlags: 0
@@ -2474,7 +2458,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c9fcede5fa4484cb827c717065be01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragCoefficient: 0.1
 --- !u!1 &1103347102 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5358185493486015155, guid: 7966d979d9982a743a30e3b75a402b94, type: 3}
@@ -2967,7 +2950,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1265117998}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14198457, y: 0.0064644725, z: -0.0009272695, w: 0.98984736}
+  m_LocalRotation: {x: 0.14198466, y: 0.0063641425, z: -0.00091287796, w: 0.989848}
   m_LocalPosition: {x: 37.65, y: 4.4261274, z: 16.870674}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3001,7 +2984,7 @@ GameObject:
   - component: {fileID: 1266153789}
   - component: {fileID: 1266153788}
   - component: {fileID: 1266153787}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Terrain_(0.00, 0.00, 1000.00)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3292,10 +3275,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2f1adbd4c8add947a711ba305b783cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  torque: 800
-  rpm: 0
+  maxTorque: 800
   maxRPM: 0
+  rpmIncreaseRate: 1000
   rpmDecayRate: 800
+  rpm: 0
 --- !u!54 &1331852931
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3382,12 +3366,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   suspension: {fileID: 1331852934}
-  engine: {fileID: 0}
   isFrontWheel: 0
-  traction: 0
-  isGrounded: 0
   grip: 1000
-  frictionCoeff: 5000
+  brakeStrength: 500
 --- !u!114 &1331852936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3400,7 +3381,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c9fcede5fa4484cb827c717065be01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragCoefficient: 0.1
 --- !u!135 &1331852941
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -3692,12 +3672,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   suspension: {fileID: 1901548103}
-  engine: {fileID: 343457801}
   isFrontWheel: 0
-  traction: 5
-  isGrounded: 0
   grip: 1.5
-  frictionCoeff: 150
+  brakeStrength: 500
 --- !u!114 &1901548103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3774,12 +3751,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   suspension: {fileID: 1975044334}
-  engine: {fileID: 0}
   isFrontWheel: 0
-  traction: 0
-  isGrounded: 0
   grip: 1000
-  frictionCoeff: 5000
+  brakeStrength: 500
 --- !u!135 &1975044339
 SphereCollider:
   m_ObjectHideFlags: 0

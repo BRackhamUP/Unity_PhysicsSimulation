@@ -15,18 +15,22 @@ public class VehicleController : MonoBehaviour
     {
         controls = new PlayerControls();
 
+        // Jump for character and braking in a car share an input action
         controls.Gameplay.JumpBrake.performed += context => brake = context.ReadValue<float>();
         controls.Gameplay.JumpBrake.canceled += context => brake = 0f;
 
-        controls.Gameplay.Move.performed += ctx =>
+        controls.Gameplay.Move.performed += context =>
         {
-            Vector2 input = ctx.ReadValue<Vector2>();
+            // W applies throttle to the engine, however i need to figure out how to apply some rpm in reverse... revisit
+            Vector2 input = context.ReadValue<Vector2>();
             throttle = input.y;
+            // A & D repsonsible for steering
             steer = input.x;
         };
 
-        controls.Gameplay.Move.canceled += ctx =>
+        controls.Gameplay.Move.canceled += context =>
         {
+            // having throttle return to zero accounts for allowing rpm decay rate
             throttle = 0;
             steer = 0;
         };
@@ -36,7 +40,6 @@ public class VehicleController : MonoBehaviour
     {
         controls.Enable();
     }
-
     private void OnDisable()
     {
         controls.Disable();
@@ -44,15 +47,14 @@ public class VehicleController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (vehicleLogic != null)
+        if (vehicleLogic != null) // prevent null exception for other vehicles for now
         {
+
             vehicleLogic.UpdatePhysics(Time.fixedDeltaTime);
 
             if (vehicleLogic is TrackCar trackCar)
             {
-
-                trackCar.ApplyThrottle(throttle, Time.fixedDeltaTime, steer);
-                trackCar.ApplyBrake(brake * 8000f, Time.fixedDeltaTime);
+                trackCar.ApplyInput(throttle, steer, brake * 8000f, Time.fixedDeltaTime);
             }
 
             else if (vehicleLogic is Truck truck)

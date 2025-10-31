@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.Animations;
-using UnityEngine.InputSystem;
 
 public class PlayerVehicleInteraction : MonoBehaviour
 {
@@ -25,7 +23,7 @@ public class PlayerVehicleInteraction : MonoBehaviour
         characterRigibody = GetComponent<Rigidbody>();
 
         controls = new PlayerControls();
-        controls.Gameplay.EnterExitVehicle.performed += ctx => TryToggleVehicle();
+        controls.Gameplay.EnterExitVehicle.performed += context => TryToggleVehicle();
     }
 
     private void OnEnable() => controls.Enable();

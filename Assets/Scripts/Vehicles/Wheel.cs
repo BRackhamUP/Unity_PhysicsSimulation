@@ -1,86 +1,78 @@
 using UnityEngine;
-public class Wheel : MonoBehaviour 
-{ 
-    public Suspension suspension; 
-    public Engine engine; 
-    public bool isFrontWheel; 
-    
-    public float traction = 1f; 
-    public bool isGrounded;
-    public float grip = 1.5f; 
-    public float frictionCoeff = 150f; 
-    private Rigidbody rb; 
+public class Wheel : MonoBehaviour
+{
+    public Suspension suspension;
+    public bool isFrontWheel;
+    public float grip = 1.5f;
+    public float brakeStrength = 500f;
 
-    private void Awake() 
-    { 
+    private Rigidbody rb;
+
+    private void Awake()
+    {
         rb = GetComponentInParent<Rigidbody>();
 
-        if (suspension == null) 
+        if (suspension == null)
             suspension = GetComponent<Suspension>();
+    }
 
-        if (engine == null) 
-            engine = GetComponentInParent<Engine>();
-    } 
-    
-    public void UpdateWheel(float deltaTime) 
-    { 
-        if (rb == null || suspension == null) return;
+    public void UpdateWheel(float deltaTime)
+    {
+        if (rb == null || suspension == null)
+            return;
 
-        suspension.UpdateSuspension(deltaTime, rb); 
-        isGrounded = suspension.isGrounded;
+        suspension.UpdateSuspension(deltaTime, rb);
 
-        if (!isGrounded) return;
+        if (suspension.isGrounded == false)
+            return;
 
+        // getting the velocity at the wheel 
         Vector3 wheelVelocity = rb.GetPointVelocity(transform.position);
         Vector3 forward = transform.forward;
-        Vector3 right = transform.right; 
+        Vector3 right = transform.right;
 
+        // splitting the velocity into forward and sideways components
         float forwardVel = Vector3.Dot(wheelVelocity, forward);
-        float sidewaysVel = Vector3.Dot(wheelVelocity, right); 
+        float sidewaysVel = Vector3.Dot(wheelVelocity, right);
 
-        Vector3 longForce = -forward * forwardVel * frictionCoeff;
-        Vector3 latForce = -right * sidewaysVel * frictionCoeff * grip; 
-        Vector3 totalFriction = longForce + latForce;
+        // applying friction
+        Vector3 frictionForce = (-forward * forwardVel - right * sidewaysVel) * grip * rb.mass;
 
-        rb.AddForceAtPosition(totalFriction, transform.position, ForceMode.Force);
-
-        Debug.DrawRay(transform.position, longForce.normalized * 2f, Color.red);
-        Debug.DrawRay(transform.position, latForce.normalized * 2f, Color.green);
+        // adding the friciton force
+        rb.AddForceAtPosition(frictionForce, transform.position, ForceMode.Force);
     }
 
     public void ApplyTorque(float torque)
-    { 
-        if (!rb || !suspension || !suspension.isGrounded) 
+    {
+        if (rb == null || suspension == null || suspension.isGrounded == false)
             return;
 
-        Vector3 driveDir = transform.forward;
-        Vector3 driveForce = driveDir * torque * traction;
-
+        // get the drive force direction and apply torque
+        Vector3 driveForce = transform.forward * torque;
         rb.AddForceAtPosition(driveForce, suspension.contactPoint, ForceMode.Force);
 
         Debug.DrawRay(suspension.contactPoint, driveForce.normalized * 2f, Color.blue);
-    } 
-    
-    public void SetSteerAngle(float angleDegrees)
-    { 
-        if (!isFrontWheel) return;
-
-        transform.localRotation = Quaternion.Euler(0f, angleDegrees, 0f);
     }
 
     public void ApplyBrake(float brakeStrength)
     {
-        if (!rb || !suspension || !suspension.isGrounded) return;
+        if (rb == null || suspension.isGrounded == false)
+            return;
 
         Vector3 wheelVelocity = rb.GetPointVelocity(transform.position);
         Vector3 forward = transform.forward;
+        float speed = Vector3.Dot(wheelVelocity, forward);
 
-        float forwardVelocity = Vector3.Dot(wheelVelocity, forward); 
+        Vector3 brakeForce = -forward * Mathf.Sign(speed) * brakeStrength;
+        rb.AddForceAtPosition(brakeForce, transform.position, ForceMode.Force);
+    }
 
-        if (Mathf.Abs(forwardVelocity) > 0.1f)
-        {
-            Vector3 brakeForce = -forward * Mathf.Sign(forwardVelocity) * brakeStrength;
-            rb.AddForceAtPosition(brakeForce, transform.position, ForceMode.Force);
-        }
+    public void SetSteerAngle(float angleDegrees)
+    {
+        if (!isFrontWheel)
+            return;
+
+        // NEEED TO Clarify for setting the rotation. Temporary fix for now. 
+        transform.localRotation = Quaternion.Euler(0f, angleDegrees, 0f);
     }
 }
