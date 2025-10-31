@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-public class TrackCar : Vehicle 
+public class TrackCar : Vehicle
 {
-    public float steerAngleMax = 30f;
+    [Header("Steering Settings")]
+    public float maxSteerAngle = 30f;
+    public float steerTorque = 200f;
 
     public TrackCar(Rigidbody body, Engine engine, List<Wheel> wheels)
     {
@@ -13,20 +15,33 @@ public class TrackCar : Vehicle
 
     public override void UpdatePhysics(float deltaTime)
     {
-        foreach (var wheel in wheels) 
+        foreach (var wheel in wheels)
             wheel.UpdateWheel(deltaTime);
     }
 
-    public void ApplyInput(float throttle, float steerInput, float brakeStrength, float deltaTime)
+    public void ApplyThrottle(float throttle, float deltaTime, float steerInput)
     {
-        //Retrieve the torque forom the engine
-        float torque = engine.GetThrottle(throttle, deltaTime); 
+        float vehicleSpeed = body.linearVelocity.magnitude;
 
+        // get torque output from engine
+        float torque = engine.GetTorqueOutput(throttle, vehicleSpeed, deltaTime);
+
+        // apply that torque to all drive wheels
         foreach (var wheel in wheels)
-        {
             wheel.ApplyTorque(torque);
-            wheel.ApplyBrake(brakeStrength);
-            wheel.SetSteerAngle(steerInput * steerAngleMax);
-        }
+
+        // steering (visual + simple yaw torque)
+        float steerAngle = steerInput * maxSteerAngle;
+        foreach (var wheel in wheels)
+            wheel.SetSteerAngle(steerAngle);
+
+        // Apply small torque to body to simulate steering turning force
+        body.AddTorque(Vector3.up * steerInput * steerTorque, ForceMode.Force);
+    }
+
+    public void ApplyBrake(float brakeForce)
+    {
+        foreach (var wheel in wheels)
+            wheel.ApplyBrake(brakeForce);
     }
 }

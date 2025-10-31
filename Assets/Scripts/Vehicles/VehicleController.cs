@@ -54,7 +54,8 @@ public class VehicleController : MonoBehaviour
 
             if (vehicleLogic is TrackCar trackCar)
             {
-                trackCar.ApplyInput(throttle, steer, brake * 8000f, Time.fixedDeltaTime);
+                trackCar.ApplyThrottle(throttle, Time.fixedDeltaTime, steer);
+                trackCar.ApplyBrake(brake * 8000f);
             }
 
             else if (vehicleLogic is Truck truck)
