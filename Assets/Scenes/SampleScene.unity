@@ -668,7 +668,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14198469, y: 0.0063641435, z: -0.00091287843, w: 0.989848}
+  m_LocalRotation: {x: 0.14198692, y: 0.0030579076, z: -0.00043862898, w: 0.98986375}
   m_LocalPosition: {x: 37.65, y: 4.4261274, z: 16.870674}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1061,7 +1061,7 @@ Rigidbody:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 1
+  m_ImplicitCom: 0
   m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 0
@@ -1082,8 +1082,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 343457798}
   isFrontWheel: 1
-  grip: 1.5
-  brakeStrength: 500
+  lateralGrip: 4
+  rollingResistance: 0.03
+  maxBrakeForce: 10000
 --- !u!114 &343457793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1113,15 +1114,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f69f944d325ca54985402ee1eb03147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restLength: 0.45
-  springStrength: 22000
-  damperStrength: 5000
+  restLength: 0.5
+  springStrength: 20000
+  damperStrength: 4500
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  isGrounded: 0
-  contactPoint: {x: 0, y: 0, z: 0}
-  contactNormal: {x: 0, y: 1, z: 0}
+  grounded: 0
+  contact: {x: 0, y: 0, z: 0}
+  normal: {x: 0, y: 1, z: 0}
+  load: 0
 --- !u!64 &343457799
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1157,6 +1159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentVehicle: {fileID: 343457789}
+  currentSpeedMPH: 0
 --- !u!114 &343457801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1170,9 +1173,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxTorque: 800
-  maxRPM: 7000
-  rpmIncreaseRate: 1000
-  rpmDecayRate: 800
+  maxRPM: 6000
+  idleRPM: 800
+  rpmResponse: 4
+  gearRatio: 2
+  finalDrive: 1.9
+  wheelRadius: 0.4
+  efficiency: 0.9
   rpm: 0
 --- !u!114 &355026512
 MonoBehaviour:
@@ -1192,9 +1199,10 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 0
-  isGrounded: 0
-  contactPoint: {x: 0, y: 0, z: 0}
-  contactNormal: {x: 0, y: 0, z: 0}
+  grounded: 0
+  contact: {x: 0, y: 0, z: 0}
+  normal: {x: 0, y: 1, z: 0}
+  load: 0
 --- !u!114 &355026513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1209,8 +1217,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 355026512}
   isFrontWheel: 0
-  grip: 1000
-  brakeStrength: 500
+  lateralGrip: 1.6
+  rollingResistance: 0.015
+  maxBrakeForce: 8000
 --- !u!1001 &382920196
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1506,6 +1515,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentVehicle: {fileID: 0}
+  currentSpeedMPH: 0
 --- !u!114 &434302003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1836,8 +1846,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 619596950}
   isFrontWheel: 1
-  grip: 1.5
-  brakeStrength: 500
+  lateralGrip: 4
+  rollingResistance: 0.015
+  maxBrakeForce: 10000
 --- !u!114 &619596950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1850,15 +1861,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f69f944d325ca54985402ee1eb03147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restLength: 0.45
-  springStrength: 22000
-  damperStrength: 5000
+  restLength: 0.5
+  springStrength: 20000
+  damperStrength: 4500
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  isGrounded: 0
-  contactPoint: {x: 0, y: 0, z: 0}
-  contactNormal: {x: 0, y: 1, z: 0}
+  grounded: 0
+  contact: {x: 0, y: 0, z: 0}
+  normal: {x: 0, y: 1, z: 0}
+  load: 0
 --- !u!1 &732521008 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -2189172389684145308, guid: 7966d979d9982a743a30e3b75a402b94, type: 3}
@@ -2072,8 +2084,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 877915392}
   isFrontWheel: 0
-  grip: 1.5
-  brakeStrength: 500
+  lateralGrip: 4
+  rollingResistance: 0.015
+  maxBrakeForce: 10000
 --- !u!114 &877915392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2086,15 +2099,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f69f944d325ca54985402ee1eb03147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restLength: 0.45
-  springStrength: 22000
-  damperStrength: 5000
+  restLength: 0.5
+  springStrength: 20000
+  damperStrength: 4500
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  isGrounded: 0
-  contactPoint: {x: 0, y: 0, z: 0}
-  contactNormal: {x: 0, y: 1, z: 0}
+  grounded: 0
+  contact: {x: 0, y: 0, z: 0}
+  normal: {x: 0, y: 1, z: 0}
+  load: 0
 --- !u!1 &887988748 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7107342587403584723, guid: 7966d979d9982a743a30e3b75a402b94, type: 3}
@@ -2290,9 +2304,10 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 0
-  isGrounded: 0
-  contactPoint: {x: 0, y: 0, z: 0}
-  contactNormal: {x: 0, y: 0, z: 0}
+  grounded: 0
+  contact: {x: 0, y: 0, z: 0}
+  normal: {x: 0, y: 1, z: 0}
+  load: 0
 --- !u!114 &1043743066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2307,8 +2322,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 1043743065}
   isFrontWheel: 0
-  grip: 1000
-  brakeStrength: 500
+  lateralGrip: 1.6
+  rollingResistance: 0.015
+  maxBrakeForce: 8000
 --- !u!1 &1087105619
 GameObject:
   m_ObjectHideFlags: 0
@@ -2950,7 +2966,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1265117998}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14198466, y: 0.0063641425, z: -0.00091287796, w: 0.989848}
+  m_LocalRotation: {x: 0.14198692, y: 0.0030579076, z: -0.00043862907, w: 0.98986375}
   m_LocalPosition: {x: 37.65, y: 4.4261274, z: 16.870674}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3277,8 +3293,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxTorque: 800
   maxRPM: 0
-  rpmIncreaseRate: 1000
-  rpmDecayRate: 800
+  idleRPM: 800
+  rpmResponse: 4
+  gearRatio: 3.5
+  finalDrive: 3.2
+  wheelRadius: 0.35
+  efficiency: 0.9
   rpm: 0
 --- !u!54 &1331852931
 Rigidbody:
@@ -3320,6 +3340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentVehicle: {fileID: 1331852933}
+  currentSpeedMPH: 0
 --- !u!114 &1331852933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3350,9 +3371,10 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 0
-  isGrounded: 0
-  contactPoint: {x: 0, y: 0, z: 0}
-  contactNormal: {x: 0, y: 0, z: 0}
+  grounded: 0
+  contact: {x: 0, y: 0, z: 0}
+  normal: {x: 0, y: 1, z: 0}
+  load: 0
 --- !u!114 &1331852935
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3367,8 +3389,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 1331852934}
   isFrontWheel: 0
-  grip: 1000
-  brakeStrength: 500
+  lateralGrip: 1.6
+  rollingResistance: 0.015
+  maxBrakeForce: 8000
 --- !u!114 &1331852936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3673,8 +3696,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 1901548103}
   isFrontWheel: 0
-  grip: 1.5
-  brakeStrength: 500
+  lateralGrip: 4
+  rollingResistance: 0.015
+  maxBrakeForce: 10000
 --- !u!114 &1901548103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3687,15 +3711,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f69f944d325ca54985402ee1eb03147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restLength: 0.45
-  springStrength: 22000
-  damperStrength: 5000
+  restLength: 0.5
+  springStrength: 20000
+  damperStrength: 4500
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  isGrounded: 0
-  contactPoint: {x: 0, y: 0, z: 0}
-  contactNormal: {x: 0, y: 1, z: 0}
+  grounded: 0
+  contact: {x: 0, y: 0, z: 0}
+  normal: {x: 0, y: 1, z: 0}
+  load: 0
 --- !u!135 &1907679639
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -3735,9 +3760,10 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 0
-  isGrounded: 0
-  contactPoint: {x: 0, y: 0, z: 0}
-  contactNormal: {x: 0, y: 0, z: 0}
+  grounded: 0
+  contact: {x: 0, y: 0, z: 0}
+  normal: {x: 0, y: 1, z: 0}
+  load: 0
 --- !u!114 &1975044335
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3752,8 +3778,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 1975044334}
   isFrontWheel: 0
-  grip: 1000
-  brakeStrength: 500
+  lateralGrip: 1.6
+  rollingResistance: 0.015
+  maxBrakeForce: 8000
 --- !u!135 &1975044339
 SphereCollider:
   m_ObjectHideFlags: 0

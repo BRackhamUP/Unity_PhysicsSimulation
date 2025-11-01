@@ -15,34 +15,35 @@ using UnityEngine;
  *       
  *       https://www.engineeringtoolbox.com/cars-power-torque-d_1784.html
  */
+
+[System.Serializable]
 public class Engine : MonoBehaviour
 {
     [Header("Engine Settings")]
     public float maxTorque = 800f;
     public float maxRPM = 6000f;
     public float idleRPM = 800f;
-    public float rpmResponseRate = 5f;
+    public float rpmResponse = 4f;
 
-    [Header("Transmission Settings")]
-    public float gearRatio = 3.5f;
-    public float finalDriveRatio = 3.2f;
-    public float wheelRadius = 0.35f;
-    [Range(0.5f, 1f)] public float transmissionEfficiency = 0.9f;
+    [Header("Transmission")]
+    public float gearRatio = 2f;
+    public float finalDrive = 1.8f;
+    public float wheelRadius = 0.40f;
+    [Range(0.5f, 1f)] public float efficiency = 0.9f;
 
     public float rpm;
-    public float currentTorque;
 
-    public float GetTorqueOutput(float throttle, float vehicleSpeed, float deltaTime)
+    public float GetTorque(float throttle, float speed, float dt)
     {
-        float wheelRPM = (vehicleSpeed / wheelRadius) * (60f / (2f * Mathf.PI));
-        float targetRPM = Mathf.Max(idleRPM, wheelRPM * gearRatio * finalDriveRatio);
-        rpm = Mathf.Lerp(rpm, targetRPM, deltaTime * rpmResponseRate);
+        float wheelRPM = (speed / (2 * Mathf.PI * wheelRadius)) * 60f;
+        float targetRPM = Mathf.Max(idleRPM, wheelRPM * gearRatio * finalDrive);
+
+        rpm = Mathf.Lerp(rpm, targetRPM, dt * rpmResponse);
         rpm = Mathf.Clamp(rpm, idleRPM, maxRPM);
 
-        float rpmPercent = rpm / maxRPM;
-        float torqueCurve = Mathf.Sin(rpmPercent * Mathf.PI); 
-
-        currentTorque = maxTorque * torqueCurve * throttle * transmissionEfficiency;
-        return currentTorque * finalDriveRatio;
+        float curve = Mathf.Sin((rpm / maxRPM) * Mathf.PI);
+        return maxTorque * curve * throttle * efficiency * finalDrive;
     }
 }
+
+

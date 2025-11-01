@@ -1,36 +1,42 @@
 using UnityEngine;
+
 public class Suspension : MonoBehaviour
 {
+    [Header("Suspension Settings")]
     public float restLength = 0.5f;
     public float springStrength = 20000f;
     public float damperStrength = 4500f;
     public LayerMask groundMask;
 
-    public bool isGrounded;
-    public Vector3 contactPoint;
-    public Vector3 contactNormal = Vector3.up;
+    [HideInInspector] public bool grounded;
+    [HideInInspector] public Vector3 contact;
+    [HideInInspector] public Vector3 normal = Vector3.up;
+    [HideInInspector] public float load;
 
     private float lastLength;
 
-    public void UpdateSuspension(float deltaTime, Rigidbody body)
+    public void UpdateSuspension(float dt, Rigidbody rb)
     {
-        isGrounded = false;
+        grounded = false;
+        load = 0f;
 
         if (Physics.Raycast(transform.position, -transform.up, out RaycastHit hit, restLength * 1.5f, groundMask))
         {
-            isGrounded = true;
-            contactPoint = hit.point;
-            contactNormal = hit.normal;
+            grounded = true;
+            contact = hit.point;
+            normal = hit.normal;
 
-            float currentLength = hit.distance;
-            float compression = restLength - currentLength;
+            float len = hit.distance;
+            float compression = Mathf.Max(0, restLength - len);
+
             float springForce = compression * springStrength;
-            float damperForce = ((lastLength - currentLength) / deltaTime) * damperStrength;
+            float damperForce = ((lastLength - len) / Mathf.Max(0.0001f, dt)) * damperStrength;
 
-            Vector3 totalForce = transform.up * (springForce + damperForce);
-            body.AddForceAtPosition(totalForce, transform.position, ForceMode.Force);
+            float total = springForce + damperForce;
+            rb.AddForceAtPosition(transform.up * total, transform.position, ForceMode.Force);
 
-            lastLength = currentLength;
+            load = springForce;
+            lastLength = len;
         }
         else
         {

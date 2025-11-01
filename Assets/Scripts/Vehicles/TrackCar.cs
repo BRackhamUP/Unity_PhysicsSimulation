@@ -1,47 +1,62 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 public class TrackCar : Vehicle
 {
-    [Header("Steering Settings")]
+    [Header("Steering & Dynamics")]
     public float maxSteerAngle = 30f;
     public float steerTorque = 200f;
 
-    public TrackCar(Rigidbody body, Engine engine, List<Wheel> wheels)
+    [Header("Aerodynamic Drag")]
+    public bool useDrag = true;
+    public float airDensity = 1.225f;
+    public float dragCoefficient = 0.32f;
+    public float frontalArea = 2.2f;
+
+    public TrackCar(Rigidbody rb, Engine eng, List<Wheel> wheels)
     {
-        this.body = body;
-        this.engine = engine;
+        this.body = rb;
+        this.engine = eng;
         this.wheels = wheels;
+
+        foreach (var w in wheels)
+        {
+            w.SetEngine(engine);
+            w.SetRigidbody(body);
+        }
     }
 
-    public override void UpdatePhysics(float deltaTime)
+    public override void UpdatePhysics(float dt)
     {
-        foreach (var wheel in wheels)
-            wheel.UpdateWheel(deltaTime);
+        foreach (var w in wheels)
+            w.UpdateWheel(dt);
+
+        if (useDrag)
+        {
+            Vector3 v = body.linearVelocity;
+            float speed = v.magnitude;
+            if (speed > 0.1f)
+            {
+                float drag = 0.5f * airDensity * dragCoefficient * frontalArea * speed * speed;
+                body.AddForce(-v.normalized * drag, ForceMode.Force);
+            }
+        }
     }
 
-    public void ApplyThrottle(float throttle, float deltaTime, float steerInput)
+    public void ApplyInput(float throttle, float steerInput, float brake, float dt)
     {
-        float vehicleSpeed = body.linearVelocity.magnitude;
+        float speed = body.linearVelocity.magnitude;
+        float torque = engine.GetTorque(throttle, speed, dt);
 
-        // get torque output from engine
-        float torque = engine.GetTorqueOutput(throttle, vehicleSpeed, deltaTime);
+        foreach (var w in wheels)
+        {
+            if (w.isFrontWheel)
+                w.SetSteerAngle(steerInput * maxSteerAngle);
 
-        // apply that torque to all drive wheels
-        foreach (var wheel in wheels)
-            wheel.ApplyTorque(torque);
+            w.ApplyDrive(torque);
+            w.ApplyBrake(brake);
+        }
 
-        // steering (visual + simple yaw torque)
-        float steerAngle = steerInput * maxSteerAngle;
-        foreach (var wheel in wheels)
-            wheel.SetSteerAngle(steerAngle);
-
-        // Apply small torque to body to simulate steering turning force
         body.AddTorque(Vector3.up * steerInput * steerTorque, ForceMode.Force);
-    }
-
-    public void ApplyBrake(float brakeForce)
-    {
-        foreach (var wheel in wheels)
-            wheel.ApplyBrake(brakeForce);
     }
 }

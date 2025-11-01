@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public abstract class Vehicle
 {
-    protected Rigidbody body;
+    public Rigidbody body;
     protected Engine engine;
     protected List<Wheel> wheels;
 
