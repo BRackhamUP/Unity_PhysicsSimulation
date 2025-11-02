@@ -3,60 +3,76 @@ using UnityEngine;
 
 public class TrackCar : Vehicle
 {
-    [Header("Steering & Dynamics")]
     public float maxSteerAngle = 30f;
     public float steerTorque = 200f;
 
-    [Header("Aerodynamic Drag")]
     public bool useDrag = true;
     public float airDensity = 1.225f;
     public float dragCoefficient = 0.32f;
     public float frontalArea = 2.2f;
 
-    public TrackCar(Rigidbody rb, Engine eng, List<Wheel> wheels)
-    {
-        this.body = rb;
-        this.engine = eng;
-        this.wheels = wheels;
+    private Rigidbody rb;
 
-        foreach (var w in wheels)
-        {
-            w.SetEngine(engine);
-            w.SetRigidbody(body);
-        }
+    public TrackCar(Rigidbody body, Engine engineData, List<Wheel> wheelsList)
+    {
+        rb = body;
+        this.body = rb;
+
+        this.engine = engineData;
+        this.wheels = wheelsList ?? new List<Wheel>();
     }
 
     public override void UpdatePhysics(float dt)
     {
-        foreach (var w in wheels)
-            w.UpdateWheel(dt);
-
-        if (useDrag)
+        if (wheels != null)
         {
-            Vector3 v = body.linearVelocity;
+            foreach (var w in wheels) if (w != null) w.UpdateWheel(dt);
+        }
+
+        if (useDrag && rb != null)
+        {
+            Vector3 v = rb.linearVelocity;
             float speed = v.magnitude;
             if (speed > 0.1f)
             {
                 float drag = 0.5f * airDensity * dragCoefficient * frontalArea * speed * speed;
-                body.AddForce(-v.normalized * drag, ForceMode.Force);
+                rb.AddForce(-v.normalized * drag, ForceMode.Force);
             }
         }
     }
 
     public void ApplyInput(float throttle, float steerInput, float brake, float dt)
     {
-        float speed = body.linearVelocity.magnitude;
-        float torque = engine.GetTorque(throttle, speed, dt);
+        if (rb == null || engine == null) return;
 
-        foreach (var w in wheels)
+        float speed = rb.linearVelocity.magnitude;
+        float totalDriveForce = engine.GetDriveForce(throttle, speed, dt);
+
+        int drivenCount = 0;
+        if (wheels != null)
         {
-            if (w.isFrontWheel)
-                w.SetSteerAngle(steerInput * maxSteerAngle);
+            foreach (var w in wheels) if (w != null && w.isDriven) drivenCount++;
+        }
+        drivenCount = Mathf.Max(1, drivenCount);
 
-            w.ApplyDrive(torque);
-            w.ApplyBrake(brake);
+        float perWheelDrive = totalDriveForce / drivenCount;
+
+        if (wheels != null)
+        {
+            foreach (var w in wheels)
+            {
+                if (w == null) continue;
+
+                if (w.isFrontWheel)
+                    w.SetSteerAngle(steerInput * maxSteerAngle);
+
+                if (w.isDriven)
+                    w.ApplyDriveForce(perWheelDrive);
+
+                w.ApplyBrake(brake);
+            }
         }
 
-        body.AddTorque(Vector3.up * steerInput * steerTorque, ForceMode.Force);
+        rb.AddTorque(Vector3.up * steerInput * steerTorque, ForceMode.Force);
     }
 }

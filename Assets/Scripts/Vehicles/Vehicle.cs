@@ -8,8 +8,8 @@ using UnityEngine;
 public abstract class Vehicle
 {
     public Rigidbody body;
-    protected Engine engine;
-    protected List<Wheel> wheels;
+    public Engine engine;
+    public List<Wheel> wheels;
 
     public abstract void UpdatePhysics(float deltaTime);
 }

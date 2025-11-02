@@ -8,10 +8,10 @@ public class Suspension : MonoBehaviour
     public float damperStrength = 4500f;
     public LayerMask groundMask;
 
-    [HideInInspector] public bool grounded;
-    [HideInInspector] public Vector3 contact;
-    [HideInInspector] public Vector3 normal = Vector3.up;
-    [HideInInspector] public float load;
+    public bool grounded;
+    public Vector3 contact;
+    public Vector3 normal = Vector3.up;
+    public float load;
 
     private float lastLength;
 
@@ -27,7 +27,7 @@ public class Suspension : MonoBehaviour
             normal = hit.normal;
 
             float len = hit.distance;
-            float compression = Mathf.Max(0, restLength - len);
+            float compression = Mathf.Max(0f, restLength - len);
 
             float springForce = compression * springStrength;
             float damperForce = ((lastLength - len) / Mathf.Max(0.0001f, dt)) * damperStrength;
@@ -44,3 +44,4 @@ public class Suspension : MonoBehaviour
         }
     }
 }
+

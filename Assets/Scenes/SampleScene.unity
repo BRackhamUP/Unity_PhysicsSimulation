@@ -973,9 +973,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 09e7d2b6a2b271343b602a2f17bdc05f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 343457800}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 09e7d2b6a2b271343b602a2f17bdc05f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 343457801}
     - targetCorrespondingSourceObject: {fileID: 4409771485646805655, guid: 09e7d2b6a2b271343b602a2f17bdc05f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 343457791}
@@ -1041,6 +1038,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ccfbbabaa1bdf4468aa8d2f688453c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  engineData:
+    power: 8000
+    topSpeedMPH: 67
+    throttleResponse: 8
+    topSpeed: 29.95168
+  wheels: []
+  useDrag: 1
+  dragCoefficient: 0.32
+  frontalArea: 2.2
 --- !u!54 &343457790
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1082,9 +1088,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 343457798}
   isFrontWheel: 1
+  isDriven: 1
   lateralGrip: 4
-  rollingResistance: 0.03
-  maxBrakeForce: 10000
+  rollingResistance: 0.015
+  maxBrakeForce: 15000
+  maxBrakeDecel: 20
 --- !u!114 &343457793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1160,27 +1168,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentVehicle: {fileID: 343457789}
   currentSpeedMPH: 0
---- !u!114 &343457801
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 343457782}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2f1adbd4c8add947a711ba305b783cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxTorque: 800
-  maxRPM: 6000
-  idleRPM: 800
-  rpmResponse: 4
-  gearRatio: 2
-  finalDrive: 1.9
-  wheelRadius: 0.4
-  efficiency: 0.9
-  rpm: 0
 --- !u!114 &355026512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1217,9 +1204,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 355026512}
   isFrontWheel: 0
+  isDriven: 1
   lateralGrip: 1.6
   rollingResistance: 0.015
-  maxBrakeForce: 8000
+  maxBrakeForce: 15000
+  maxBrakeDecel: 20
 --- !u!1001 &382920196
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1846,9 +1835,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 619596950}
   isFrontWheel: 1
+  isDriven: 1
   lateralGrip: 4
   rollingResistance: 0.015
-  maxBrakeForce: 10000
+  maxBrakeForce: 15000
+  maxBrakeDecel: 20
 --- !u!114 &619596950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2084,9 +2075,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 877915392}
   isFrontWheel: 0
+  isDriven: 1
   lateralGrip: 4
   rollingResistance: 0.015
-  maxBrakeForce: 10000
+  maxBrakeForce: 15000
+  maxBrakeDecel: 20
 --- !u!114 &877915392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2322,9 +2315,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 1043743065}
   isFrontWheel: 0
+  isDriven: 1
   lateralGrip: 1.6
   rollingResistance: 0.015
-  maxBrakeForce: 8000
+  maxBrakeForce: 15000
+  maxBrakeDecel: 20
 --- !u!1 &1087105619
 GameObject:
   m_ObjectHideFlags: 0
@@ -3210,9 +3205,6 @@ PrefabInstance:
       addedObject: {fileID: 1331852931}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0119176a42213a849a9d6dbeb4d2f42b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1331852930}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0119176a42213a849a9d6dbeb4d2f42b, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1331852936}
     - targetCorrespondingSourceObject: {fileID: 4409771485646805655, guid: 0119176a42213a849a9d6dbeb4d2f42b, type: 3}
       insertIndex: -1
@@ -3279,27 +3271,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4409771485646805655, guid: 0119176a42213a849a9d6dbeb4d2f42b, type: 3}
   m_PrefabInstance: {fileID: 1331852924}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1331852930
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1331852925}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2f1adbd4c8add947a711ba305b783cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxTorque: 800
-  maxRPM: 0
-  idleRPM: 800
-  rpmResponse: 4
-  gearRatio: 3.5
-  finalDrive: 3.2
-  wheelRadius: 0.35
-  efficiency: 0.9
-  rpm: 0
 --- !u!54 &1331852931
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3339,7 +3310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01242fe6cdf87e147894f7b04733af3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentVehicle: {fileID: 1331852933}
+  currentVehicle: {fileID: 0}
   currentSpeedMPH: 0
 --- !u!114 &1331852933
 MonoBehaviour:
@@ -3353,6 +3324,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ccfbbabaa1bdf4468aa8d2f688453c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  engineData:
+    power: 8000
+    topSpeedMPH: 67
+    throttleResponse: 8
+    topSpeed: 29.95168
+  wheels: []
+  useDrag: 1
+  dragCoefficient: 0.32
+  frontalArea: 2.2
 --- !u!114 &1331852934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3389,9 +3369,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 1331852934}
   isFrontWheel: 0
+  isDriven: 1
   lateralGrip: 1.6
   rollingResistance: 0.015
-  maxBrakeForce: 8000
+  maxBrakeForce: 15000
+  maxBrakeDecel: 20
 --- !u!114 &1331852936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3696,9 +3678,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 1901548103}
   isFrontWheel: 0
+  isDriven: 1
   lateralGrip: 4
   rollingResistance: 0.015
-  maxBrakeForce: 10000
+  maxBrakeForce: 15000
+  maxBrakeDecel: 20
 --- !u!114 &1901548103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3778,9 +3762,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   suspension: {fileID: 1975044334}
   isFrontWheel: 0
+  isDriven: 1
   lateralGrip: 1.6
   rollingResistance: 0.015
-  maxBrakeForce: 8000
+  maxBrakeForce: 15000
+  maxBrakeDecel: 20
 --- !u!135 &1975044339
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -3934,7 +3920,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2104166350}
   - component: {fileID: 2104166353}
-  - component: {fileID: 2104166352}
   - component: {fileID: 2104166351}
   m_Layer: 0
   m_Name: VehicleTriggerZone
@@ -3971,18 +3956,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vehicle: {fileID: 343457789}
---- !u!114 &2104166352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2104166349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ccfbbabaa1bdf4468aa8d2f688453c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!135 &2104166353
 SphereCollider:
   m_ObjectHideFlags: 0
