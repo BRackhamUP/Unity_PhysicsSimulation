@@ -4173,8 +4173,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   engineData:
     power: 8000
-    topSpeedMPH: 67
-    topSpeed: 29.95168
+    topSpeedMPH: 100
+    topSpeed: 44.704
   wheels: []
   useDrag: 1
   dragCoefficient: 0.32
