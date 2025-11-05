@@ -48,7 +48,7 @@ public class Wheel : MonoBehaviour
         Vector3 velocity = rb.GetPointVelocity(suspension.contact);
 
         // project the normalised vector for forward and sideways(right) on to the plane to make the wheel local axis stay flat on the roaf surface
-        // originally discovered for third-person char, but made more sense here to incorporate for vehicles on hills and over bumps
+        // originally discovered for third-person char, but made more sense here to incorporate for vehicles traversing hills and over bumps
         // https://discussions.unity.com/t/why-use-projectonplane-in-thirdpersoncharacter-script-of-the-standard-assets-example-project/576001
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, suspension.normal).normalized;
         Vector3 right = Vector3.ProjectOnPlane(transform.right, suspension.normal).normalized;
@@ -66,9 +66,6 @@ public class Wheel : MonoBehaviour
 
         Debug.DrawRay(suspension.contact, sideForce * 0.5f, Color.green);
         Debug.DrawRay(suspension.contact, resistForce * 0.5f, Color.red);
-
-        Debug.DrawLine(suspension.contact, forward * 2, Color.yellow);
-        Debug.DrawLine(suspension.contact, right * 2, Color.yellow);
     }
 
     public void ApplyDriveForce(float driveForce)
