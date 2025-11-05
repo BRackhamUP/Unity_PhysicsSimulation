@@ -9,33 +9,23 @@ public class Wheel : MonoBehaviour
     public bool isDriven = true;
 
     [Header("Grip")]
-    public float lateralGrip = 1.6f;
-    public float rollingResistance = 0.015f;
+    public float lateralGrip = 5f;
+    public float rollingResistance = 0.02f;
 
     [Header("Brakes")]
     public float maxBrakeForce = 15000f;         // N
-    public float maxBrakeDecelleration = 20f;    // m/s^2 optional cap
+    public float maxBrakeDecelleration = 20f;    // m/s^2
 
     private Rigidbody rb;
-    private float baseWheelLoad = 1000f;
 
     private void Awake()
     {
         // get references to the rigidbody and suspension
         rb = GetComponentInParent<Rigidbody>();
         suspension = GetComponent<Suspension>();
-
-        // using 'var' to infer the variable type of the wheels - https://www.geeksforgeeks.org/c-sharp/var-keyword-in-c-sharp/
-        var parentWheels = rb.GetComponentsInChildren<Wheel>();
-        
-        // determining the wheel count of the vehicle
-        int count = Mathf.Max(1, parentWheels.Length);
-
-        // determining the base load of the vehicle spread amongst each wheel
-        baseWheelLoad = rb.mass * 9.81f / count;
     }
 
-    // called in the vehicle script, utilising the overridable methoed for updatePhysics
+    // called in the vehicle script, utilised in the overridable methoed for updatePhysics
     public void UpdateWheel(float dt)
     {
         suspension.UpdateSuspension(dt, rb);
@@ -53,15 +43,20 @@ public class Wheel : MonoBehaviour
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, suspension.normal).normalized;
         Vector3 right = Vector3.ProjectOnPlane(transform.right, suspension.normal).normalized;
 
+        // determine how much velocity is sideways or forward
         float sideVel = Vector3.Dot(velocity, right);
         float fwdVel = Vector3.Dot(velocity, forward);
 
-        float load = Mathf.Max(baseWheelLoad, suspension.load, 1f);
+        // use spring force as the load on the wheels
+        float wheelSpringLoad =  suspension.load;
 
-        Vector3 sideForce = -right * sideVel * lateralGrip * (load * 0.001f); // scaled
+        // determine the load scale to prevent high numbers of newtons acting on the grip forces
+        float loadScale = wheelSpringLoad * 0.001f;
+
+        Vector3 sideForce = -right * sideVel * lateralGrip * loadScale;
+        Vector3 resistForce = -forward * fwdVel * rollingResistance * loadScale;
+
         rb.AddForceAtPosition(sideForce, suspension.contact, ForceMode.Force);
-
-        Vector3 resistForce = -forward * fwdVel * rollingResistance * (load * 0.001f);
         rb.AddForceAtPosition(resistForce, suspension.contact, ForceMode.Force);
 
         Debug.DrawRay(suspension.contact, sideForce * 0.5f, Color.green);
@@ -70,12 +65,13 @@ public class Wheel : MonoBehaviour
 
     public void ApplyDriveForce(float driveForce)
     {
-        if (rb == null || suspension == null) return;
-        if (!suspension.grounded || !isDriven || Mathf.Approximately(driveForce, 0f)) return;
+        // if not grounded not driven wheels or not applying drive force, skip
+        if (!suspension.grounded || !isDriven || driveForce == 0) 
+            return;
 
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, suspension.normal).normalized;
 
-        float tractionLimit = lateralGrip * Mathf.Max(1f, suspension.load, baseWheelLoad);
+        float tractionLimit = lateralGrip * suspension.load;
 
         float clamped = Mathf.Clamp(driveForce, -tractionLimit, tractionLimit);
 
