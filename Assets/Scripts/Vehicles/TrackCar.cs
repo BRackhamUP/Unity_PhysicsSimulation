@@ -24,10 +24,10 @@ public class TrackCar : Vehicle
 
     public override void UpdatePhysics(float dt)
     {
-        if (wheels != null)
-        {
-            foreach (var w in wheels) if (w != null) w.UpdateWheel(dt);
-        }
+
+        foreach (var w in wheels)
+            w.UpdateWheel(dt);
+
 
         if (useDrag && rb != null)
         {

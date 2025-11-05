@@ -8,7 +8,7 @@ public class Engine
     [Header("Engine")]
     public float power = 8000f;          // force of the engine in Newtons
     public float topSpeedMPH = 100f;     // mph
-    public float topSpeed = 45f;         // m/s
+    [SerializeField]private float topSpeed = 45f;         // m/s
 
     // This method is just to have more user friendly variables in the inspecor for tuning the engine
     public void ApplyInspectorUnits()
@@ -21,6 +21,19 @@ public class Engine
     {
         float inputThrottle = Mathf.Clamp(throttle, -1f, 1f); // clamp to prevent crzy throttle values
         float total = power * inputThrottle;
+
+        // Reduce force as approach topspeed, but are still throttling
+        if (topSpeed > 0f && inputThrottle > 0)
+        {
+            // calculate the soeed fraction between 0 and 1,  to determine the taper
+            float speedFraction = Mathf.Clamp01(speed / topSpeed);
+
+            // minus the fraction from 1 to give the inverted value 
+            float taper = 1f - speedFraction;
+
+            // by multiplying the total by the taper it will gradually reduce engine power when vehicle reaches its max speed
+            total = total * taper;
+        }
         return total;
     }
 }

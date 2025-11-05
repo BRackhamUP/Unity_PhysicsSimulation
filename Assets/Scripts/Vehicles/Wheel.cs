@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Suspension))]
 public class Wheel : MonoBehaviour
 {
     public Suspension suspension;
@@ -14,40 +13,50 @@ public class Wheel : MonoBehaviour
     public float rollingResistance = 0.015f;
 
     [Header("Brakes")]
-    public float maxBrakeForce = 15000f; // N
+    public float maxBrakeForce = 15000f;         // N
     public float maxBrakeDecelleration = 20f;    // m/s^2 optional cap
 
     private Rigidbody rb;
-    private float baselineLoad = 1000f;
+    private float baseWheelLoad = 1000f;
 
     private void Awake()
     {
+        // get references to the rigidbody and suspension
         rb = GetComponentInParent<Rigidbody>();
-        if (suspension == null) suspension = GetComponent<Suspension>();
+        suspension = GetComponent<Suspension>();
 
-        if (rb != null)
-        {
-            var parentWheels = rb.GetComponentsInChildren<Wheel>();
-            int count = Mathf.Max(1, parentWheels.Length);
-            baselineLoad = rb.mass * 9.81f / count;
-        }
+        // using 'var' to infer the variable type of the wheels - https://www.geeksforgeeks.org/c-sharp/var-keyword-in-c-sharp/
+        var parentWheels = rb.GetComponentsInChildren<Wheel>();
+        
+        // determining the wheel count of the vehicle
+        int count = Mathf.Max(1, parentWheels.Length);
+
+        // determining the base load of the vehicle spread amongst each wheel
+        baseWheelLoad = rb.mass * 9.81f / count;
     }
 
+    // called in the vehicle script, utilising the overridable methoed for updatePhysics
     public void UpdateWheel(float dt)
     {
-        if (rb == null || suspension == null) return;
-
         suspension.UpdateSuspension(dt, rb);
-        if (!suspension.grounded) return;
 
-        Vector3 vel = rb.GetPointVelocity(suspension.contact);
+        // if car is in the air, no need to update wheels
+        if (!suspension.grounded) 
+            return;
+
+        // retrieve the velocity at each tire's contact point.
+        Vector3 velocity = rb.GetPointVelocity(suspension.contact);
+
+        // project the normalised vector for forward and sideways(right) on to the plane to make the wheel local axis stay flat on the roaf surface
+        // originally discovered for third-person char, but made more sense here to incorporate for vehicles on hills and over bumps
+        // https://discussions.unity.com/t/why-use-projectonplane-in-thirdpersoncharacter-script-of-the-standard-assets-example-project/576001
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, suspension.normal).normalized;
         Vector3 right = Vector3.ProjectOnPlane(transform.right, suspension.normal).normalized;
 
-        float sideVel = Vector3.Dot(vel, right);
-        float fwdVel = Vector3.Dot(vel, forward);
+        float sideVel = Vector3.Dot(velocity, right);
+        float fwdVel = Vector3.Dot(velocity, forward);
 
-        float load = Mathf.Max(baselineLoad, suspension.load, 1f);
+        float load = Mathf.Max(baseWheelLoad, suspension.load, 1f);
 
         Vector3 sideForce = -right * sideVel * lateralGrip * (load * 0.001f); // scaled
         rb.AddForceAtPosition(sideForce, suspension.contact, ForceMode.Force);
@@ -55,8 +64,11 @@ public class Wheel : MonoBehaviour
         Vector3 resistForce = -forward * fwdVel * rollingResistance * (load * 0.001f);
         rb.AddForceAtPosition(resistForce, suspension.contact, ForceMode.Force);
 
-        Debug.DrawRay(suspension.contact, sideForce * 0.0002f, Color.green);
-        Debug.DrawRay(suspension.contact, resistForce * 0.0002f, Color.red);
+        Debug.DrawRay(suspension.contact, sideForce * 0.5f, Color.green);
+        Debug.DrawRay(suspension.contact, resistForce * 0.5f, Color.red);
+
+        Debug.DrawLine(suspension.contact, forward * 2, Color.yellow);
+        Debug.DrawLine(suspension.contact, right * 2, Color.yellow);
     }
 
     public void ApplyDriveForce(float driveForce)
@@ -66,7 +78,7 @@ public class Wheel : MonoBehaviour
 
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, suspension.normal).normalized;
 
-        float tractionLimit = lateralGrip * Mathf.Max(1f, suspension.load, baselineLoad);
+        float tractionLimit = lateralGrip * Mathf.Max(1f, suspension.load, baseWheelLoad);
 
         float clamped = Mathf.Clamp(driveForce, -tractionLimit, tractionLimit);
 
