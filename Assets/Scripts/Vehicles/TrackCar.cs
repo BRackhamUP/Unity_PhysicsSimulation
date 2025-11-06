@@ -19,7 +19,7 @@ public class TrackCar : Vehicle
         this.body = rb;
 
         this.engine = engineData;
-        this.wheels = wheelsList ?? new List<Wheel>();
+        this.wheels = wheelsList;
     }
 
     public override void UpdatePhysics(float dt)

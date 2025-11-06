@@ -1,16 +1,18 @@
+using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class PlayerVehicleInteraction : MonoBehaviour
 {
     [Header("Interaction Settings")]
     public float interactRange = 3f;
-    public Transform hidePosition;
 
     private PlayerCharacterController playerController;
     private Collider characterCollider;
     private Rigidbody characterRigibody;
     private VehicleController vehicleController;
     private PlayerControls controls;
+    public CinemachineCamera ThirdPersonCam;
 
     private bool isInVehicle = false;
     private VehicleComponent nearbyVehicle;
@@ -21,6 +23,7 @@ public class PlayerVehicleInteraction : MonoBehaviour
         vehicleController = GetComponent<VehicleController>();
         characterCollider = GetComponent<Collider>();
         characterRigibody = GetComponent<Rigidbody>();
+        ThirdPersonCam = GetComponent<CinemachineCamera>();
 
         controls = new PlayerControls();
         controls.Gameplay.EnterExitVehicle.performed += context => TryToggleVehicle();
@@ -69,8 +72,13 @@ public class PlayerVehicleInteraction : MonoBehaviour
         transform.localPosition = new Vector3(0, 1, 0);
         transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 
+        ThirdPersonCam.Follow = vehicle.transform;
+        ThirdPersonCam.LookAt = vehicle.transform;
+
         vehicleController.EnterVehicle(vehicle);
     }
+
+
 
     private void ExitVehicle()
     {
@@ -92,6 +100,9 @@ public class PlayerVehicleInteraction : MonoBehaviour
         }
         if (characterCollider != null)
             characterCollider.enabled = true;
+
+      //  ThirdPersonCam.Follow =  .transform;
+       // ThirdPersonCam.LookAt = vehicle.transform;
 
         playerController.enabled = true;
         vehicleController.ExitVehicle();

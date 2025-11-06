@@ -50,13 +50,22 @@ public class VehicleController : MonoBehaviour
     {
         if (vehicleLogic == null) return;
 
-        if (vehicleLogic is TrackCar car)
+        if (vehicleLogic is TrackCar trackCar)
         {
-            car.ApplyInput(throttle, steerInput, brake, Time.fixedDeltaTime);
-            if (car.body != null)
-                currentSpeedMPH = car.body.linearVelocity.magnitude * 2.23694f;
+            trackCar.ApplyInput(throttle, steerInput, brake, Time.fixedDeltaTime);
+            if (trackCar.body != null)
+                currentSpeedMPH = trackCar.body.linearVelocity.magnitude * 2.23694f;
             Debug.Log($"{currentSpeedMPH}");
         }
+
+        else if (vehicleLogic is Truck truck)
+        {
+            truck.ApplyInput(throttle, steerInput, brake, Time.fixedDeltaTime);
+            if (truck.body != null)
+                currentSpeedMPH = truck.body.linearVelocity.magnitude * 2.23694f;
+            Debug.Log($"{currentSpeedMPH}");
+        }
+
     }
 
     private void InitializeControls()
@@ -104,7 +113,9 @@ public class VehicleController : MonoBehaviour
     public void EnterVehicle(VehicleComponent newVehicle)
     {
         currentVehicle = newVehicle;
-        vehicleLogic = newVehicle.vehicleLogic;
+
+        vehicleLogic = newVehicle.vehicleLogicTrackCar;
+
     }
 
     public void ExitVehicle()

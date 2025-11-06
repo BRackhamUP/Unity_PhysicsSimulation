@@ -15,37 +15,49 @@ public class VehicleComponent : MonoBehaviour
     public float dragCoefficient = 0.32f;
     public float frontalArea = 2.2f;
 
-    [HideInInspector] public TrackCar vehicleLogic;
-    Rigidbody rb;
+    public TrackCar vehicleLogicTrackCar;
+    public Truck vehicleLogicTruck;
+    
+    Rigidbody rbTrackCar;
+    Rigidbody rbTruck;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        rbTrackCar = GetComponent<Rigidbody>();
+        rbTruck = GetComponent<Rigidbody>();
 
         if (wheels == null || wheels.Count == 0)
             wheels = new List<Wheel>(GetComponentsInChildren<Wheel>());
 
         if (engineData != null) engineData.ApplyInspectorUnits();
 
-        vehicleLogic = new TrackCar(rb, engineData, wheels);
-        vehicleLogic.useDrag = useDrag;
-        vehicleLogic.dragCoefficient = dragCoefficient;
-        vehicleLogic.frontalArea = frontalArea;
+        vehicleLogicTrackCar = new TrackCar(rbTrackCar, engineData, wheels);
+        vehicleLogicTrackCar.useDrag = useDrag;
+        vehicleLogicTrackCar.dragCoefficient = dragCoefficient;
+        vehicleLogicTrackCar.frontalArea = frontalArea;
+
+        vehicleLogicTruck = new Truck(rbTruck, engineData, wheels);
+
     }
 
     private void OnValidate()
     {
         if (engineData != null) engineData.ApplyInspectorUnits();
-        if (vehicleLogic != null)
+
+        if (vehicleLogicTrackCar != null)
         {
-            vehicleLogic.useDrag = useDrag;
-            vehicleLogic.dragCoefficient = dragCoefficient;
-            vehicleLogic.frontalArea = frontalArea;
+            vehicleLogicTrackCar.useDrag = useDrag;
+            vehicleLogicTrackCar.dragCoefficient = dragCoefficient;
+            vehicleLogicTrackCar.frontalArea = frontalArea;
         }
+
+
     }
 
     private void FixedUpdate()
     {
-        if (vehicleLogic != null) vehicleLogic.UpdatePhysics(Time.fixedDeltaTime);
+        if (vehicleLogicTrackCar != null) vehicleLogicTrackCar.UpdatePhysics(Time.fixedDeltaTime);
+
+        if (vehicleLogicTruck != null) vehicleLogicTruck.UpdatePhysics(Time.fixedDeltaTime);
     }
 }
