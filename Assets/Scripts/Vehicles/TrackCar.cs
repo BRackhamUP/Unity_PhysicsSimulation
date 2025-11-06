@@ -51,9 +51,12 @@ public class TrackCar : Vehicle
         int drivenCount = 0;
         if (wheels != null)
         {
-            foreach (var w in wheels) if (w != null && w.isDriven) drivenCount++;
+            foreach (var w in wheels) 
+                if (w != null && w.isDriven) 
+                    drivenCount++;
         }
         drivenCount = Mathf.Max(1, drivenCount);
+
 
         float perWheelDrive = totalDriveForce / drivenCount;
 

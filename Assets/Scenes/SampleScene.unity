@@ -5473,7 +5473,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14198539, y: 0.0055457037, z: -0.0007954807, w: 0.9898529}
+  m_LocalRotation: {x: 0.1419859, y: 0.0048587867, z: -0.0006969485, w: 0.98985654}
   m_LocalPosition: {x: 22.530003, y: 4.8861275, z: 1.3106728}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6066,10 +6066,10 @@ MonoBehaviour:
   suspension: {fileID: 343457798}
   isFrontWheel: 1
   isDriven: 1
-  lateralGrip: 200
+  lateralGrip: 300
   rollingResistance: 0.015
   maxBrakeForce: 15000
-  maxBrakeDecelleration: 20
+  maxBrakeDecelleration: 5
 --- !u!114 &343457793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10266,10 +10266,10 @@ MonoBehaviour:
   suspension: {fileID: 619596950}
   isFrontWheel: 1
   isDriven: 1
-  lateralGrip: 200
+  lateralGrip: 300
   rollingResistance: 0.015
   maxBrakeForce: 15000
-  maxBrakeDecelleration: 20
+  maxBrakeDecelleration: 5
 --- !u!114 &619596950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13619,10 +13619,10 @@ MonoBehaviour:
   suspension: {fileID: 877915392}
   isFrontWheel: 0
   isDriven: 1
-  lateralGrip: 200
+  lateralGrip: 300
   rollingResistance: 0.015
   maxBrakeForce: 15000
-  maxBrakeDecelleration: 20
+  maxBrakeDecelleration: 5
 --- !u!114 &877915392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19240,7 +19240,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1265117998}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14198537, y: 0.005545703, z: -0.00079548056, w: 0.98985296}
+  m_LocalRotation: {x: 0.14198586, y: 0.0048587862, z: -0.00069694826, w: 0.98985654}
   m_LocalPosition: {x: 22.530003, y: 4.8861275, z: 1.3106728}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -27907,10 +27907,10 @@ MonoBehaviour:
   suspension: {fileID: 1901548103}
   isFrontWheel: 0
   isDriven: 1
-  lateralGrip: 200
+  lateralGrip: 300
   rollingResistance: 0.015
   maxBrakeForce: 15000
-  maxBrakeDecelleration: 20
+  maxBrakeDecelleration: 5
 --- !u!114 &1901548103
 MonoBehaviour:
   m_ObjectHideFlags: 0

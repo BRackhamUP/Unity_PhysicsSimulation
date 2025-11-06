@@ -55,7 +55,7 @@ public class VehicleController : MonoBehaviour
             car.ApplyInput(throttle, steerInput, brake, Time.fixedDeltaTime);
             if (car.body != null)
                 currentSpeedMPH = car.body.linearVelocity.magnitude * 2.23694f;
-           // Debug.Log($"{currentSpeedMPH}");
+            Debug.Log($"{currentSpeedMPH}");
         }
     }
 

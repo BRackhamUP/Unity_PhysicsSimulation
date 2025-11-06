@@ -3,6 +3,7 @@ using UnityEngine;
 public class Wheel : MonoBehaviour
 {
     public Suspension suspension;
+    public Engine engine;
 
     [Header("Wheel Type")]
     public bool isFrontWheel = false;
@@ -80,14 +81,20 @@ public class Wheel : MonoBehaviour
 
     public void ApplyBrake(float brakeInput)
     {
-        if (rb == null || suspension == null) return;
-        if (!suspension.grounded || brakeInput <= 0f) return;
+        if (!suspension.grounded || brakeInput <= 0f) 
+            return;
 
-        Vector3 vel = rb.GetPointVelocity(suspension.contact);
+        Vector3 velocity = rb.GetPointVelocity(suspension.contact);
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, suspension.normal).normalized;
-        float fwdSpeed = Vector3.Dot(vel, forward);
-        if (Mathf.Abs(fwdSpeed) < 0.01f) return;
 
+        // retrieve the dot product of the vectors to determine the 'Sign' = 1 or -1
+        float forwardSpeed = Vector3.Dot(velocity, forward);
+        
+        // if forward speed is not positive, skip
+        if (Mathf.Abs(forwardSpeed) < 0.01f) 
+            return;
+
+        // input value * max brake force float
         float brakeForce = Mathf.Clamp01(brakeInput) * maxBrakeForce;
 
         if (maxBrakeDecelleration > 0f)
@@ -96,7 +103,9 @@ public class Wheel : MonoBehaviour
             brakeForce = Mathf.Min(brakeForce, decelLimitForce);
         }
 
-        Vector3 force = -Mathf.Sign(fwdSpeed) * forward * brakeForce;
+        // forwardSpeed = - (1) * forwardVector direction.normalized (same direction with length of 1) * float  
+        Vector3 force = - Mathf.Sign(forwardSpeed) * forward * brakeForce;
+
         rb.AddForceAtPosition(force, suspension.contact, ForceMode.Force);
 
         Debug.DrawRay(suspension.contact, force * 0.0002f, Color.blue);
