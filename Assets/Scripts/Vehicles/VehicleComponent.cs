@@ -4,60 +4,73 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class VehicleComponent : MonoBehaviour
 {
-    [Header("Engine (simple)")]
+    public enum LogicType { TrackCar, Truck, SuperCar }
+
+    [Header("Engine")]
     public Engine engineData = new Engine();
 
-    [Header("Wheels (child objects)")]
+    [Header("Wheels")]
     public List<Wheel> wheels = new List<Wheel>();
 
-    [Header("Dynamics (simple)")]
+    [Header("Dynamics")]
     public bool useDrag = true;
     public float dragCoefficient = 0.32f;
     public float frontalArea = 2.2f;
 
-    public TrackCar vehicleLogicTrackCar;
-    public Truck vehicleLogicTruck;
-    
-    Rigidbody rbTrackCar;
-    Rigidbody rbTruck;
+    public LogicType vehicleLogicType = LogicType.TrackCar;
+
+    public Vehicle currentVehicleLogic { get; private set; }
+
+    public Transform AttachTransform
+    {
+        get
+        {
+            var rb = GetComponent<Rigidbody>();
+            return rb != null ? rb.transform : transform;
+        }
+    }
 
     private void Awake()
     {
-        rbTrackCar = GetComponent<Rigidbody>();
-        rbTruck = GetComponent<Rigidbody>();
-
-        if (wheels == null || wheels.Count == 0)
-            wheels = new List<Wheel>(GetComponentsInChildren<Wheel>());
-
+        if (wheels == null || wheels.Count == 0) wheels = new List<Wheel>(GetComponentsInChildren<Wheel>());
         if (engineData != null) engineData.ApplyInspectorUnits();
 
-        vehicleLogicTrackCar = new TrackCar(rbTrackCar, engineData, wheels);
-        vehicleLogicTrackCar.useDrag = useDrag;
-        vehicleLogicTrackCar.dragCoefficient = dragCoefficient;
-        vehicleLogicTrackCar.frontalArea = frontalArea;
+        var rb = GetComponent<Rigidbody>();
 
-        vehicleLogicTruck = new Truck(rbTruck, engineData, wheels);
+        switch (vehicleLogicType)
+        {
+            case LogicType.TrackCar:
+                var t = new TrackCar(rb, engineData, wheels);
+                t.useDrag = useDrag;
+                t.dragCoefficient = dragCoefficient;
+                t.frontalArea = frontalArea;
+                currentVehicleLogic = t;
+                break;
 
+            case LogicType.Truck:
+                currentVehicleLogic = new Truck(rb, engineData, wheels);
+                break;
+
+            case LogicType.SuperCar:
+                
+                break;
+        }
     }
 
     private void OnValidate()
     {
         if (engineData != null) engineData.ApplyInspectorUnits();
-
-        if (vehicleLogicTrackCar != null)
+        if (currentVehicleLogic is TrackCar tc)
         {
-            vehicleLogicTrackCar.useDrag = useDrag;
-            vehicleLogicTrackCar.dragCoefficient = dragCoefficient;
-            vehicleLogicTrackCar.frontalArea = frontalArea;
+            tc.useDrag = useDrag;
+            tc.dragCoefficient = dragCoefficient;
+            tc.frontalArea = frontalArea;
         }
-
-
     }
 
     private void FixedUpdate()
     {
-        if (vehicleLogicTrackCar != null) vehicleLogicTrackCar.UpdatePhysics(Time.fixedDeltaTime);
-
-        if (vehicleLogicTruck != null) vehicleLogicTruck.UpdatePhysics(Time.fixedDeltaTime);
+        currentVehicleLogic?.UpdatePhysics(Time.fixedDeltaTime);
     }
 }
+

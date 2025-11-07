@@ -8,8 +8,8 @@ public class VehicleController : MonoBehaviour
     public Vehicle vehicleLogic;
 
     private PlayerControls controls;
-    private bool controlsInitialized = false;
-    private bool controlsEnabled = false;
+    private bool controlsInitialized;
+    private bool controlsEnabled;
 
     private float throttle;
     private float brake;
@@ -17,55 +17,39 @@ public class VehicleController : MonoBehaviour
 
     public float currentSpeedMPH;
 
-    private void Awake()
-    {
-        InitializeControls();
-    }
+    private void Awake() => InitializeControls();
 
     private void OnEnable()
     {
-        InitializeControls();
-        if (!controlsEnabled && controls != null)
-        {
-            controls.Enable();
-            controlsEnabled = true;
-        }
+        if (!controlsInitialized) InitializeControls();
+        if (!controlsEnabled && controls != null) { controls.Enable(); controlsEnabled = true; }
     }
 
     private void OnDisable()
     {
-        if (controls != null && controlsEnabled)
-        {
-            controls.Disable();
-            controlsEnabled = false;
-        }
+        if (controls != null && controlsEnabled) { controls.Disable(); controlsEnabled = false; }
     }
 
-    private void OnDestroy()
-    {
-        CleanupControls();
-    }
+    private void OnDestroy() => CleanupControls();
 
     private void FixedUpdate()
     {
         if (vehicleLogic == null) return;
 
-        if (vehicleLogic is TrackCar trackCar)
-        {
-            trackCar.ApplyInput(throttle, steerInput, brake, Time.fixedDeltaTime);
-            if (trackCar.body != null)
-                currentSpeedMPH = trackCar.body.linearVelocity.magnitude * 2.23694f;
-            Debug.Log($"{currentSpeedMPH}");
-        }
+        float dt = Time.fixedDeltaTime;
 
-        else if (vehicleLogic is Truck truck)
+        switch (vehicleLogic)
         {
-            truck.ApplyInput(throttle, steerInput, brake, Time.fixedDeltaTime);
-            if (truck.body != null)
-                currentSpeedMPH = truck.body.linearVelocity.magnitude * 2.23694f;
-            Debug.Log($"{currentSpeedMPH}");
-        }
+            case TrackCar trackCar:
+                trackCar.ApplyInput(throttle, steerInput, brake, dt);
+                if (trackCar.body != null) currentSpeedMPH = trackCar.body.linearVelocity.magnitude * 2.23694f;
+                break;
 
+            case Truck truck:
+                truck.ApplyInput(throttle, steerInput, brake, dt);
+                if (truck.body != null) currentSpeedMPH = truck.body.linearVelocity.magnitude * 2.23694f;
+                break;
+        }
     }
 
     private void InitializeControls()
@@ -76,7 +60,6 @@ public class VehicleController : MonoBehaviour
 
         controls.Gameplay.JumpBrake.performed += OnBrakePerformed;
         controls.Gameplay.JumpBrake.canceled += OnBrakeCanceled;
-
         controls.Gameplay.Move.performed += OnMovePerformed;
         controls.Gameplay.Move.canceled += OnMoveCanceled;
 
@@ -89,11 +72,10 @@ public class VehicleController : MonoBehaviour
 
         controls.Gameplay.JumpBrake.performed -= OnBrakePerformed;
         controls.Gameplay.JumpBrake.canceled -= OnBrakeCanceled;
-
         controls.Gameplay.Move.performed -= OnMovePerformed;
         controls.Gameplay.Move.canceled -= OnMoveCanceled;
 
-        controls = null;
+        controls.Dispose();
         controlsInitialized = false;
         controlsEnabled = false;
     }
@@ -107,15 +89,12 @@ public class VehicleController : MonoBehaviour
         throttle = Mathf.Clamp(input.y, -1f, 1f);
         steerInput = input.x;
     }
-
     private void OnMoveCanceled(InputAction.CallbackContext _) { throttle = 0f; steerInput = 0f; }
 
     public void EnterVehicle(VehicleComponent newVehicle)
     {
         currentVehicle = newVehicle;
-
-        vehicleLogic = newVehicle.vehicleLogicTrackCar;
-
+        vehicleLogic = newVehicle?.currentVehicleLogic;
     }
 
     public void ExitVehicle()

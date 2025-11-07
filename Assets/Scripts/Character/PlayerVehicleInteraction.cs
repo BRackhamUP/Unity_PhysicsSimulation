@@ -1,32 +1,41 @@
 using Unity.Cinemachine;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
+[RequireComponent(typeof(Collider), typeof(Rigidbody))]
 public class PlayerVehicleInteraction : MonoBehaviour
 {
     [Header("Interaction Settings")]
     public float interactRange = 3f;
 
+    [Header("Cinemachine")]
+    public CinemachineCamera virtualCamera; 
+
     private PlayerCharacterController playerController;
     private Collider characterCollider;
-    private Rigidbody characterRigibody;
+    private Rigidbody characterRigidbody;
     private VehicleController vehicleController;
     private PlayerControls controls;
-    public CinemachineCamera ThirdPersonCam;
 
-    private bool isInVehicle = false;
+    private bool isInVehicle;
     private VehicleComponent nearbyVehicle;
+
+    private Transform originalFollowTarget;
+    private Transform originalLookAtTarget;
+
+    private Vector3 seatOffset = new Vector3(0f, 1f, 0f);
+    private Vector3 exitOffset = new Vector3(2f, 0.5f, 0f);
+
+    private Transform attachTarget;
 
     private void Awake()
     {
         playerController = GetComponent<PlayerCharacterController>();
         vehicleController = GetComponent<VehicleController>();
         characterCollider = GetComponent<Collider>();
-        characterRigibody = GetComponent<Rigidbody>();
-        ThirdPersonCam = GetComponent<CinemachineCamera>();
+        characterRigidbody = GetComponent<Rigidbody>();
 
         controls = new PlayerControls();
-        controls.Gameplay.EnterExitVehicle.performed += context => TryToggleVehicle();
+        controls.Gameplay.EnterExitVehicle.performed += _ => TryToggleVehicle();
     }
 
     private void OnEnable() => controls.Enable();
@@ -35,79 +44,104 @@ public class PlayerVehicleInteraction : MonoBehaviour
     public void NotifyNearbyVehicle(VehicleComponent vehicle)
     {
         nearbyVehicle = vehicle;
-        if (vehicle != null)
-            Debug.Log($"Player near vehicle: {vehicle.name}");
-        else
-            Debug.Log("Player left vehicle zone");
+        Debug.Log(vehicle != null ? $"Player near vehicle: {vehicle.name}" : "Player left vehicle zone");
     }
 
     private void TryToggleVehicle()
     {
-        if (isInVehicle)
-            ExitVehicle();
-        else if (nearbyVehicle != null)
-            EnterVehicle(nearbyVehicle);
+        if (isInVehicle) ExitVehicle();
+        else if (nearbyVehicle != null) EnterVehicle(nearbyVehicle);
     }
 
     private void EnterVehicle(VehicleComponent vehicle)
     {
+        if (isInVehicle || vehicle == null) return;
+
         isInVehicle = true;
         nearbyVehicle = vehicle;
 
-
-        playerController.enabled = false;
-        foreach (var r in GetComponentsInChildren<Renderer>())
-            r.enabled = false;
-
-
-        if (characterRigibody != null)
+        Transform resolved = null;
+        var vc = vehicle as VehicleComponent;
+        if (vc != null)
         {
-            characterRigibody.isKinematic = true;
-            characterRigibody.detectCollisions = false;
+            try { resolved = vc.AttachTransform; } catch { resolved = null; }
         }
-        if (characterCollider != null)
-            characterCollider.enabled = false;
 
-        transform.SetParent(vehicle.transform);
-        transform.localPosition = new Vector3(0, 1, 0);
-        transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        if (resolved == null)
+        {
+            var rb = vehicle.GetComponent<Rigidbody>();
+            resolved = rb != null ? rb.transform : vehicle.transform;
+        }
 
-        ThirdPersonCam.Follow = vehicle.transform;
-        ThirdPersonCam.LookAt = vehicle.transform;
+        attachTarget = resolved;
 
-        vehicleController.EnterVehicle(vehicle);
+        transform.position = attachTarget.TransformPoint(seatOffset);
+        transform.rotation = attachTarget.rotation;
+
+        if (virtualCamera != null)
+        {
+            originalFollowTarget = virtualCamera.Follow;
+            originalLookAtTarget = virtualCamera.LookAt;
+            virtualCamera.Follow = attachTarget;
+            virtualCamera.LookAt = attachTarget;
+        }
+
+        if (playerController != null) playerController.enabled = false;
+        SetPlayerVisible(false);
+
+        if (characterRigidbody != null)
+        {
+            characterRigidbody.isKinematic = true;
+            characterRigidbody.detectCollisions = false;
+        }
+        if (characterCollider != null) characterCollider.enabled = false;
+
+        vehicleController?.EnterVehicle(vehicle);
     }
-
-
 
     private void ExitVehicle()
     {
+        if (!isInVehicle) return;
         isInVehicle = false;
-        transform.SetParent(null);
 
-        if (nearbyVehicle != null)
-            transform.position = nearbyVehicle.transform.position + nearbyVehicle.transform.right * 2f + Vector3.up * 0.5f;
-        transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-
-        foreach (var r in GetComponentsInChildren<Renderer>())
-            r.enabled = true;
-
-
-        if (characterRigibody != null)
+        if (attachTarget != null)
         {
-            characterRigibody.isKinematic = false;
-            characterRigibody.detectCollisions = true;
+            Vector3 worldExit = attachTarget.position + attachTarget.right * exitOffset.x + Vector3.up * exitOffset.y;
+            transform.position = worldExit;
+            transform.rotation = attachTarget.rotation;
         }
-        if (characterCollider != null)
-            characterCollider.enabled = true;
+        else if (nearbyVehicle != null)
+        {
+            transform.position = nearbyVehicle.transform.position + nearbyVehicle.transform.right * exitOffset.x + Vector3.up * exitOffset.y;
+            transform.rotation = nearbyVehicle.transform.rotation;
+        }
 
-      //  ThirdPersonCam.Follow =  .transform;
-       // ThirdPersonCam.LookAt = vehicle.transform;
+        SetPlayerVisible(true);
 
-        playerController.enabled = true;
-        vehicleController.ExitVehicle();
+        if (characterRigidbody != null)
+        {
+            characterRigidbody.isKinematic = false;
+            characterRigidbody.detectCollisions = true;
+        }
+        if (characterCollider != null) characterCollider.enabled = true;
+
+        if (virtualCamera != null)
+        {
+            virtualCamera.Follow = originalFollowTarget ?? transform;
+            virtualCamera.LookAt = originalLookAtTarget ?? transform;
+        }
+
+        if (playerController != null) playerController.enabled = true;
+
+        vehicleController?.ExitVehicle();
 
         nearbyVehicle = null;
+        attachTarget = null;
     }
 
+    private void SetPlayerVisible(bool visible)
+    {
+        foreach (var r in GetComponentsInChildren<Renderer>())
+            r.enabled = visible;
+    }
 }

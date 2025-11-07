@@ -25,13 +25,6 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         orbital = GetComponent<CinemachineOrbitalFollow>();
-
-        if (orbital == null)
-        {
-            Debug.LogError("CinemachineOrbitalFollow component not found on camera!");
-            return;
-        }
-
         targetZoom = orbital.Radius;
     }
 
@@ -53,5 +46,4 @@ public class CameraController : MonoBehaviour
 
         targetZoom = zoomLevels[currentZoomIndex];
     }
-
 }
