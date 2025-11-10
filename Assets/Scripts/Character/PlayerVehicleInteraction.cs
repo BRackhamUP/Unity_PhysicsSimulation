@@ -1,6 +1,9 @@
 using Unity.Cinemachine;
 using UnityEngine;
 
+/// <summary>
+/// entering/exiting vehicles and switching camera and player states
+/// </summary>
 [RequireComponent(typeof(Collider), typeof(Rigidbody))]
 public class PlayerVehicleInteraction : MonoBehaviour
 {

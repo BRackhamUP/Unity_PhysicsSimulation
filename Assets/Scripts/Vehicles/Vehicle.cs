@@ -11,5 +11,8 @@ public abstract class Vehicle
     public Engine engine;
     public List<Wheel> wheels;
 
+    /// <summary>
+    /// this is the overrideable method that will be used in the child vehicle objects to update their moevement
+    /// </summary>
     public abstract void UpdatePhysics(float deltaTime);
 }

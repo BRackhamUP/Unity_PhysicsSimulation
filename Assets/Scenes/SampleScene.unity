@@ -5480,7 +5480,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14198536, y: 0.005545703, z: -0.00079548045, w: 0.9898529}
+  m_LocalRotation: {x: 0.14198694, y: 0.003041468, z: -0.00043627084, w: 0.98986375}
   m_LocalPosition: {x: 22.530003, y: 4.8861275, z: 1.3106728}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6071,17 +6071,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  suspension: {fileID: 343457798}
-  engine:
-    power: 8000
-    topSpeedMPH: 100
-    topSpeed: 45
   isFrontWheel: 1
   isDriven: 1
-  lateralGrip: 300
+  muStatic: 0.8
+  muDynamic: 0.75
+  cornerStiffness: 1500
   rollingResistance: 0.015
   maxBrakeForce: 15000
   maxBrakeDecelleration: 5
+  stationaryVehicleThreshold: 0.05
 --- !u!114 &343457793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6117,10 +6115,6 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  grounded: 0
-  contact: {x: 0, y: 0, z: 0}
-  normal: {x: 0, y: 1, z: 0}
-  load: 0
 --- !u!64 &343457799
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6383,16 +6377,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f69f944d325ca54985402ee1eb03147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restLength: 0.7
-  springStrength: 30000
-  damperStrength: 4500
+  restLength: 0.6
+  springStrength: 60000
+  damperStrength: 8000
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  grounded: 1
-  contact: {x: 0, y: 0, z: 0}
-  normal: {x: 0, y: 1, z: 0}
-  load: 0
 --- !u!114 &355026513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6405,17 +6395,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  suspension: {fileID: 355026512}
-  engine:
-    power: 8000
-    topSpeedMPH: 100
-    topSpeed: 45
   isFrontWheel: 1
   isDriven: 1
-  lateralGrip: 500
-  rollingResistance: 0.5
-  maxBrakeForce: 30000
-  maxBrakeDecelleration: 5
+  muStatic: 0.85
+  muDynamic: 0.7
+  cornerStiffness: 8000
+  rollingResistance: 0.015
+  maxBrakeForce: 4000
+  maxBrakeDecelleration: 9
+  stationaryVehicleThreshold: 0
 --- !u!4 &355657076 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 481848, guid: fa07ca939fb86614e840203d85f23f08, type: 3}
@@ -10389,17 +10377,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  suspension: {fileID: 619596950}
-  engine:
-    power: 8000
-    topSpeedMPH: 100
-    topSpeed: 45
   isFrontWheel: 1
   isDriven: 1
-  lateralGrip: 300
+  muStatic: 0.8
+  muDynamic: 0.75
+  cornerStiffness: 1500
   rollingResistance: 0.015
   maxBrakeForce: 15000
   maxBrakeDecelleration: 5
+  stationaryVehicleThreshold: 0.05
 --- !u!114 &619596950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10418,10 +10404,6 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  grounded: 0
-  contact: {x: 0, y: 0, z: 0}
-  normal: {x: 0, y: 1, z: 0}
-  load: 0
 --- !u!4 &621723900 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 481848, guid: fa07ca939fb86614e840203d85f23f08, type: 3}
@@ -13877,17 +13859,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  suspension: {fileID: 877915392}
-  engine:
-    power: 8000
-    topSpeedMPH: 100
-    topSpeed: 45
   isFrontWheel: 0
   isDriven: 1
-  lateralGrip: 300
+  muStatic: 0.8
+  muDynamic: 0.75
+  cornerStiffness: 1500
   rollingResistance: 0.015
   maxBrakeForce: 15000
   maxBrakeDecelleration: 5
+  stationaryVehicleThreshold: 0.05
 --- !u!114 &877915392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13906,10 +13886,6 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  grounded: 0
-  contact: {x: 0, y: 0, z: 0}
-  normal: {x: 0, y: 1, z: 0}
-  load: 0
 --- !u!4 &878525454 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 481848, guid: fa07ca939fb86614e840203d85f23f08, type: 3}
@@ -16119,16 +16095,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f69f944d325ca54985402ee1eb03147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restLength: 0.7
-  springStrength: 30000
-  damperStrength: 4500
+  restLength: 0.6
+  springStrength: 60000
+  damperStrength: 8000
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  grounded: 1
-  contact: {x: 0, y: 0, z: 0}
-  normal: {x: 0, y: 1, z: 0}
-  load: 0
 --- !u!114 &1043743066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16141,17 +16113,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  suspension: {fileID: 1043743065}
-  engine:
-    power: 8000
-    topSpeedMPH: 100
-    topSpeed: 45
   isFrontWheel: 0
   isDriven: 1
-  lateralGrip: 500
-  rollingResistance: 0.5
-  maxBrakeForce: 30000
-  maxBrakeDecelleration: 5
+  muStatic: 0.85
+  muDynamic: 0.7
+  cornerStiffness: 8000
+  rollingResistance: 0.015
+  maxBrakeForce: 4000
+  maxBrakeDecelleration: 9
+  stationaryVehicleThreshold: 0
 --- !u!4 &1044835257 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 458076, guid: a5aca9c9ef39b0a49835b3ee43077679, type: 3}
@@ -19509,7 +19479,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1265117998}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14198534, y: 0.005545703, z: -0.0007954803, w: 0.9898529}
+  m_LocalRotation: {x: 0.14198692, y: 0.0030414679, z: -0.0004362708, w: 0.9898638}
   m_LocalPosition: {x: 22.530003, y: 4.8861275, z: 1.3106728}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -20439,14 +20409,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   engineData:
-    power: 30000
-    topSpeedMPH: 90
-    topSpeed: 40.2336
+    power: 20000
+    topSpeedMPH: 100
+    topSpeed: 44.704
   wheels: []
   useDrag: 1
   dragCoefficient: 0.32
-  frontalArea: 3.5
-  vehicleLogicType: 1
+  frontalArea: 2.2
+  vehicleLogicType: 0
 --- !u!114 &1331852934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20459,16 +20429,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f69f944d325ca54985402ee1eb03147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restLength: 0.7
-  springStrength: 30000
-  damperStrength: 4500
+  restLength: 0.6
+  springStrength: 60000
+  damperStrength: 8000
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  grounded: 1
-  contact: {x: 0, y: 0, z: 0}
-  normal: {x: 0, y: 1, z: 0}
-  load: 0
 --- !u!114 &1331852935
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20481,17 +20447,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  suspension: {fileID: 1331852934}
-  engine:
-    power: 8000
-    topSpeedMPH: 100
-    topSpeed: 45
   isFrontWheel: 1
   isDriven: 1
-  lateralGrip: 500
-  rollingResistance: 0.5
-  maxBrakeForce: 30000
-  maxBrakeDecelleration: 5
+  muStatic: 0.85
+  muDynamic: 0.7
+  cornerStiffness: 8000
+  rollingResistance: 0.015
+  maxBrakeForce: 4000
+  maxBrakeDecelleration: 9
+  stationaryVehicleThreshold: 0
 --- !u!114 &1331852936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22556,7 +22520,7 @@ Transform:
   m_GameObject: {fileID: 1506279763}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -574.419, y: -750.234, z: 745.413}
+  m_LocalPosition: {x: -577.48, y: -750.234, z: 745.413}
   m_LocalScale: {x: 0.58, y: 0.58, z: 0.58}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -29101,17 +29065,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  suspension: {fileID: 1901548103}
-  engine:
-    power: 8000
-    topSpeedMPH: 100
-    topSpeed: 45
   isFrontWheel: 0
   isDriven: 1
-  lateralGrip: 300
+  muStatic: 0.8
+  muDynamic: 0.75
+  cornerStiffness: 1500
   rollingResistance: 0.015
   maxBrakeForce: 15000
   maxBrakeDecelleration: 5
+  stationaryVehicleThreshold: 0.05
 --- !u!114 &1901548103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29130,10 +29092,6 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  grounded: 0
-  contact: {x: 0, y: 0, z: 0}
-  normal: {x: 0, y: 1, z: 0}
-  load: 0
 --- !u!4 &1901693171 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 472252, guid: 8fb9d4c1e830a6742bda038e0f8c11a8, type: 3}
@@ -30482,16 +30440,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f69f944d325ca54985402ee1eb03147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restLength: 0.7
-  springStrength: 30000
-  damperStrength: 4500
+  restLength: 0.6
+  springStrength: 60000
+  damperStrength: 8000
   groundMask:
     serializedVersion: 2
     m_Bits: 8
-  grounded: 1
-  contact: {x: 0, y: 0, z: 0}
-  normal: {x: 0, y: 1, z: 0}
-  load: 0
 --- !u!114 &1975044335
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30504,17 +30458,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  suspension: {fileID: 1975044334}
-  engine:
-    power: 8000
-    topSpeedMPH: 100
-    topSpeed: 45
   isFrontWheel: 0
   isDriven: 1
-  lateralGrip: 500
-  rollingResistance: 0.5
-  maxBrakeForce: 30000
-  maxBrakeDecelleration: 5
+  muStatic: 0.85
+  muDynamic: 0.7
+  cornerStiffness: 8000
+  rollingResistance: 0.015
+  maxBrakeForce: 4000
+  maxBrakeDecelleration: 9
+  stationaryVehicleThreshold: 0
 --- !u!135 &1975044339
 SphereCollider:
   m_ObjectHideFlags: 0

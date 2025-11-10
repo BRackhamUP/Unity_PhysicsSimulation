@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// handles vehicle insances and passes tuning values into them
+/// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class VehicleComponent : MonoBehaviour
 {

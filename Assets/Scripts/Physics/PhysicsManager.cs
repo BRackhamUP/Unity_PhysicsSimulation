@@ -20,11 +20,11 @@ public static class PhysicsManager
 
      */
 
-    public static void ApplyGravity(Transform obj)
+    public static void ApplyGravity(Transform @object)
     {
-        Rigidbody objRb = obj.GetComponent<Rigidbody>();
+        Rigidbody objectRigidbody = @object.GetComponent<Rigidbody>();
          
-         objRb.AddForce(new Vector3(0, -9.81f, 0), ForceMode.Acceleration);       
+         objectRigidbody.AddForce(new Vector3(0, -9.81f, 0), ForceMode.Acceleration);       
     }
 
     public static void RemoveGravity(Transform obj)

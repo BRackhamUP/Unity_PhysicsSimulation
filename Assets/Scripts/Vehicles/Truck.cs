@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// vehicle subclass that updates wheels, applies drag and distributes drive force amongst wheels
+/// </summary>
 public class Truck : Vehicle
 {
     public float maxSteerAngle = 30f;
@@ -34,7 +37,7 @@ public class Truck : Vehicle
         if (wheels != null)
         {
             foreach (var w in wheels)
-                if (w != null && w.isDriven)
+                if (w != null && w.IsDriven)
                     drivenCount++;
         }
         drivenCount = Mathf.Max(1, drivenCount);
@@ -48,10 +51,10 @@ public class Truck : Vehicle
             {
                 if (w == null) continue;
 
-                if (w.isFrontWheel)
+                if (w.IsFrontWheel)
                     w.SetSteerAngle(steerInput * maxSteerAngle);
 
-                if (w.isDriven)
+                if (w.IsDriven)
                     w.ApplyDriveForce(perWheelDrive);
 
                 w.ApplyBrake(brake);

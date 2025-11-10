@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// recieivng player input and applys to active vehicle logic
+/// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class VehicleController : MonoBehaviour
 {
