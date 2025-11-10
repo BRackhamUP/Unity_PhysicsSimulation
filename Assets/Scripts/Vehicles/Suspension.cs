@@ -1,45 +1,74 @@
 using UnityEngine;
 
+/// <summary>
+/// using a raycast to detect the ground layer and compute, spring and damper forces and apply vertical forces to rigidbody
+/// </summary>
 public class Suspension : MonoBehaviour
 {
-    [Header("Suspension Settings")]
-    public float restLength = 0.5f;
-    public float springStrength = 20000f;
-    public float damperStrength = 4500f;
-    public LayerMask groundMask;
+    [Header("Suspension")]
+    [SerializeField] private float restLength = 0.5f;
+    [SerializeField] private float springStrength = 20000f;
+    [SerializeField] private float damperStrength = 4500f;
+    [SerializeField] private LayerMask groundMask;
 
-    public bool grounded;
-    public Vector3 contact;
-    public Vector3 normal = Vector3.up;
-    public float load;
+    // read only variables
+    public bool Grounded { get; private set; }
+    public Vector3 Contact { get; private set; }
+    public Vector3 Normal { get; private set; } = Vector3.up;
 
+    // the current vertical load on the wheel
+    public float Load { get; private set; }
+
+    // last length of the raycast to determine the damper velocity
     private float lastLength;
 
-    public void UpdateSuspension(float dt, Rigidbody rb)
+    /// <summary>
+    /// updating the suspension for 'this' wheel. happens for all instances of wheel on vehicle
+    /// </summary>
+    public void UpdateSuspension(float deltaTime, Rigidbody rigidbody)
     {
-        grounded = false;
-        load = 0f;
+        Grounded = false;
+        Load = 0f;
 
-        if (Physics.Raycast(transform.position, -transform.up, out RaycastHit hit, restLength * 1.5f, groundMask))
+        //the length of the ray is bigger then the restlength to detect the ground beyond the restlength of suspension
+        float rayLength = restLength * 1.5f;
+
+        // fire the raycast from the wheels transform position downwards, get info at the raylength and detect groundlayer
+        if (Physics.Raycast(transform.position, -transform.up, out RaycastHit hit, rayLength, groundMask))
         {
-            grounded = true;
-            contact = hit.point;
-            normal = hit.normal;
+            Grounded = true;
+            Contact = hit.point;
+            Normal = hit.normal;
 
-            float len = hit.distance;
-            float compression = Mathf.Max(0f, restLength - len);
+            // distance from the transform to the contact point. current length of the suspension
+            float length = hit.distance;
 
+            // Hookes Law suspension - https://www.engineeringtoolbox.com/hookes-law-force-spring-constant-d_1853.html
+            // F = KS
+            // calculate the compression of the suspension which is the displacement (S)
+            // springStrength is the constant (K)
+            // springForce is the result (F)
+            float compression = Mathf.Max(0f, restLength - length);
             float springForce = compression * springStrength;
-            float damperForce = ((lastLength - len) / Mathf.Max(0.0001f, dt)) * damperStrength;
 
+            // damping force: F = cx - (Slide 12) https://canvas.anglia.ac.uk/courses/48081/pages/csfg-lecture-6-session-a-suspension?module_item_id=2876804
+            // compression velocity is the change in length over time
+            float velocity = (lastLength - length) / Mathf.Max(0.0001f, deltaTime);
+            float damperForce = velocity * damperStrength;
+
+            // combining spring and damper forces
             float total = springForce + damperForce;
-            rb.AddForceAtPosition(transform.up * total, transform.position, ForceMode.Force);
 
-            load = springForce;
-            lastLength = len;
+            // 'transform.up' accounts for the '-' in hookes original formula as the upwards transform is the negative of the compression direction
+            rigidbody.AddForceAtPosition(transform.up * total, hit.point, ForceMode.Force);
+
+            // store spring force for traction calc and lastlength for next frame
+            Load = springForce;
+            lastLength = length;
         }
         else
         {
+            // no ground contact returns the suspension length to restlength
             lastLength = restLength;
         }
     }
