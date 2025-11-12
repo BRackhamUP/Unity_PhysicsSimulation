@@ -7784,7 +7784,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14198753, y: 0.00092486665, z: -0.00013266367, w: 0.98986804}
+  m_LocalRotation: {x: 0.14198537, y: 0.0055457037, z: -0.00079548056, w: 0.9898529}
   m_LocalPosition: {x: 22.530003, y: 4.8861275, z: 1.3106728}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -8441,15 +8441,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFrontWheel: 1
-  isDriven: 1
-  muStatic: 0.8
-  muDynamic: 0.75
-  cornerStiffness: 1500
-  rollingResistance: 0.015
+  frontWheel: 0
+  driven: 1
+  grip: 0.8
+  gripAtStop: 0.9
+  slideResistance: 3000
+  slowDownResistance: 0.015
   maxBrakeForce: 15000
-  maxBrakeDecelleration: 5
-  stationaryVehicleThreshold: 0.05
+  maxBrakeDecelleration: 9
+  almostStoppedSideSpeed: 0.05
+  holdReduction: 0.98
 --- !u!114 &343457793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8832,15 +8833,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFrontWheel: 1
-  isDriven: 1
-  muStatic: 0.85
-  muDynamic: 0.7
-  cornerStiffness: 8000
-  rollingResistance: 0.015
-  maxBrakeForce: 4000
+  frontWheel: 1
+  driven: 1
+  grip: 0.8
+  gripAtStop: 0.9
+  slideResistance: 3000
+  slowDownResistance: 0.015
+  maxBrakeForce: 15000
   maxBrakeDecelleration: 9
-  stationaryVehicleThreshold: 0
+  almostStoppedSideSpeed: 0.05
+  holdReduction: 0.98
 --- !u!4 &355657076 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 481848, guid: fa07ca939fb86614e840203d85f23f08, type: 3}
@@ -14989,15 +14991,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFrontWheel: 1
-  isDriven: 1
-  muStatic: 0.8
-  muDynamic: 0.75
-  cornerStiffness: 1500
-  rollingResistance: 0.015
+  frontWheel: 0
+  driven: 1
+  grip: 0.8
+  gripAtStop: 0.9
+  slideResistance: 3000
+  slowDownResistance: 0.015
   maxBrakeForce: 15000
-  maxBrakeDecelleration: 5
-  stationaryVehicleThreshold: 0.05
+  maxBrakeDecelleration: 9
+  almostStoppedSideSpeed: 0.05
+  holdReduction: 0.98
 --- !u!114 &619596950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16994,7 +16997,7 @@ GameObject:
   m_Component:
   - component: {fileID: 723851978}
   - component: {fileID: 723851977}
-  - component: {fileID: 723851976}
+  - component: {fileID: 723851979}
   m_Layer: 3
   m_Name: Terrain
   m_TagString: Untagged
@@ -17002,26 +17005,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
   m_IsActive: 1
---- !u!154 &723851976
-TerrainCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 723851975}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_TerrainData: {fileID: 15600000, guid: 3a98fc022af5e8d4a9b313030dac0b95, type: 2}
-  m_EnableTreeColliders: 1
 --- !u!218 &723851977
 Terrain:
   m_ObjectHideFlags: 0
@@ -17080,6 +17063,26 @@ Transform:
   - {fileID: 2143301421}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!154 &723851979
+TerrainCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 723851975}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_TerrainData: {fileID: 15600000, guid: 3a98fc022af5e8d4a9b313030dac0b95, type: 2}
+  m_EnableTreeColliders: 1
 --- !u!4 &726438471 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 481848, guid: fa07ca939fb86614e840203d85f23f08, type: 3}
@@ -20030,15 +20033,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFrontWheel: 0
-  isDriven: 1
-  muStatic: 0.8
-  muDynamic: 0.75
-  cornerStiffness: 1500
-  rollingResistance: 0.015
+  frontWheel: 0
+  driven: 1
+  grip: 0.8
+  gripAtStop: 0.9
+  slideResistance: 3000
+  slowDownResistance: 0.015
   maxBrakeForce: 15000
-  maxBrakeDecelleration: 5
-  stationaryVehicleThreshold: 0.05
+  maxBrakeDecelleration: 9
+  almostStoppedSideSpeed: 0.05
+  holdReduction: 0.98
 --- !u!114 &877915392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23677,15 +23681,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFrontWheel: 0
-  isDriven: 1
-  muStatic: 0.85
-  muDynamic: 0.7
-  cornerStiffness: 8000
-  rollingResistance: 0.015
-  maxBrakeForce: 4000
+  frontWheel: 0
+  driven: 1
+  grip: 0.8
+  gripAtStop: 0.9
+  slideResistance: 3000
+  slowDownResistance: 0.015
+  maxBrakeForce: 15000
   maxBrakeDecelleration: 9
-  stationaryVehicleThreshold: 0
+  almostStoppedSideSpeed: 0.05
+  holdReduction: 0.98
 --- !u!4 &1044835257 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 458076, guid: a5aca9c9ef39b0a49835b3ee43077679, type: 3}
@@ -28610,7 +28615,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1265117998}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14198752, y: 0.0009248666, z: -0.00013266363, w: 0.98986804}
+  m_LocalRotation: {x: 0.14198536, y: 0.0055457037, z: -0.0007954805, w: 0.9898529}
   m_LocalPosition: {x: 22.530003, y: 4.8861275, z: 1.3106728}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -30095,7 +30100,7 @@ MonoBehaviour:
   useDrag: 1
   dragCoefficient: 0.32
   frontalArea: 2.2
-  vehicleLogicType: 0
+  vehicleLogicType: 1
 --- !u!114 &1331852934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30126,15 +30131,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFrontWheel: 1
-  isDriven: 1
-  muStatic: 0.85
-  muDynamic: 0.7
-  cornerStiffness: 8000
-  rollingResistance: 0.015
-  maxBrakeForce: 4000
+  frontWheel: 1
+  driven: 1
+  grip: 0.8
+  gripAtStop: 0.9
+  slideResistance: 3000
+  slowDownResistance: 0.015
+  maxBrakeForce: 15000
   maxBrakeDecelleration: 9
-  stationaryVehicleThreshold: 0
+  almostStoppedSideSpeed: 0.05
+  holdReduction: 0.98
 --- !u!114 &1331852936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42666,15 +42672,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFrontWheel: 0
-  isDriven: 1
-  muStatic: 0.8
-  muDynamic: 0.75
-  cornerStiffness: 1500
-  rollingResistance: 0.015
+  frontWheel: 0
+  driven: 1
+  grip: 0.8
+  gripAtStop: 0.9
+  slideResistance: 3000
+  slowDownResistance: 0.015
   maxBrakeForce: 15000
-  maxBrakeDecelleration: 5
-  stationaryVehicleThreshold: 0.05
+  maxBrakeDecelleration: 9
+  almostStoppedSideSpeed: 0.05
+  holdReduction: 0.98
 --- !u!114 &1901548103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44519,15 +44526,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e24030ca03bfd4caefb289fc43d9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFrontWheel: 0
-  isDriven: 1
-  muStatic: 0.85
-  muDynamic: 0.7
-  cornerStiffness: 8000
-  rollingResistance: 0.015
-  maxBrakeForce: 4000
+  frontWheel: 0
+  driven: 1
+  grip: 0.8
+  gripAtStop: 0.9
+  slideResistance: 3000
+  slowDownResistance: 0.015
+  maxBrakeForce: 15000
   maxBrakeDecelleration: 9
-  stationaryVehicleThreshold: 0
+  almostStoppedSideSpeed: 0.05
+  holdReduction: 0.98
 --- !u!135 &1975044339
 SphereCollider:
   m_ObjectHideFlags: 0

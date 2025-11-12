@@ -20,6 +20,8 @@ public static class PhysicsManager
 
      */
 
+  //  public Vector3 gravity new Vector3(0, -9.81f ,0);
+
     public static void ApplyGravity(Transform @object)
     {
         Rigidbody objectRigidbody = @object.GetComponent<Rigidbody>();
