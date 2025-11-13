@@ -120,6 +120,7 @@ public class Wheel : MonoBehaviour
         Debug.DrawRay(suspension.Contact, rollForce * 0.001f, Color.red);
 
         WheelMesh.position = suspension.Contact + new Vector3(0, WheelRadius, 0);
+        RotateWheelMesh();
 
     }
 
@@ -174,7 +175,15 @@ public class Wheel : MonoBehaviour
             return;
 
         transform.localRotation = Quaternion.Euler(0f, angle, 0f);
-        WheelMesh.localRotation = Quaternion.Euler(0f, angle, 0f);
+        //WheelMesh.localRotation = Quaternion.Euler(WheelMesh.localRotation.x, angle, WheelMesh.localRotation.x);
+        WheelMesh.Rotate(Vector3.up, (angle) * Time.fixedDeltaTime);
 
+    }
+
+    public void RotateWheelMesh()
+    {
+        float wheelCircumference = WheelRadius * Mathf.PI * 2;
+        float RotPerSecond = vehicleRigidbody.linearVelocity.magnitude / wheelCircumference;
+        WheelMesh.Rotate(Vector3.right, (RotPerSecond * 360) * Time.fixedDeltaTime);
     }
 }
