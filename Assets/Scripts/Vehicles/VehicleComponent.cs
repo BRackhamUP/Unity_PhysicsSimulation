@@ -55,7 +55,7 @@ public class VehicleComponent : MonoBehaviour
                 break;
 
             case LogicType.SuperCar:
-                
+                currentVehicleLogic = new SuperCar(rb, engineData, wheels);
                 break;
         }
     }

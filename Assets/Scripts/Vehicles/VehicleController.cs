@@ -52,6 +52,10 @@ public class VehicleController : MonoBehaviour
                 truck.ApplyInput(throttle, steerInput, brake, dt);
                 if (truck.body != null) currentSpeedMPH = truck.body.linearVelocity.magnitude * 2.23694f;
                 break;
+            case SuperCar superCar:
+                superCar.ApplyInput(throttle, steerInput, brake, dt);
+                if (superCar.body != null) currentSpeedMPH = superCar.body.linearVelocity.magnitude * 2.23694f;
+                break;
         }
     }
 
