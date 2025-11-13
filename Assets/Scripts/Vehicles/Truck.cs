@@ -22,22 +22,20 @@ public class Truck : Vehicle
 
     public override void UpdatePhysics(float deltaTime)
     {
-        foreach (var w in wheels)
-            w.UpdateWheel(deltaTime);
+        foreach (var wheels in wheels)
+            wheels.UpdateWheel(deltaTime);
 
     }
     public void ApplyInput(float throttle, float steerInput, float brake, float dt)
     {
-        if (rb == null || engine == null) return;
-
         float speed = rb.linearVelocity.magnitude;
         float totalDriveForce = engine.GetDriveForce(throttle, speed, dt);
 
         int drivenCount = 0;
         if (wheels != null)
         {
-            foreach (var w in wheels)
-                if (w != null && w.IsDriven)
+            foreach (var wheels in wheels)
+                if (wheels != null && wheels.IsDriven)
                     drivenCount++;
         }
         drivenCount = Mathf.Max(1, drivenCount);
@@ -47,17 +45,17 @@ public class Truck : Vehicle
 
         if (wheels != null)
         {
-            foreach (var w in wheels)
+            foreach (var wheels in wheels)
             {
-                if (w == null) continue;
+                if (wheels == null) continue;
 
-                if (w.IsFrontWheel)
-                    w.SetSteerAngle(steerInput * maxSteerAngle);
+                if (wheels.IsFrontWheel)
+                    wheels.SetSteerAngle(steerInput * maxSteerAngle);
 
-                if (w.IsDriven)
-                    w.ApplyDriveForce(perWheelDrive);
+                if (wheels.IsDriven)
+                    wheels.ApplyDriveForce(perWheelDrive);
 
-                w.ApplyBrake(brake);
+                wheels.ApplyBrake(brake);
             }
         }
 

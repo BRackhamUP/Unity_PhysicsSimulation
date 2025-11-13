@@ -11,6 +11,11 @@ public class Wheel : MonoBehaviour
     private Suspension suspension;
     private Rigidbody vehicleRigidbody;
 
+    [Header("Wheels")]
+    [SerializeField] private Transform WheelMesh;
+    [SerializeField] private float WheelRadius;
+
+
     [Header("Wheel Type")]
     [SerializeField] private bool frontWheel = false;
     [SerializeField] private bool driven = true; // going to turn into an enum for front rear and all wheel drive
@@ -70,7 +75,7 @@ public class Wheel : MonoBehaviour
 
         Vector3 lateralForce = Vector3.zero;
 
-        // get horizontal velcoity and multiply by mass to get a 'force'  (m * g)
+        // get horizontal velcoity and multiply by mass to get a 'force'  (m * g) (need to incorporate my own 'g')
         Vector3 downslope = Vector3.ProjectOnPlane(Physics.gravity, suspension.Normal) * vehicleRigidbody.mass;
 
         // use the dot to determine how much force is on the "side" axis. should be positive if gravity tries to pull the wheel sideways
@@ -114,6 +119,8 @@ public class Wheel : MonoBehaviour
         Debug.DrawRay(suspension.Contact, lateralForce * 0.001f, Color.green);
         Debug.DrawRay(suspension.Contact, rollForce * 0.001f, Color.red);
 
+        WheelMesh.position = suspension.Contact + new Vector3(0, WheelRadius, 0);
+
     }
 
     /// <summary>
@@ -147,14 +154,14 @@ public class Wheel : MonoBehaviour
     {
         if (suspension == null || vehicleRigidbody == null || !suspension.Grounded || brakeInput <= 0f) return;
 
-        Vector3 contactVel = vehicleRigidbody.GetPointVelocity(suspension.Contact);
+        Vector3 contactVelocity = vehicleRigidbody.GetPointVelocity(suspension.Contact);
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, suspension.Normal).normalized;
-        float fwdSpeed = Vector3.Dot(contactVel, forward);
-        if (Mathf.Abs(fwdSpeed) < 0.01f) return;
+        float forwardSpeed   = Vector3.Dot(contactVelocity, forward);
+        if (Mathf.Abs(forwardSpeed) < 0.01f) return;
 
         float desired = Mathf.Clamp01(brakeInput) * maxBrakeForce;
         if (maxBrakeDecelleration > 0f) desired = Mathf.Min(desired, vehicleRigidbody.mass * maxBrakeDecelleration);
-        Vector3 force = -Mathf.Sign(fwdSpeed) * forward * desired;
+        Vector3 force = -Mathf.Sign(forwardSpeed) * forward * desired;
         vehicleRigidbody.AddForceAtPosition(force, suspension.Contact, ForceMode.Force);
     }
 
@@ -163,7 +170,11 @@ public class Wheel : MonoBehaviour
     /// </summary>
     public void SetSteerAngle(float angle)
     {
-        if (!frontWheel) return;
+        if (!frontWheel) 
+            return;
+
         transform.localRotation = Quaternion.Euler(0f, angle, 0f);
+        WheelMesh.localRotation = Quaternion.Euler(0f, angle, 0f);
+
     }
 }

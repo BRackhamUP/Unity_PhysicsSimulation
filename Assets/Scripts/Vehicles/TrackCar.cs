@@ -28,18 +28,18 @@ public class TrackCar : Vehicle
     public override void UpdatePhysics(float dt)
     {
 
-        foreach (var w in wheels)
-            w.UpdateWheel(dt);
+        foreach (var wheels in wheels)
+            wheels.UpdateWheel(dt);
 
 
         if (useDrag && rb != null)
         {
-            Vector3 v = rb.linearVelocity;
-            float speed = v.magnitude;
+            Vector3 velocity = rb.linearVelocity;
+            float speed = velocity.magnitude;
             if (speed > 0.1f)
             {
                 float drag = 0.5f * airDensity * dragCoefficient * frontalArea * speed * speed;
-                rb.AddForce(-v.normalized * drag, ForceMode.Force);
+                rb.AddForce(-velocity.normalized * drag, ForceMode.Force);
             }
         }
     }
@@ -54,8 +54,8 @@ public class TrackCar : Vehicle
         int drivenCount = 0;
         if (wheels != null)
         {
-            foreach (var w in wheels) 
-                if (w != null && w.IsDriven) 
+            foreach (var wheels in wheels) 
+                if (wheels != null && wheels.IsDriven) 
                     drivenCount++;
         }
         drivenCount = Mathf.Max(1, drivenCount);
@@ -65,17 +65,17 @@ public class TrackCar : Vehicle
 
         if (wheels != null)
         {
-            foreach (var w in wheels)
+            foreach (var wheels in wheels)
             {
-                if (w == null) continue;
+                if (wheels == null) continue;
 
-                if (w.IsFrontWheel)
-                    w.SetSteerAngle(steerInput * maxSteerAngle);
+                if (wheels.IsFrontWheel)
+                    wheels.SetSteerAngle(steerInput * maxSteerAngle);
 
-                if (w.IsDriven)
-                    w.ApplyDriveForce(perWheelDrive);
+                if (wheels.IsDriven)
+                    wheels.ApplyDriveForce(perWheelDrive);
 
-                w.ApplyBrake(brake);
+                wheels.ApplyBrake(brake);
             }
         }
 

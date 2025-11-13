@@ -7,6 +7,7 @@ public class Suspension : MonoBehaviour
 {
     [Header("Suspension")]
     [SerializeField] private float restLength = 0.5f;
+    [SerializeField] private float MaxLength = 0.5f;
     [SerializeField] private float springStrength = 20000f;
     [SerializeField] private float damperStrength = 4500f;
     [SerializeField] private LayerMask groundMask;
@@ -31,8 +32,8 @@ public class Suspension : MonoBehaviour
         Load = 0f;
 
         //the length of the ray is bigger then the restlength to detect the ground beyond the restlength of suspension
-        float rayLength = restLength * 1.5f;
-
+        float rayLength = MaxLength;
+        Debug.DrawRay(transform.position, -transform.up * rayLength, Color.red, 0.1f);
         // fire the raycast from the wheels transform position downwards, get info at the raylength and detect groundlayer
         if (Physics.Raycast(transform.position, -transform.up, out RaycastHit hit, rayLength, groundMask))
         {
