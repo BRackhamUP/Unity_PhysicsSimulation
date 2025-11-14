@@ -18,7 +18,7 @@ public class Engine
     }
 
     // Determining the amount of driving force the engine is producing
-    public float GetDriveForce(float throttle, float speed, float dt)
+    public float GetDriveForce(float throttle, float speed)
     {
         float inputThrottle = Mathf.Clamp(throttle, -1f, 1f); // clamp to prevent crzy throttle values
         float total = power * inputThrottle;

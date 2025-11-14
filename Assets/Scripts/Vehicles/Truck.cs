@@ -29,7 +29,7 @@ public class Truck : Vehicle
     public void ApplyInput(float throttle, float steerInput, float brake, float dt)
     {
         float speed = rb.linearVelocity.magnitude;
-        float totalDriveForce = engine.GetDriveForce(throttle, speed, dt);
+        float totalDriveForce = engine.GetDriveForce(throttle, speed);
 
         int drivenCount = 0;
         if (wheels != null)
