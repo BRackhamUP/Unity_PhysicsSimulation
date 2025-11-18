@@ -11,7 +11,10 @@ public class PlayerVehicleInteraction : MonoBehaviour
     public float interactRange = 3f;
 
     [Header("Cinemachine")]
-    public CinemachineCamera virtualCamera; 
+    public CinemachineCamera virtualCamera;
+
+    [Header("UI")]
+    [SerializeField] private Speedometer speedometer;
 
     private PlayerCharacterController playerController;
     private Collider characterCollider;
@@ -78,6 +81,7 @@ public class PlayerVehicleInteraction : MonoBehaviour
 
         attachTarget = resolved;
 
+
         transform.position = attachTarget.TransformPoint(seatOffset);
         transform.rotation = attachTarget.rotation;
 
@@ -100,6 +104,11 @@ public class PlayerVehicleInteraction : MonoBehaviour
         if (characterCollider != null) characterCollider.enabled = false;
 
         vehicleController?.EnterVehicle(vehicle);
+
+        if (speedometer != null)
+        {
+            speedometer.AttachToVehicle(vehicleController);
+        }
     }
 
     private void ExitVehicle()
@@ -121,6 +130,7 @@ public class PlayerVehicleInteraction : MonoBehaviour
 
         SetPlayerVisible(true);
 
+
         if (characterRigidbody != null)
         {
             characterRigidbody.isKinematic = false;
@@ -137,6 +147,11 @@ public class PlayerVehicleInteraction : MonoBehaviour
         if (playerController != null) playerController.enabled = true;
 
         vehicleController?.ExitVehicle();
+
+        if (speedometer != null)
+        {
+            speedometer.Detach();
+        }
 
         nearbyVehicle = null;
         attachTarget = null;
