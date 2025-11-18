@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerCharacterController : MonoBehaviour
 {
@@ -51,18 +52,50 @@ public class PlayerCharacterController : MonoBehaviour
             rb.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         }
 
+    }
+    void OnEnable()
+    {
         // connecting up my input manager .
         // https://docs.unity3d.com/Packages/com.unity.inputsystem@1.8/manual/RespondingToActions.html
-        controls = new PlayerControls();
-        controls.Gameplay.Move.performed += context => moveInput = context.ReadValue<Vector2>();
-        controls.Gameplay.Move.canceled += context => moveInput = Vector2.zero;
-        controls.Gameplay.JumpBrake.performed += context => jumpPressed = true;
-        controls.Gameplay.Sprint.performed += context => sprintPressed = true;
-        controls.Gameplay.Sprint.canceled += context => sprintPressed = false;
-        controls.Gameplay.Ragdoll.performed += context => ToggleRagdoll();
+        controls = InputManager.controls;
+
+        controls.CharacterControls.Move.performed += OnMovePerformed;
+        controls.CharacterControls.Move.canceled += OnMoveCanceled;
+
+        controls.CharacterControls.JumpBrake.performed += OnJumpBrakePerformed;
+
+        controls.CharacterControls.Sprint.performed += OnSprintPerformed;
+        controls.CharacterControls.Sprint.canceled += OnSprintCanceled;
+
+        controls.CharacterControls.Ragdoll.performed += OnRagdollPerformed;
+
+        controls.CharacterControls.Enable();
     }
-    void OnEnable() => controls.Enable();
-    void OnDisable() => controls.Disable();
+    void OnDisable()
+    {
+        if (controls == null) return;
+
+        controls.CharacterControls.Move.performed -= OnMovePerformed;
+        controls.CharacterControls.Move.canceled -= OnMoveCanceled;
+
+        controls.CharacterControls.JumpBrake.performed -= OnJumpBrakePerformed;
+
+        controls.CharacterControls.Sprint.performed -= OnSprintPerformed;
+        controls.CharacterControls.Sprint.canceled -= OnSprintCanceled;
+
+        controls.CharacterControls.Ragdoll.performed -= OnRagdollPerformed;
+
+        controls.CharacterControls.Disable();
+    }
+
+    private void OnMovePerformed(InputAction.CallbackContext ctx) => moveInput = ctx.ReadValue<Vector2>();
+    private void OnMoveCanceled(InputAction.CallbackContext _) => moveInput = Vector2.zero;
+    private void OnJumpBrakePerformed(InputAction.CallbackContext _) => jumpPressed = true;
+    private void OnSprintPerformed(InputAction.CallbackContext _) => sprintPressed = true;
+    private void OnSprintCanceled(InputAction.CallbackContext _) => sprintPressed = false;
+    private void OnRagdollPerformed(InputAction.CallbackContext _) => ToggleRagdoll();
+
+
     void Start()
     {
         // making sure mass matches with inspector
@@ -173,7 +206,7 @@ public class PlayerCharacterController : MonoBehaviour
 
         Vector3 velocityDelta = desiredVelocity - currentVelOnPlane;
 
-        float resp = Mathf.Max(0.0001f, acceleration); 
+        float resp = Mathf.Max(0.0001f, acceleration);
         Vector3 force = velocityDelta * mass * resp;
 
         if (!isGrounded)
@@ -264,7 +297,7 @@ public class PlayerCharacterController : MonoBehaviour
     private void OnDrawGizmos()
     {
         if (rb == null) return;
-        
+
         Vector3 origin = rayOriginTransform != null ? rayOriginTransform.position : rb.position + Vector3.up * 0.5f;
 
         Gizmos.color = Color.yellow;

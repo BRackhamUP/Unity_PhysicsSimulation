@@ -29,7 +29,7 @@ public class PlayerVehicleInteraction : MonoBehaviour
     private Transform originalLookAtTarget;
 
     private Vector3 seatOffset = new Vector3(0f, 1f, 0f);
-    private Vector3 exitOffset = new Vector3(2f, 0.5f, 0f);
+    private Vector3 exitOffset = new Vector3(-2f, 0.5f, 0f);
 
     private Transform attachTarget;
 
@@ -39,13 +39,21 @@ public class PlayerVehicleInteraction : MonoBehaviour
         vehicleController = GetComponent<VehicleController>();
         characterCollider = GetComponent<Collider>();
         characterRigidbody = GetComponent<Rigidbody>();
-
-        controls = new PlayerControls();
-        controls.Gameplay.EnterExitVehicle.performed += _ => TryToggleVehicle();
     }
 
-    private void OnEnable() => controls.Enable();
-    private void OnDisable() => controls.Disable();
+    private void OnEnable()
+    {
+        InputManager.EnterExitPressed += OnEnterExitPressed;
+    }
+
+    private void OnDisable()
+    {
+        InputManager.EnterExitPressed -= OnEnterExitPressed;
+    }
+    private void OnEnterExitPressed()
+    {
+        TryToggleVehicle();
+    }
 
     public void NotifyNearbyVehicle(VehicleComponent vehicle)
     {
@@ -105,6 +113,8 @@ public class PlayerVehicleInteraction : MonoBehaviour
 
         vehicleController?.EnterVehicle(vehicle);
 
+        InputManager.SwitchToVehicle();
+
         if (speedometer != null)
         {
             speedometer.AttachToVehicle(vehicleController);
@@ -147,6 +157,8 @@ public class PlayerVehicleInteraction : MonoBehaviour
         if (playerController != null) playerController.enabled = true;
 
         vehicleController?.ExitVehicle();
+
+        InputManager.SwitchToCharacter();
 
         if (speedometer != null)
         {

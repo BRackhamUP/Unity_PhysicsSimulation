@@ -184,7 +184,7 @@ public class Wheel : MonoBehaviour
     {
         float wheelCircumference = WheelRadius * Mathf.PI * 2;
         float vel = Vector3.Dot(vehicleRigidbody.linearVelocity, transform.forward);
-        Debug.Log(vel);
+
         float RotPerSecond =  vel / wheelCircumference;
         WheelMesh.Rotate(Vector3.right, (RotPerSecond * 360) * Time.fixedDeltaTime);
     }

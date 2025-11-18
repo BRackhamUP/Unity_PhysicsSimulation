@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 /// <summary>
 /// recieivng player input and applys to active vehicle logic
@@ -10,104 +9,91 @@ public class VehicleController : MonoBehaviour
     public VehicleComponent currentVehicle;
     public Vehicle vehicleLogic;
 
-    private PlayerControls controls;
-    private bool controlsInitialized;
-    private bool controlsEnabled;
+    private float rawThrottle;
+    private float rawBrake;
+    private float rawSteer;
 
-    private float throttle;
+    private float smoothedThrottle = 0f;
+
+    [Header("Throttle Smoothing (tweak)")]
+    [Tooltip("How quickly throttle rises (higher = snappier)")]
+    [SerializeField] private float throttleAccelResponse = 4f;
+    [Tooltip("How quickly throttle falls (higher = faster drop)")]
+    [SerializeField] private float throttleDecelResponse = 8f;
+    [Tooltip("Small deadzone to ignore tiny trigger/stick noise")]
+    [SerializeField] private float throttleDeadzone = 0.02f;
+    [Tooltip("If true, pressing brake will zero throttle immediately")]
+    [SerializeField] private bool brakeCutsThrottle = true;
+
     private float brake;
     private float steerInput;
-
     public float currentSpeedMPH;
-
-    private void Awake() => InitializeControls();
-
-    private void OnEnable()
-    {
-        if (!controlsInitialized) InitializeControls();
-        if (!controlsEnabled && controls != null) { controls.Enable(); controlsEnabled = true; }
-    }
-
-    private void OnDisable()
-    {
-        if (controls != null && controlsEnabled) { controls.Disable(); controlsEnabled = false; }
-    }
-
-    private void OnDestroy() => CleanupControls();
 
     private void FixedUpdate()
     {
-        if (vehicleLogic == null) return;
+        var controls = InputManager.controls;
 
-        float dt = Time.fixedDeltaTime;
+        rawThrottle = controls.VehicleControls.Throttle.ReadValue<float>();
+        rawSteer = controls.VehicleControls.Steer.ReadValue<float>();
+        rawBrake = controls.VehicleControls.Brake.ReadValue<float>();
+
+        if (Mathf.Abs(rawThrottle) < throttleDeadzone) rawThrottle = 0f;
+
+        float targetThrottle = rawThrottle;
+        if (brakeCutsThrottle && rawBrake > 0.0001f && targetThrottle > 0f)
+        {
+            targetThrottle = 0f;
+        }
+
+        float deltaTime = Time.fixedDeltaTime;
+
+        float response = (targetThrottle > smoothedThrottle) ? throttleAccelResponse : throttleDecelResponse;
+
+        float alpha = 1f - Mathf.Exp(-response * deltaTime);
+        smoothedThrottle = Mathf.Lerp(smoothedThrottle, targetThrottle, alpha);
+
+        steerInput = Mathf.Abs(rawSteer) < 0.12f ? 0f : rawSteer;
+        brake = (Mathf.Abs(rawBrake) < 0.02f) ? 0f : rawBrake;
 
         switch (vehicleLogic)
         {
             case TrackCar trackCar:
-                trackCar.ApplyInput(throttle, steerInput, brake, dt);
-                if (trackCar.body != null) currentSpeedMPH = trackCar.body.linearVelocity.magnitude * 2.23694f;
+
+                trackCar.ApplyInput(smoothedThrottle, steerInput, brake, deltaTime);
+
+                currentSpeedMPH = trackCar.body.linearVelocity.magnitude * 2.23694f;
+
                 break;
 
             case Truck truck:
-                truck.ApplyInput(throttle, steerInput, brake, dt);
-                if (truck.body != null) currentSpeedMPH = truck.body.linearVelocity.magnitude * 2.23694f;
+
+                truck.ApplyInput(smoothedThrottle, steerInput, brake, deltaTime);
+
+                currentSpeedMPH = truck.body.linearVelocity.magnitude * 2.23694f;
+
+
                 break;
+
             case SuperCar superCar:
-                superCar.ApplyInput(throttle, steerInput, brake, dt);
-                if (superCar.body != null) currentSpeedMPH = superCar.body.linearVelocity.magnitude * 2.23694f;
+
+                superCar.ApplyInput(smoothedThrottle, steerInput, brake, deltaTime);
+
+                currentSpeedMPH = superCar.body.linearVelocity.magnitude * 2.23694f;
+
                 break;
         }
     }
 
-    private void InitializeControls()
-    {
-        if (controlsInitialized) return;
-
-        controls = new PlayerControls();
-
-        controls.Gameplay.JumpBrake.performed += OnBrakePerformed;
-        controls.Gameplay.JumpBrake.canceled += OnBrakeCanceled;
-        controls.Gameplay.Move.performed += OnMovePerformed;
-        controls.Gameplay.Move.canceled += OnMoveCanceled;
-
-        controlsInitialized = true;
-    }
-
-    private void CleanupControls()
-    {
-        if (!controlsInitialized || controls == null) return;
-
-        controls.Gameplay.JumpBrake.performed -= OnBrakePerformed;
-        controls.Gameplay.JumpBrake.canceled -= OnBrakeCanceled;
-        controls.Gameplay.Move.performed -= OnMovePerformed;
-        controls.Gameplay.Move.canceled -= OnMoveCanceled;
-
-        controls.Dispose();
-        controlsInitialized = false;
-        controlsEnabled = false;
-    }
-
-    private void OnBrakePerformed(InputAction.CallbackContext ctx) => brake = ctx.ReadValue<float>();
-    private void OnBrakeCanceled(InputAction.CallbackContext _) => brake = 0f;
-
-    private void OnMovePerformed(InputAction.CallbackContext ctx)
-    {
-        Vector2 input = ctx.ReadValue<Vector2>();
-        throttle = Mathf.Clamp(input.y, -1f, 1f);
-        steerInput = input.x;
-    }
-    private void OnMoveCanceled(InputAction.CallbackContext _) { throttle = 0f; steerInput = 0f; }
-
     public void EnterVehicle(VehicleComponent newVehicle)
     {
         currentVehicle = newVehicle;
-        vehicleLogic = newVehicle?.currentVehicleLogic;
+        vehicleLogic = newVehicle.currentVehicleLogic;
     }
 
     public void ExitVehicle()
     {
         currentVehicle = null;
         vehicleLogic = null;
-        throttle = steerInput = brake = 0f;
+        rawThrottle = rawSteer = rawBrake = smoothedThrottle = 0;
     }
 }

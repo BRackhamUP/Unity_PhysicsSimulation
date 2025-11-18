@@ -1,5 +1,6 @@
-using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using Unity.Cinemachine;
 
 public class CameraController : MonoBehaviour
 {
@@ -7,43 +8,40 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float[] zoomLevels = { 5f, 6f, 8f };
     private int currentZoomIndex = 0;
 
-    private PlayerControls controls;
     private CinemachineOrbitalFollow orbital;
     private float zoomLerpSpeed = 5f;
     private float targetZoom;
 
     private void Awake()
     {
-        controls = new PlayerControls();
-        controls.CameraControls.ZoomToggle.performed += _ => CycleZoom();
-
+        orbital = GetComponent<CinemachineOrbitalFollow>();
+        targetZoom = orbital != null ? orbital.Radius : 5f;
     }
 
-    private void OnEnable() => controls.Enable();
-    private void OnDisable() => controls.Disable();
-
-    void Start()
+    private void OnEnable()
     {
-        orbital = GetComponent<CinemachineOrbitalFollow>();
-        targetZoom = orbital.Radius;
+        InputManager.controls.CameraControls.ZoomToggle.performed += OnZoomTogglePerformed;
+        InputManager.controls.CameraControls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        if (InputManager.controls == null) return;
+        InputManager.controls.CameraControls.ZoomToggle.performed -= OnZoomTogglePerformed;
+        InputManager.controls.CameraControls.Disable();
     }
 
     private void Update()
     {
         if (orbital != null)
-        {
             orbital.Radius = Mathf.Lerp(orbital.Radius, targetZoom, Time.deltaTime * zoomLerpSpeed);
-        }
     }
 
-    private void CycleZoom()
+    private void OnZoomTogglePerformed(InputAction.CallbackContext _)
     {
-        currentZoomIndex ++;
-        if (currentZoomIndex >= zoomLevels.Length)
-        {
-            currentZoomIndex = 0;
-        }
-
+        currentZoomIndex++;
+        if (currentZoomIndex >= zoomLevels.Length) currentZoomIndex = 0;
         targetZoom = zoomLevels[currentZoomIndex];
     }
 }
+

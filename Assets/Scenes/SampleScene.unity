@@ -1605,6 +1605,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentVehicle: {fileID: 0}
+  throttleAccelResponse: 3
+  throttleDecelResponse: 8
+  throttleDeadzone: 0.02
+  brakeCutsThrottle: 0
   currentSpeedMPH: 0
 --- !u!114 &434302003
 MonoBehaviour:
@@ -2783,6 +2787,50 @@ CapsuleCollider:
   m_Height: 0.43490225
   m_Direction: 1
   m_Center: {x: -0.0000000047742925, y: 0.30462387, z: -0.00094205595}
+--- !u!1 &1002315758
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1002315760}
+  - component: {fileID: 1002315759}
+  m_Layer: 0
+  m_Name: InputManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1002315759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1002315758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5835cb27ae02044bb8d840ba213416c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1002315760
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1002315758}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 739.57513, y: 248.38013, z: 875.515}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1031809456 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1645783442784081785, guid: 7966d979d9982a743a30e3b75a402b94, type: 3}
@@ -3078,15 +3126,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 584581468013830867, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: engineData.power
-      value: 400000
+      value: 20000
       objectReference: {fileID: 0}
     - target: {fileID: 584581468013830867, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: engineData.topSpeed
-      value: 98.3488
+      value: 89.408
       objectReference: {fileID: 0}
     - target: {fileID: 584581468013830867, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: engineData.topSpeedMPH
-      value: 220
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 656646631640303267, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: m_ImplicitCom
@@ -5876,10 +5924,11 @@ SceneRoots:
   - {fileID: 723851978}
   - {fileID: 410087041}
   - {fileID: 832575519}
+  - {fileID: 1711746408}
+  - {fileID: 1002315760}
+  - {fileID: 828518160}
   - {fileID: 78418024}
   - {fileID: 15858005}
   - {fileID: 8462157425376112345}
   - {fileID: 1280568607}
   - {fileID: 1092872517}
-  - {fileID: 828518160}
-  - {fileID: 1711746408}
