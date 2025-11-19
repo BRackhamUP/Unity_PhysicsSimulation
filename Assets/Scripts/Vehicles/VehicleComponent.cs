@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// handles vehicle insances and passes tuning values into them
+/// handles vehicle instances and passes tuning values into them
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class VehicleComponent : MonoBehaviour
@@ -15,47 +15,50 @@ public class VehicleComponent : MonoBehaviour
     [Header("Wheels")]
     public List<Wheel> wheels = new List<Wheel>();
 
-    [Header("Dynamics")]
-    public bool useDrag = true;
-    public float dragCoefficient = 0.32f;
-    public float frontalArea = 2.2f;
+    [Header("Reverse speed clamp")]
+    [Tooltip("Maximum allowed reverse speed")]
+    public float maxReverseSpeed = 5f;
 
+    [Header("Logic")]
     public LogicType vehicleLogicType = LogicType.TrackCar;
 
-    public Vehicle currentVehicleLogic { get; private set; }
+    public Vehicle CurrentVehicleLogic
+    {
+        get; private set;
+    }
+
+    private Rigidbody rb;
 
     public Transform AttachTransform
     {
         get
         {
-            var rb = GetComponent<Rigidbody>();
-            return rb != null ? rb.transform : transform;
+            var rigidbody = GetComponent<Rigidbody>();
+            return rigidbody != null ? rigidbody.transform : transform;
         }
     }
 
     private void Awake()
     {
+        rb = GetComponent<Rigidbody>();
+
         if (wheels == null || wheels.Count == 0) wheels = new List<Wheel>(GetComponentsInChildren<Wheel>());
         if (engineData != null) engineData.ApplyInspectorUnits();
-
-        var rb = GetComponent<Rigidbody>();
 
         switch (vehicleLogicType)
         {
             case LogicType.TrackCar:
-                var t = new TrackCar(rb, engineData, wheels);
-                t.useDrag = useDrag;
-                t.dragCoefficient = dragCoefficient;
-                t.frontalArea = frontalArea;
-                currentVehicleLogic = t;
+                var vehicleType = new TrackCar(rb, engineData, wheels);
+
+                CurrentVehicleLogic = vehicleType;
                 break;
 
             case LogicType.Truck:
-                currentVehicleLogic = new Truck(rb, engineData, wheels);
+                CurrentVehicleLogic = new Truck(rb, engineData, wheels);
                 break;
 
             case LogicType.SuperCar:
-                currentVehicleLogic = new SuperCar(rb, engineData, wheels);
+                CurrentVehicleLogic = new SuperCar(rb, engineData, wheels);
                 break;
         }
     }
@@ -63,17 +66,26 @@ public class VehicleComponent : MonoBehaviour
     private void OnValidate()
     {
         if (engineData != null) engineData.ApplyInspectorUnits();
-        if (currentVehicleLogic is TrackCar tc)
-        {
-            tc.useDrag = useDrag;
-            tc.dragCoefficient = dragCoefficient;
-            tc.frontalArea = frontalArea;
-        }
     }
 
     private void FixedUpdate()
     {
-        currentVehicleLogic?.UpdatePhysics(Time.fixedDeltaTime);
+        float deltaTime = Time.fixedDeltaTime;
+
+        CurrentVehicleLogic?.UpdatePhysics(deltaTime);
+
+        if (rb != null && maxReverseSpeed >= 0f)
+            ClampReverseSpeed(rb, maxReverseSpeed);
+    }
+
+    private void ClampReverseSpeed(Rigidbody rigidbody, float maxReverse)
+    {
+        float forwardVel = Vector3.Dot(rigidbody.linearVelocity, transform.forward);
+
+        if (forwardVel < -maxReverse)
+        {
+            Vector3 lateral = rigidbody.linearVelocity - transform.forward * forwardVel;
+            rigidbody.linearVelocity = transform.forward * (-maxReverse) + lateral;
+        }
     }
 }
-

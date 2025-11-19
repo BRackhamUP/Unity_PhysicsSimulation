@@ -87,7 +87,7 @@ public class VehicleController : MonoBehaviour
     public void EnterVehicle(VehicleComponent newVehicle)
     {
         currentVehicle = newVehicle;
-        vehicleLogic = newVehicle.currentVehicleLogic;
+        vehicleLogic = newVehicle.CurrentVehicleLogic;
     }
 
     public void ExitVehicle()
