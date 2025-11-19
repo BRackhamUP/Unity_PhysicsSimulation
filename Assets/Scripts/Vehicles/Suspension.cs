@@ -23,6 +23,8 @@ public class Suspension : MonoBehaviour
     // last length of the raycast to determine the damper velocity
     private float lastLength;
 
+    public SurfaceProperties CurrentSurface { get; private set; }
+
     /// <summary>
     /// updating the suspension for 'this' wheel. happens for all instances of wheel on vehicle
     /// </summary>
@@ -40,6 +42,8 @@ public class Suspension : MonoBehaviour
             Grounded = true;
             Contact = hit.point;
             Normal = hit.normal;
+
+            CurrentSurface = hit.collider.GetComponentInParent<SurfaceProperties>();
 
             // distance from the transform to the contact point. current length of the suspension
             float length = hit.distance;
@@ -71,6 +75,8 @@ public class Suspension : MonoBehaviour
         {
             // no ground contact returns the suspension length to restlength
             lastLength = restLength;
+
+            CurrentSurface = null;
         }
     }
 }

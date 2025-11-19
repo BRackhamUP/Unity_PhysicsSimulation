@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+// adding skid mark effects adapted from this tutorial - https://www.youtube.com/watch?v=0LOcxZhkVwc&t=188s
 public class CarEffects : MonoBehaviour
 {
     public TrailRenderer[] tireMarks;

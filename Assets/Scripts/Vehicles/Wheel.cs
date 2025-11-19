@@ -39,9 +39,6 @@ public class Wheel : MonoBehaviour
     [Tooltip("How quickly the wheel brakes")]
     [SerializeField] private float brakeSmooth = 8f;
 
-    [Header("Debug")]
-    [SerializeField] private bool showDebug = false;
-
     private float currentBrake = 0f;
     public float SidewaysSlip { get; private set; }
     public bool IsGrounded { get; private set; }
@@ -84,9 +81,22 @@ public class Wheel : MonoBehaviour
 
         SidewaysSlip = Mathf.Abs(sideSpeed);
 
-
         // use spring force as the load on the wheels, more load for more grip
         float normalForce = Mathf.Max(0f, suspension.Load);
+
+
+        SurfaceProperties surface = suspension.CurrentSurface;
+        float effectiveGrip = grip;
+        float effectiveGripAtStop = gripAtStop;
+        float effectiveSlideResistance = slideResistance;
+
+        if (surface != null)
+        {
+            effectiveGrip *= surface.gripMultiplier;
+            effectiveGripAtStop *= surface.gripAtStopMultiplier;
+            effectiveSlideResistance *= surface.slideResistanceMultiplier;
+        }
+
 
         Vector3 lateralForce;
 
@@ -100,12 +110,12 @@ public class Wheel : MonoBehaviour
             // how much gravity is trying to pull the vehicle
             float needed = -downslopeSideways;
             // max hold force the tire has when nearly stopped
-            float maxHold = gripAtStop * normalForce;
+            float maxHold = effectiveGripAtStop * normalForce;
             // apply the amount but clamp to prevent exceeding tire grip
             float appliedHold = Mathf.Clamp(needed * 0.98f, -maxHold, maxHold);
 
             // apply the lateral force (experiencing some bugs where the holding force can pull the vehicle up a slope sideways dependant on it resistance)
-            appliedHold += -sideSpeed * slideResistance;
+            appliedHold += -sideSpeed * effectiveSlideResistance;
             lateralForce = right * appliedHold;
 
 
@@ -113,8 +123,8 @@ public class Wheel : MonoBehaviour
         else
         {
             // determine a resisting force opposite to sideways movement using sideways velocity
-            float resist = -slideResistance * sideSpeed;
-            float maxResist = grip * normalForce;
+            float resist = -effectiveSlideResistance * sideSpeed;
+            float maxResist = effectiveGrip * normalForce;
 
             // clamped by the tire max grip, for drifting and cornering tuning
             resist = Mathf.Clamp(resist, -maxResist, maxResist);
@@ -135,12 +145,10 @@ public class Wheel : MonoBehaviour
         vehicleRigidbody.AddForceAtPosition(lateralForce, suspension.Contact, ForceMode.Force);
         vehicleRigidbody.AddForceAtPosition(rollForce, suspension.Contact, ForceMode.Force);
 
-        if (showDebug == true)
-        {
-            Debug.DrawRay(suspension.Contact, lateralForce * 0.001f, Color.green);
-            Debug.DrawRay(suspension.Contact, rollForce * 0.001f, Color.red);
-            Debug.DrawRay(suspension.Contact, suspension.Normal * 0.2f, Color.blue);
-        }
+        Debug.DrawRay(suspension.Contact, lateralForce * 0.001f, Color.green);
+        Debug.DrawRay(suspension.Contact, rollForce * 0.001f, Color.red);
+        Debug.DrawRay(suspension.Contact, suspension.Normal * 0.2f, Color.blue);
+
 
         // determine the visual wheel mesh position to sit on the gorund at the suspensino contact and add the radius, update visual
         WheelMesh.position = suspension.Contact + new Vector3(0, WheelRadius, 0);

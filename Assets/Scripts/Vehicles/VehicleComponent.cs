@@ -7,7 +7,12 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class VehicleComponent : MonoBehaviour
 {
-    public enum LogicType { TrackCar, Truck, SuperCar }
+    public enum LogicType 
+    { 
+        TrackCar, 
+        Truck, 
+        SuperCar 
+    }
 
     [Header("Engine")]
     public Engine engineData = new Engine();
