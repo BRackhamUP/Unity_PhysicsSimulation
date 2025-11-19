@@ -12,30 +12,38 @@ public class Wheel : MonoBehaviour
     private Rigidbody vehicleRigidbody;
 
     [Header("Wheels")]
+    [Tooltip("Assign the wheel mesh and determine the radius, for visual wheel spin")]
     [SerializeField] private Transform WheelMesh;
     [SerializeField] private float WheelRadius;
 
-
     [Header("Wheel Type")]
+    [Tooltip("Boolean for wheel porpertys like if it is front wheel or driveable")]
     [SerializeField] private bool frontWheel = false;
-    [SerializeField] private bool driven = true; // going to turn into an enum for front rear and all wheel drive
+    [SerializeField] private bool driven = true;
 
     [Header("Grip")]
-    [SerializeField][Range(0, 1)] private float grip = 0.8f;                
-    [SerializeField][Range(0, 1)] private float gripAtStop = 0.9f;
-    [SerializeField] private float slideResistance = 3000f;         //N per m/s  converting sideways speed into resisting force
-    [SerializeField] private float slowDownResistance = 0.015f;     // rolling resistance coefficient
+    [Tooltip("Grip whilst sliding, lower is easier to slide, higher is more traction")]
+    [SerializeField][Range(0f, 1f)] private float grip = 0.8f;
+    [Tooltip("Grip when vehicle is stopped, to prevent sliding sideways")]
+    [SerializeField][Range(0f, 1f)] private float gripAtStop = 0.9f;
+    [Tooltip("Resisting sideways motion, higher values will give better cornering")]
+    [SerializeField] private float slideResistance = 3000f;
+    [Tooltip("A rolling resistance coefficient to slow down vehicle when no throttle is being applied")]
+    [SerializeField] private float slowDownResistance = 0.015f;
 
-    // going to be changed
-    [Header("Brakes & engine")]
-    [SerializeField] private float maxBrakeForce = 15000f;          // N
-    [SerializeField] private float maxBrakeDecelleration = 9f;      // m/s^2
+    [Header("Brakes")]
+    [Tooltip("Brake force wheels apply, higher is stronger braking (per-wheel)")]
+    [SerializeField] private float maxBrakeForce = 5000f;
+    [Tooltip("Maximum deceleration (m/s^2) requested when brakeInput = 1")]
+    [SerializeField] private float maxBrakeDecelleration = 9f;
+    [Tooltip("If contact forward speed is below this (m/s) we remove forward velocity gently to avoid jolt")]
+    [SerializeField] private float lowSpeedThreshold = 0.3f;
 
-    [SerializeField] private float almostStoppedSideSpeed = 0.05f;          // the speed in m/s to be considered not moving
-    [SerializeField][Range(0.8f, 1f)] private float holdReduction = 0.98f;  // 
+    private int wheelCountCached = 4;
 
+    [Header("Debug")]
+    [SerializeField] private bool showDebug = false;
 
-    // public accessible properites other scripts need to access
     public bool IsFrontWheel => frontWheel;
     public bool IsDriven => driven;
 
@@ -53,11 +61,11 @@ public class Wheel : MonoBehaviour
         suspension.UpdateSuspension(deltaTime, vehicleRigidbody);
 
         // if car is in the air, no need to update wheels
-        if (!suspension.Grounded) 
+        if (!suspension.Grounded)
             return;
 
         // retrieve the velocity at each tires contact point
-        Vector3 velocity = vehicleRigidbody.GetPointVelocity(suspension.Contact);
+        Vector3 contactVelocity = vehicleRigidbody.GetPointVelocity(suspension.Contact);
 
         // project the normalised vector for forward and sideways(right) on to the plane to make the wheel local axis stay flat on the roaf surface
         // originally discovered for third-person char, but made more sense here to incorporate for vehicles traversing hills and over bumps
@@ -66,11 +74,11 @@ public class Wheel : MonoBehaviour
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, suspension.Normal).normalized;
         Vector3 right = Vector3.ProjectOnPlane(transform.right, suspension.Normal).normalized;
 
-        // determine how much velocity is sideways or forward
-        float sideSpeed = Vector3.Dot(velocity, right);
-        float forwardSpeed = Vector3.Dot(velocity, forward);
+        // determine how much velocity is sideways or forward to calculate grip and rolling resistance
+        float sideSpeed = Vector3.Dot(contactVelocity, right);
+        float forwardSpeed = Vector3.Dot(contactVelocity, forward);
 
-        // use spring force as the load on the wheels
+        // use spring force as the load on the wheels, more load for more grip
         float normalForce = Mathf.Max(0f, suspension.Load);
 
         Vector3 lateralForce = Vector3.zero;
@@ -82,13 +90,16 @@ public class Wheel : MonoBehaviour
         float downslopeSideways = Vector3.Dot(downslope, right);
 
         // calculate how much sidewasys force is needed to counteract gravity on a slope
-        if (Mathf.Abs(sideSpeed) <= almostStoppedSideSpeed)
+        if (Mathf.Abs(sideSpeed) <= lowSpeedThreshold)
         {
+            // how much gravity is trying to pull the vehicle
             float needed = -downslopeSideways;
+            // max hold force the tire has when nearly stopped
             float maxHold = gripAtStop * normalForce;
-            float appliedHold = Mathf.Clamp(needed * holdReduction, -maxHold, maxHold);
+            // apply the amount but clamp to prevent exceeding tire grip
+            float appliedHold = Mathf.Clamp(needed * 0.98f, -maxHold, maxHold);
 
-            // apply the holding force (experiencing some bugs where the holding force can pull the vehicle up a slope sideways)
+            // apply the lateral force (experiencing some bugs where the holding force can pull the vehicle up a slope sideways dependant on it resistance)
             appliedHold += -sideSpeed * slideResistance;
             lateralForce = right * appliedHold;
         }
@@ -97,14 +108,14 @@ public class Wheel : MonoBehaviour
             // determine a resisting force opposite to sideways movement using sideways velocity
             float resist = -slideResistance * sideSpeed;
             float maxResist = grip * normalForce;
-            
+
             // clamped by the tire max grip, for drifting and cornering tuning
             resist = Mathf.Clamp(resist, -maxResist, maxResist);
             lateralForce = right * resist;
         }
 
         Vector3 rollForce = Vector3.zero;
-        
+
         // apply a force in the opposite direction of the wheels forward to simulate rolling resistance
         // bringing the vehicle to a stop instead of drifitng off
         if (Mathf.Abs(forwardSpeed) > 0.01f)
@@ -113,15 +124,20 @@ public class Wheel : MonoBehaviour
             rollForce = forward * force;
         }
 
+        // apply the force at the contact point of each wheel 
         vehicleRigidbody.AddForceAtPosition(lateralForce, suspension.Contact, ForceMode.Force);
         vehicleRigidbody.AddForceAtPosition(rollForce, suspension.Contact, ForceMode.Force);
 
-        Debug.DrawRay(suspension.Contact, lateralForce * 0.001f, Color.green);
-        Debug.DrawRay(suspension.Contact, rollForce * 0.001f, Color.red);
+        if (showDebug == true)
+        {
+            Debug.DrawRay(suspension.Contact, lateralForce * 0.001f, Color.green);
+            Debug.DrawRay(suspension.Contact, rollForce * 0.001f, Color.red);
+            Debug.DrawRay(suspension.Contact, suspension.Normal * 0.2f, Color.blue);
+        }
 
+        // determine the visual wheel mesh position to sit on the gorund at the suspensino contact and add the radius, update visual
         WheelMesh.position = suspension.Contact + new Vector3(0, WheelRadius, 0);
         RotateWheelMesh();
-
     }
 
     /// <summary>
@@ -132,60 +148,68 @@ public class Wheel : MonoBehaviour
     public void ApplyDriveForce(float driveForce)
     {
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, suspension.Normal).normalized;
-        
+
         // grip multiplied by the normal spring force to determine the limit
         float limit = grip * Mathf.Max(0f, suspension.Load);
 
         // traction is determined by clamping driveForce so it never exceeds the tires grip limit
         float applied = Mathf.Clamp(driveForce, -limit, limit);
-        
+
         vehicleRigidbody.AddForceAtPosition(forward * applied, suspension.Contact, ForceMode.Force);
     }
 
-
-
-
-
-
-
-    /// <summary>
-    /// Simple brake that will defo be changed in fututre
-    /// </summary>
     public void ApplyBrake(float brakeInput)
     {
-        if (suspension == null || vehicleRigidbody == null || !suspension.Grounded || brakeInput <= 0f) return;
+        if (!suspension.Grounded || brakeInput <= 0f) return;
 
-        Vector3 contactVelocity = vehicleRigidbody.GetPointVelocity(suspension.Contact);
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, suspension.Normal).normalized;
-        float forwardSpeed   = Vector3.Dot(contactVelocity, forward);
-        if (Mathf.Abs(forwardSpeed) < 0.01f) return;
+        Vector3 contactVelocity = vehicleRigidbody.GetPointVelocity(suspension.Contact);
+        float forwardSpeed = Vector3.Dot(contactVelocity, forward);
+        float absForwardSpeed = Mathf.Abs(forwardSpeed);
 
-        float desired = Mathf.Clamp01(brakeInput) * maxBrakeForce;
-        if (maxBrakeDecelleration > 0f) desired = Mathf.Min(desired, vehicleRigidbody.mass * maxBrakeDecelleration);
-        Vector3 force = -Mathf.Sign(forwardSpeed) * forward * desired;
+        if (absForwardSpeed < lowSpeedThreshold)
+        {
+            Vector3 worldVel = vehicleRigidbody.linearVelocity;
+            float worldForwardVel = Vector3.Dot(worldVel, forward);
+            float removeFraction = Mathf.Clamp01(brakeInput) * 0.9f;
+            float perWheelRemove = removeFraction / Mathf.Max(1, wheelCountCached);
+            Vector3 newVel = worldVel - forward * worldForwardVel * perWheelRemove;
+            vehicleRigidbody.linearVelocity = newVel;
+            return;
+        }
+
+        float desiredDecel = Mathf.Clamp01(brakeInput) * maxBrakeDecelleration;
+        float totalBrakeForce = vehicleRigidbody.mass * desiredDecel;
+
+        int wheels = Mathf.Max(1, wheelCountCached);
+        float perWheelForce = totalBrakeForce / wheels;
+        perWheelForce = Mathf.Min(perWheelForce, maxBrakeForce);
+
+        Vector3 force = -Mathf.Sign(forwardSpeed) * forward * perWheelForce;
         vehicleRigidbody.AddForceAtPosition(force, suspension.Contact, ForceMode.Force);
     }
+
 
     /// <summary>
     ///  simple steering that will defo be changed in future
     /// </summary>
     public void SetSteerAngle(float angle)
     {
-        if (!frontWheel) 
+        if (!frontWheel)
             return;
 
         transform.localRotation = Quaternion.Euler(0f, angle, 0f);
-       // WheelMesh.localRotation = Quaternion.Euler(WheelMesh.localRotation.x, angle, WheelMesh.localRotation.x);
-        //WheelMesh.Rotate(Vector3.up, (angle) * Time.fixedDeltaTime);
-
     }
 
+    /// <summary>
+    /// Converting the forward velocity to the wheel spin, speed / circumferance . rotations per second, then apply the roations
+    /// </summary>
     public void RotateWheelMesh()
     {
         float wheelCircumference = WheelRadius * Mathf.PI * 2;
-        float vel = Vector3.Dot(vehicleRigidbody.linearVelocity, transform.forward);
+        float velocity = Vector3.Dot(vehicleRigidbody.linearVelocity, transform.forward);
 
-        float RotPerSecond =  vel / wheelCircumference;
+        float RotPerSecond = velocity / wheelCircumference;
         WheelMesh.Rotate(Vector3.right, (RotPerSecond * 360) * Time.fixedDeltaTime);
     }
 }
