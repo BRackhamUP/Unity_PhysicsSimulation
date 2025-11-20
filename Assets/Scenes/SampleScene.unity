@@ -1540,7 +1540,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1419854, y: 0.00546358, z: -0.00078370055, w: 0.9898534}
+  m_LocalRotation: {x: 0.14198516, y: 0.005774077, z: -0.0008282385, w: 0.9898516}
   m_LocalPosition: {x: 160.9, y: 4.8861275, z: 144.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1787,7 +1787,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 10000
+  m_Time: 100
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -1797,7 +1797,7 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.24324226
+        value: 0.19778633
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -2275,7 +2275,7 @@ MonoBehaviour:
   freezeXZRotation: 1
   acceleration: 50
   airControl: 0.1
-  groundCheckDistance: 0.5
+  groundCheckDistance: 1.2
   maxGroundAngle: 50
   slopeSlideMultiplier: 108
   groundFriction: 9
@@ -2676,7 +2676,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 10000
+  m_Time: 100
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -2686,7 +2686,7 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.24324226
+        value: 0.19778633
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -4857,7 +4857,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 10000
+  m_Time: 100
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -4867,7 +4867,7 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.24324226
+        value: 0.19778633
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -5880,7 +5880,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 737071627184234627, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: brakeForce
-      value: 25000
+      value: 20000
       objectReference: {fileID: 0}
     - target: {fileID: 737071627184234627, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: gripAtStop
@@ -6012,7 +6012,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7385373373446006848, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: brakeForce
-      value: 25000
+      value: 20000
       objectReference: {fileID: 0}
     - target: {fileID: 7385373373446006848, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: gripAtStop
@@ -6048,7 +6048,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8514492218837005039, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: brakeForce
-      value: 25000
+      value: 20000
       objectReference: {fileID: 0}
     - target: {fileID: 8514492218837005039, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: gripAtStop
@@ -6096,7 +6096,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8891405586626746146, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: brakeForce
-      value: 25000
+      value: 20000
       objectReference: {fileID: 0}
     - target: {fileID: 8891405586626746146, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: gripAtStop
@@ -6730,7 +6730,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1265117998}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1419854, y: 0.0054635797, z: -0.0007837005, w: 0.9898534}
+  m_LocalRotation: {x: 0.14198515, y: 0.005774077, z: -0.00082823855, w: 0.9898516}
   m_LocalPosition: {x: 160.9, y: 4.8861275, z: 144.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7078,7 +7078,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 10000
+  m_Time: 100
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -7088,7 +7088,7 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.24324226
+        value: 0.19778633
         inSlope: 0
         outSlope: 0
         tangentMode: 0

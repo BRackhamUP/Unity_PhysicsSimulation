@@ -6,8 +6,8 @@ using UnityEngine;
 /// </summary>
 public class SuperCar : Vehicle
 {
-    public float maxSteerAngle = 30f;
-    public float steerTorque = 200f;
+    public float maxSteerAngle = 40f;
+    public float steerTorque = 150f;
 
     private Rigidbody rb;
 
