@@ -23,7 +23,7 @@ public class Wheel : MonoBehaviour
 
     [Header("Grip")]
     [Tooltip("Grip whilst sliding, lower is easier to slide, higher is more traction")]
-    [SerializeField][Range(0f, 1f)] private float grip = 0.8f;
+    [SerializeField][Range(0f, 5f)] private float grip = 0.8f;
     [Tooltip("Grip when vehicle is stopped, to prevent sliding sideways")]
     [SerializeField][Range(0f, 1f)] private float gripAtStop = 0.9f;
     [Tooltip("Resisting sideways motion, higher values will give better cornering")]

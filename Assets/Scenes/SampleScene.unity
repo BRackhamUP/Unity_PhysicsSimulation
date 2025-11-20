@@ -1540,7 +1540,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14198436, y: 0.006700699, z: -0.0009611541, w: 0.98984575}
+  m_LocalRotation: {x: 0.1419854, y: 0.00546358, z: -0.00078370055, w: 0.9898534}
   m_LocalPosition: {x: 160.9, y: 4.8861275, z: 144.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2268,18 +2268,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 70
-  walkSpeed: 3.5
+  walkSpeed: 5
   sprintMultiplier: 1.75
   jumpHeight: 1.2
   rotationSpeedDegrees: 360
   freezeXZRotation: 1
   acceleration: 50
   airControl: 0.1
-  groundCheckDistance: 1.2
+  groundCheckDistance: 0.5
   maxGroundAngle: 50
-  slopeSlideMultiplier: 100
-  groundFriction: 8
-  stopThreshold: 0.05
+  slopeSlideMultiplier: 108
+  groundFriction: 9
+  stopThreshold: 1
   rayOriginTransform: {fileID: 1544269970}
   animator: {fileID: 434302000}
 --- !u!54 &434301995
@@ -5844,15 +5844,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 584581468013830867, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: engineData.power
-      value: 20000
+      value: 60000
       objectReference: {fileID: 0}
     - target: {fileID: 584581468013830867, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: engineData.topSpeed
-      value: 80.4672
+      value: 89.408
       objectReference: {fileID: 0}
     - target: {fileID: 584581468013830867, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: engineData.topSpeedMPH
-      value: 180
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 656646631640303267, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
+      propertyPath: m_Mass
+      value: 1600
       objectReference: {fileID: 0}
     - target: {fileID: 656646631640303267, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: m_ImplicitCom
@@ -5868,15 +5872,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 737071627184234627, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: grip
-      value: 0.98
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 737071627184234627, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: driven
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 737071627184234627, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
+      propertyPath: brakeForce
+      value: 25000
+      objectReference: {fileID: 0}
+    - target: {fileID: 737071627184234627, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: gripAtStop
-      value: 0.99
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 737071627184234627, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: WheelRadius
@@ -5892,7 +5900,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 737071627184234627, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: slideResistance
-      value: 15000
+      value: 30000
       objectReference: {fileID: 0}
     - target: {fileID: 737071627184234627, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: lowSpeedThreshold
@@ -5908,19 +5916,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 778616359276176682, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: MaxLength
-      value: 0.8
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 778616359276176682, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: restLength
-      value: 0.76
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 1843512864695702923, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: MaxLength
-      value: 0.8
+      value: 0.51
       objectReference: {fileID: 0}
     - target: {fileID: 1843512864695702923, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: restLength
-      value: 0.55
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4323684821882967411, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5992,23 +6000,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6571326368243280762, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: MaxLength
-      value: 0.8
+      value: 0.51
       objectReference: {fileID: 0}
     - target: {fileID: 6571326368243280762, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: restLength
-      value: 0.55
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7385373373446006848, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: grip
-      value: 0.95
+      value: 0.9
       objectReference: {fileID: 0}
     - target: {fileID: 7385373373446006848, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: brakeForce
-      value: 10000
+      value: 25000
       objectReference: {fileID: 0}
     - target: {fileID: 7385373373446006848, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: gripAtStop
-      value: 0.98
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7385373373446006848, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: WheelRadius
@@ -6020,7 +6028,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7385373373446006848, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: slideResistance
-      value: 4000
+      value: 18000
       objectReference: {fileID: 0}
     - target: {fileID: 7385373373446006848, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: lowSpeedThreshold
@@ -6036,15 +6044,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8514492218837005039, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: grip
-      value: 0.95
+      value: 0.9
       objectReference: {fileID: 0}
     - target: {fileID: 8514492218837005039, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: brakeForce
-      value: 10000
+      value: 25000
       objectReference: {fileID: 0}
     - target: {fileID: 8514492218837005039, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: gripAtStop
-      value: 0.98
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8514492218837005039, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: WheelRadius
@@ -6056,7 +6064,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8514492218837005039, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: slideResistance
-      value: 4000
+      value: 18000
       objectReference: {fileID: 0}
     - target: {fileID: 8514492218837005039, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: lowSpeedThreshold
@@ -6072,23 +6080,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8647869140106528871, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: MaxLength
-      value: 0.8
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 8647869140106528871, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: restLength
-      value: 0.76
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 8891405586626746146, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: grip
-      value: 0.98
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8891405586626746146, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: driven
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8891405586626746146, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
+      propertyPath: brakeForce
+      value: 25000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8891405586626746146, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: gripAtStop
-      value: 0.99
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8891405586626746146, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: WheelRadius
@@ -6104,7 +6116,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8891405586626746146, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: slideResistance
-      value: 15000
+      value: 30000
       objectReference: {fileID: 0}
     - target: {fileID: 8891405586626746146, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       propertyPath: lowSpeedThreshold
@@ -6718,7 +6730,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1265117998}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14198431, y: 0.0067006983, z: -0.0009611539, w: 0.9898458}
+  m_LocalRotation: {x: 0.1419854, y: 0.0054635797, z: -0.0007837005, w: 0.9898534}
   m_LocalPosition: {x: 160.9, y: 4.8861275, z: 144.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6825,9 +6837,33 @@ PrefabInstance:
       propertyPath: maxBrakeDecelleration
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 2864245078327487487, guid: df6c86827674c1946a787b868ae525a7, type: 3}
+      propertyPath: damperStrength
+      value: 3000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2864245078327487487, guid: df6c86827674c1946a787b868ae525a7, type: 3}
+      propertyPath: springStrength
+      value: 35000
+      objectReference: {fileID: 0}
     - target: {fileID: 3853574561175487986, guid: df6c86827674c1946a787b868ae525a7, type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4461270157967473647, guid: df6c86827674c1946a787b868ae525a7, type: 3}
+      propertyPath: damperStrength
+      value: 3000
+      objectReference: {fileID: 0}
+    - target: {fileID: 4461270157967473647, guid: df6c86827674c1946a787b868ae525a7, type: 3}
+      propertyPath: springStrength
+      value: 35000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5478754720316921680, guid: df6c86827674c1946a787b868ae525a7, type: 3}
+      propertyPath: damperStrength
+      value: 3000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5478754720316921680, guid: df6c86827674c1946a787b868ae525a7, type: 3}
+      propertyPath: springStrength
+      value: 35000
       objectReference: {fileID: 0}
     - target: {fileID: 6541608211961582066, guid: df6c86827674c1946a787b868ae525a7, type: 3}
       propertyPath: grip
@@ -6856,6 +6892,14 @@ PrefabInstance:
     - target: {fileID: 8148068137017190917, guid: df6c86827674c1946a787b868ae525a7, type: 3}
       propertyPath: m_Name
       value: Truck
+      objectReference: {fileID: 0}
+    - target: {fileID: 8531588747231911285, guid: df6c86827674c1946a787b868ae525a7, type: 3}
+      propertyPath: damperStrength
+      value: 3000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8531588747231911285, guid: df6c86827674c1946a787b868ae525a7, type: 3}
+      propertyPath: springStrength
+      value: 35000
       objectReference: {fileID: 0}
     - target: {fileID: 8575563255014894511, guid: df6c86827674c1946a787b868ae525a7, type: 3}
       propertyPath: grip

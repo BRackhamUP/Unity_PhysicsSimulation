@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Cinemachine;
 
+/// <summary>
+/// NEED To reference the cinemachine tutorial i used...
+/// </summary>
 public class CameraController : MonoBehaviour
 {
     [Header("Zoom Presets")]
