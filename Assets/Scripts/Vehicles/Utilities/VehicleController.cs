@@ -33,18 +33,42 @@ public class VehicleController : MonoBehaviour
     {
         var controls = InputManager.controls;
 
-        if (vehicleLogic is Truck && currentVehicle != null)
+        if (vehicleLogic is Truck)
         {
             var cargo = currentVehicle.GetComponent<TruckCargo>();
             if (cargo != null)
             {
                 if (controls.VehicleControls.TruckPickUp.triggered)
+                {
                     cargo.PickUpRock();
+                }
 
                 if (controls.VehicleControls.TruckDrop.triggered)
+                {
                     cargo.DropRock();
+                }
             }
-        }    
+        }
+
+        if (vehicleLogic is SuperCar)
+        {
+            var activeNitro = currentVehicle.GetComponent<Nitro>();
+            if (activeNitro != null)
+            {
+                if (controls.VehicleControls.Special.triggered)
+                {
+                    activeNitro.boosting = true;
+                    activeNitro.ApplyBoost();
+                    Debug.Log("being called at all?");
+                }
+
+                if (activeNitro.nitro < 2)
+                {
+                    activeNitro.boosting = false;
+                }
+
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -112,6 +136,7 @@ public class VehicleController : MonoBehaviour
     {
         currentVehicle = null;
         vehicleLogic = null;
-        rawThrottle = rawSteer = rawBrake = smoothedThrottle = 0;
+        rawThrottle = rawSteer = smoothedThrottle = 0;
+        rawBrake = 1;
     }
 }

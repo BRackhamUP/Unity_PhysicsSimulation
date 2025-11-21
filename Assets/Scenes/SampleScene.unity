@@ -5178,7 +5178,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 100
+  m_Time: 40
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -7111,7 +7111,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 10000
+  m_Time: 40
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -8485,7 +8485,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 100
+  m_Time: 40
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -9717,7 +9717,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 10000
+  m_Time: 40
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -12801,7 +12801,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 10000
+  m_Time: 40
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -13779,7 +13779,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 100
+  m_Time: 40
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -16577,7 +16577,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 10000
+  m_Time: 40
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -17301,6 +17301,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4329248000607156583, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1671156847}
+    - targetCorrespondingSourceObject: {fileID: 4329248000607156583, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1671156857}
   m_SourcePrefab: {fileID: 100100000, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
 --- !u!1001 &1095248121
 PrefabInstance:
@@ -21011,7 +21014,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 100
+  m_Time: 40
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -24472,7 +24475,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 10000
+  m_Time: 40
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -25301,7 +25304,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 10000
+  m_Time: 40
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -26525,6 +26528,29 @@ MonoBehaviour:
   - {fileID: 1053500950}
   - {fileID: 951263218}
   skidThreshold: 10
+--- !u!54 &1671156851 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 656646631640303267, guid: 7fb2474b31ffcf0418ff7e982c991b0b, type: 3}
+  m_PrefabInstance: {fileID: 1092872517}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1671156857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1671156837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db00ee9d65ef9cf4f9aedce24f7881ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vehicleRb: {fileID: 1671156851}
+  maxNitro: 100
+  nitroDrain: 30
+  nitroCharge: 15
+  nitroForce: 500
+  boosting: 0
 --- !u!1001 &1681663547
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29704,7 +29730,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 10000
+  m_Time: 40
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -30108,7 +30134,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 10000
+  m_Time: 40
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
