@@ -26551,6 +26551,7 @@ MonoBehaviour:
   nitroCharge: 15
   nitroForce: 500
   boosting: 0
+  nitro: 0
 --- !u!1001 &1681663547
 PrefabInstance:
   m_ObjectHideFlags: 0
