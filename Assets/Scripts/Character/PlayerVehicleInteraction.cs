@@ -20,7 +20,6 @@ public class PlayerVehicleInteraction : MonoBehaviour
     private Collider characterCollider;
     private Rigidbody characterRigidbody;
     private VehicleController vehicleController;
-    private PlayerControls controls;
 
     private bool isInVehicle;
     private VehicleComponent nearbyVehicle;
@@ -29,7 +28,7 @@ public class PlayerVehicleInteraction : MonoBehaviour
     private Transform originalLookAtTarget;
 
     private Vector3 seatOffset = new Vector3(0f, 1f, 0f);
-    private Vector3 exitOffset = new Vector3(-2f, 0.5f, 0f);
+    private Vector3 exitOffset = new Vector3(-3f, 0.5f, 0f);
 
     private Transform attachTarget;
 
@@ -74,24 +73,14 @@ public class PlayerVehicleInteraction : MonoBehaviour
         isInVehicle = true;
         nearbyVehicle = vehicle;
 
-        Transform resolved = null;
-        var vc = vehicle as VehicleComponent;
-        if (vc != null)
-        {
-            try { resolved = vc.AttachTransform; } catch { resolved = null; }
-        }
-
-        if (resolved == null)
-        {
-            var rb = vehicle.GetComponent<Rigidbody>();
-            resolved = rb != null ? rb.transform : vehicle.transform;
-        }
+        Transform resolved = vehicle.AttachTransform;
 
         attachTarget = resolved;
 
+        transform.SetParent(attachTarget, true);
 
-        transform.position = attachTarget.TransformPoint(seatOffset);
-        transform.rotation = attachTarget.rotation;
+        transform.localPosition = seatOffset; 
+        transform.localRotation = Quaternion.identity; 
 
         if (virtualCamera != null)
         {
@@ -104,21 +93,16 @@ public class PlayerVehicleInteraction : MonoBehaviour
         if (playerController != null) playerController.enabled = false;
         SetPlayerVisible(false);
 
-        if (characterRigidbody != null)
-        {
-            characterRigidbody.isKinematic = true;
-            characterRigidbody.detectCollisions = false;
-        }
-        if (characterCollider != null) characterCollider.enabled = false;
+        characterRigidbody.isKinematic = true;
+        characterRigidbody.detectCollisions = false;
+        characterCollider.enabled = false;
 
-        vehicleController?.EnterVehicle(vehicle);
+        vehicleController.EnterVehicle(vehicle);
 
         InputManager.SwitchToVehicle();
 
         if (speedometer != null)
-        {
             speedometer.AttachToVehicle(vehicleController);
-        }
     }
 
     private void ExitVehicle()
@@ -126,27 +110,38 @@ public class PlayerVehicleInteraction : MonoBehaviour
         if (!isInVehicle) return;
         isInVehicle = false;
 
+        Vector3 worldExit = Vector3.zero;
+        Quaternion worldRot = Quaternion.identity;
+
         if (attachTarget != null)
         {
-            Vector3 worldExit = attachTarget.position + attachTarget.right * exitOffset.x + Vector3.up * exitOffset.y;
-            transform.position = worldExit;
-            transform.rotation = attachTarget.rotation;
+            worldExit = attachTarget.TransformPoint(exitOffset);
+            worldRot = attachTarget.rotation;
         }
         else if (nearbyVehicle != null)
         {
-            transform.position = nearbyVehicle.transform.position + nearbyVehicle.transform.right * exitOffset.x + Vector3.up * exitOffset.y;
-            transform.rotation = nearbyVehicle.transform.rotation;
+            worldExit = nearbyVehicle.transform.TransformPoint(exitOffset);
+            worldRot = nearbyVehicle.transform.rotation;
         }
+        else
+        {
+            worldExit = transform.position + transform.right * exitOffset.x + Vector3.up * exitOffset.y;
+            worldRot = transform.rotation;
+        }
+
+        transform.SetParent(null, true);
+
+        transform.position = worldExit + Vector3.up * 0.05f;
+        transform.rotation = worldRot;
 
         SetPlayerVisible(true);
 
+        characterRigidbody.isKinematic = false;
+        characterRigidbody.detectCollisions = true;
+        characterRigidbody.linearVelocity = Vector3.zero;
+        characterRigidbody.angularVelocity = Vector3.zero;
 
-        if (characterRigidbody != null)
-        {
-            characterRigidbody.isKinematic = false;
-            characterRigidbody.detectCollisions = true;
-        }
-        if (characterCollider != null) characterCollider.enabled = true;
+        characterCollider.enabled = true;
 
         if (virtualCamera != null)
         {
@@ -156,14 +151,11 @@ public class PlayerVehicleInteraction : MonoBehaviour
 
         if (playerController != null) playerController.enabled = true;
 
-        vehicleController?.ExitVehicle();
+        vehicleController.ExitVehicle();
 
         InputManager.SwitchToCharacter();
 
-        if (speedometer != null)
-        {
-            speedometer.Detach();
-        }
+        if (speedometer != null) speedometer.Detach();
 
         nearbyVehicle = null;
         attachTarget = null;

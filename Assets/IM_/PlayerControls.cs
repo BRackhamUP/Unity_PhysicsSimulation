@@ -341,6 +341,24 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TruckPickUp"",
+                    ""type"": ""Button"",
+                    ""id"": ""d6d5f7d9-cfbc-4c86-aa1f-dfc3835b50d5"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TruckDrop"",
+                    ""type"": ""Button"",
+                    ""id"": ""e0af9af4-3192-4aec-b61d-dde943d9fbaa"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -497,6 +515,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Special"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4b62b239-35b4-45e0-af88-975ce80b35e8"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TruckPickUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6b652f4e-d718-426b-82c3-2a8ff426a944"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TruckDrop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -574,6 +614,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_VehicleControls_Throttle = m_VehicleControls.FindAction("Throttle", throwIfNotFound: true);
         m_VehicleControls_Brake = m_VehicleControls.FindAction("Brake", throwIfNotFound: true);
         m_VehicleControls_Special = m_VehicleControls.FindAction("Special", throwIfNotFound: true);
+        m_VehicleControls_TruckPickUp = m_VehicleControls.FindAction("TruckPickUp", throwIfNotFound: true);
+        m_VehicleControls_TruckDrop = m_VehicleControls.FindAction("TruckDrop", throwIfNotFound: true);
         // CameraControls
         m_CameraControls = asset.FindActionMap("CameraControls", throwIfNotFound: true);
         m_CameraControls_ZoomToggle = m_CameraControls.FindAction("ZoomToggle", throwIfNotFound: true);
@@ -893,6 +935,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_VehicleControls_Throttle;
     private readonly InputAction m_VehicleControls_Brake;
     private readonly InputAction m_VehicleControls_Special;
+    private readonly InputAction m_VehicleControls_TruckPickUp;
+    private readonly InputAction m_VehicleControls_TruckDrop;
     /// <summary>
     /// Provides access to input actions defined in input action map "VehicleControls".
     /// </summary>
@@ -920,6 +964,14 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "VehicleControls/Special".
         /// </summary>
         public InputAction @Special => m_Wrapper.m_VehicleControls_Special;
+        /// <summary>
+        /// Provides access to the underlying input action "VehicleControls/TruckPickUp".
+        /// </summary>
+        public InputAction @TruckPickUp => m_Wrapper.m_VehicleControls_TruckPickUp;
+        /// <summary>
+        /// Provides access to the underlying input action "VehicleControls/TruckDrop".
+        /// </summary>
+        public InputAction @TruckDrop => m_Wrapper.m_VehicleControls_TruckDrop;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -958,6 +1010,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Special.started += instance.OnSpecial;
             @Special.performed += instance.OnSpecial;
             @Special.canceled += instance.OnSpecial;
+            @TruckPickUp.started += instance.OnTruckPickUp;
+            @TruckPickUp.performed += instance.OnTruckPickUp;
+            @TruckPickUp.canceled += instance.OnTruckPickUp;
+            @TruckDrop.started += instance.OnTruckDrop;
+            @TruckDrop.performed += instance.OnTruckDrop;
+            @TruckDrop.canceled += instance.OnTruckDrop;
         }
 
         /// <summary>
@@ -981,6 +1039,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Special.started -= instance.OnSpecial;
             @Special.performed -= instance.OnSpecial;
             @Special.canceled -= instance.OnSpecial;
+            @TruckPickUp.started -= instance.OnTruckPickUp;
+            @TruckPickUp.performed -= instance.OnTruckPickUp;
+            @TruckPickUp.canceled -= instance.OnTruckPickUp;
+            @TruckDrop.started -= instance.OnTruckDrop;
+            @TruckDrop.performed -= instance.OnTruckDrop;
+            @TruckDrop.canceled -= instance.OnTruckDrop;
         }
 
         /// <summary>
@@ -1292,6 +1356,20 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSpecial(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "TruckPickUp" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTruckPickUp(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "TruckDrop" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTruckDrop(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "CameraControls" which allows adding and removing callbacks.

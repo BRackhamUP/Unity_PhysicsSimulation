@@ -16,18 +16,36 @@ public class VehicleController : MonoBehaviour
     private float smoothedThrottle = 0f;
 
     [Header("Throttle Smoothing (tweak)")]
-    [Tooltip("How quickly throttle rises (higher = snappier)")]
+    [Tooltip("How quickly throttle rises (higher = quicker)")]
     [SerializeField] private float throttleAccelResponse = 4f;
     [Tooltip("How quickly throttle falls (higher = faster drop)")]
     [SerializeField] private float throttleDecelResponse = 8f;
-    [Tooltip("Small deadzone to ignore tiny trigger/stick noise")]
+    [Tooltip("Small deadzone to ignore tiny trigger input")]
     [SerializeField] private float throttleDeadzone = 0.02f;
-    [Tooltip("If true, pressing brake will zero throttle immediately")]
+    [Tooltip("If true, pressing brake will zero throttle")]
     [SerializeField] private bool brakeCutsThrottle = true;
 
     private float brake;
     private float steerInput;
     public float currentSpeedMPH;
+
+    private void Update()
+    {
+        var controls = InputManager.controls;
+
+        if (vehicleLogic is Truck && currentVehicle != null)
+        {
+            var cargo = currentVehicle.GetComponent<TruckCargo>();
+            if (cargo != null)
+            {
+                if (controls.VehicleControls.TruckPickUp.triggered)
+                    cargo.PickUpRock();
+
+                if (controls.VehicleControls.TruckDrop.triggered)
+                    cargo.DropRock();
+            }
+        }    
+    }
 
     private void FixedUpdate()
     {

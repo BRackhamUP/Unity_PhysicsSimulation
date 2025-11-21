@@ -54,10 +54,9 @@ MonoBehaviour:
   gripAtStop: 0.9
   slideResistance: 3000
   slowDownResistance: 0.015
-  maxBrakeForce: 15000
-  maxBrakeDecelleration: 9
-  almostStoppedSideSpeed: 0.05
-  holdReduction: 0.98
+  appliesBrake: 1
+  brakeForce: 4000
+  brakeSmooth: 8
 --- !u!114 &4461270157967473647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,10 +197,9 @@ MonoBehaviour:
   gripAtStop: 0.9
   slideResistance: 3000
   slowDownResistance: 0.015
-  maxBrakeForce: 15000
-  maxBrakeDecelleration: 9
-  almostStoppedSideSpeed: 0.05
-  holdReduction: 0.98
+  appliesBrake: 1
+  brakeForce: 4000
+  brakeSmooth: 8
 --- !u!114 &5478754720316921680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,6 +327,68 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.0018
   m_Center: {x: -0.000049184986, y: -0.000005698181, z: -0.000034686764}
+--- !u!1 &3581518882493779353
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4947260930572167977}
+  m_Layer: 0
+  m_Name: CargoPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4947260930572167977
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3581518882493779353}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.011, y: 2.441, z: -1.312}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8815814277130023103}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4018626995662057076
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5900482898164270078}
+  m_Layer: 0
+  m_Name: DropPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5900482898164270078
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4018626995662057076}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.065, y: 0.781, z: -4.124}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8815814277130023103}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4226325756602266691
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,10 +659,9 @@ MonoBehaviour:
   gripAtStop: 0.9
   slideResistance: 3000
   slowDownResistance: 0.015
-  maxBrakeForce: 15000
-  maxBrakeDecelleration: 9
-  almostStoppedSideSpeed: 0.05
-  holdReduction: 0.98
+  appliesBrake: 1
+  brakeForce: 4000
+  brakeSmooth: 8
 --- !u!114 &2864245078327487487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -784,10 +843,9 @@ MonoBehaviour:
   gripAtStop: 0.9
   slideResistance: 3000
   slowDownResistance: 0.015
-  maxBrakeForce: 15000
-  maxBrakeDecelleration: 9
-  almostStoppedSideSpeed: 0.05
-  holdReduction: 0.98
+  appliesBrake: 1
+  brakeForce: 4000
+  brakeSmooth: 8
 --- !u!114 &8531588747231911285
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1025,6 +1083,73 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.011, y: 0.014, z: 0.002}
   m_Center: {x: 0.000000007450581, y: -0.00063048856, z: 0.0035}
+--- !u!1 &8147102496736381378
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1623229211644688247}
+  - component: {fileID: 6226742674157384686}
+  - component: {fileID: 2095644886451286733}
+  m_Layer: 0
+  m_Name: BedCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1623229211644688247
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8147102496736381378}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.3, y: 1.282, z: -1.285}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8815814277130023103}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &6226742674157384686
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8147102496736381378}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5248657, y: 1.0619456, z: 1.4948124}
+  m_Center: {x: 0.31744996, y: 0.030972768, z: -0.24740581}
+--- !u!114 &2095644886451286733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8147102496736381378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 215260b7e4445db45a8d178696e7fd73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rockTag: Rock
 --- !u!1 &8148068137017190917
 GameObject:
   m_ObjectHideFlags: 0
@@ -1039,6 +1164,7 @@ GameObject:
   - component: {fileID: 4455616648973947594}
   - component: {fileID: 2440740781214692947}
   - component: {fileID: 352964307939411903}
+  - component: {fileID: 6125801361999826517}
   m_Layer: 0
   m_Name: Truck
   m_TagString: Truck
@@ -1066,6 +1192,9 @@ Transform:
   - {fileID: 582975571756246516}
   - {fileID: 739717088504517473}
   - {fileID: 7114379702563775090}
+  - {fileID: 4947260930572167977}
+  - {fileID: 5900482898164270078}
+  - {fileID: 1623229211644688247}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &6769567795498531727
@@ -1146,9 +1275,7 @@ MonoBehaviour:
     topSpeedMPH: 100
     topSpeed: 44.704
   wheels: []
-  useDrag: 1
-  dragCoefficient: 0.32
-  frontalArea: 2.2
+  maxReverseSpeed: 5
   vehicleLogicType: 1
 --- !u!114 &352964307939411903
 MonoBehaviour:
@@ -1163,7 +1290,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentVehicle: {fileID: 2440740781214692947}
+  throttleAccelResponse: 4
+  throttleDecelResponse: 8
+  throttleDeadzone: 0.02
+  brakeCutsThrottle: 1
   currentSpeedMPH: 0
+--- !u!114 &6125801361999826517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8148068137017190917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7976b4c907f3c341bc5fb9bccb4c33b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cargoPoint: {fileID: 4947260930572167977}
+  dropPoint: {fileID: 5900482898164270078}
+  pickupRadius: 3
+  rockTag: Rock
+  truckBed: {fileID: 2095644886451286733}
 --- !u!1 &8490149828056564474
 GameObject:
   m_ObjectHideFlags: 0

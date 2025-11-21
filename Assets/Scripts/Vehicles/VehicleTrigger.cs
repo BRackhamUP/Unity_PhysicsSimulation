@@ -5,12 +5,11 @@ using UnityEngine;
 /// </summary>
 public class VehicleTrigger : MonoBehaviour
 {
-    [SerializeField] private VehicleComponent vehicle; 
+    [SerializeField] private VehicleComponent vehicle;
 
     private void Awake()
     {
-        if (vehicle == null)
-            vehicle = GetComponentInParent<VehicleComponent>();
+        vehicle = GetComponentInParent<VehicleComponent>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -18,11 +17,7 @@ public class VehicleTrigger : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             var playerInteraction = other.GetComponent<PlayerVehicleInteraction>();
-            if (playerInteraction != null)
-            {
-                Debug.Log($"Player entered trigger for {vehicle.name}");
-                playerInteraction.NotifyNearbyVehicle(vehicle);
-            }
+            playerInteraction.NotifyNearbyVehicle(vehicle);
         }
     }
 
@@ -31,11 +26,7 @@ public class VehicleTrigger : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             var playerInteraction = other.GetComponent<PlayerVehicleInteraction>();
-            if (playerInteraction != null)
-            {
-                Debug.Log($"Player exited trigger for {vehicle.name}");
-                playerInteraction.NotifyNearbyVehicle(null);
-            }
+            playerInteraction.NotifyNearbyVehicle(null);
         }
     }
 }
