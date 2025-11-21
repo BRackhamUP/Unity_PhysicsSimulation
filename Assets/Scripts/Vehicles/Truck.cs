@@ -58,7 +58,6 @@ public class Truck : Vehicle
                 wheels.ApplyBrake(brake);
             }
         }
-
         rb.AddTorque(Vector3.up * steerInput * steerTorque, ForceMode.Force);
     }
 
