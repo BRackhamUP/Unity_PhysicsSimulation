@@ -117,8 +117,6 @@ public class Wheel : MonoBehaviour
             // apply the lateral force (experiencing some bugs where the holding force can pull the vehicle up a slope sideways dependant on it resistance)
             appliedHold += -sideSpeed * effectiveSlideResistance;
             lateralForce = right * appliedHold;
-
-
         }
         else
         {
