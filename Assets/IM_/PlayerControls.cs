@@ -99,6 +99,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PauseGame"",
+                    ""type"": ""Button"",
+                    ""id"": ""4938eab5-4578-457b-adbd-72b4623ba825"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -121,6 +130,39 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Enter/ExitVehicle"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ce6d2549-3cfb-4f5e-ad27-c1060ca08367"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PauseGame"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""06eb111d-f959-4904-ae15-faa4f02dd834"",
+                    ""path"": ""<Keyboard>/p"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PauseGame"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8c951067-9e56-49e9-b2c6-3b17eb59ece8"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PauseGame"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -624,6 +666,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         // Global
         m_Global = asset.FindActionMap("Global", throwIfNotFound: true);
         m_Global_EnterExitVehicle = m_Global.FindAction("Enter/ExitVehicle", throwIfNotFound: true);
+        m_Global_PauseGame = m_Global.FindAction("PauseGame", throwIfNotFound: true);
         // CharacterControls
         m_CharacterControls = asset.FindActionMap("CharacterControls", throwIfNotFound: true);
         m_CharacterControls_Move = m_CharacterControls.FindAction("Move", throwIfNotFound: true);
@@ -729,6 +772,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Global;
     private List<IGlobalActions> m_GlobalActionsCallbackInterfaces = new List<IGlobalActions>();
     private readonly InputAction m_Global_EnterExitVehicle;
+    private readonly InputAction m_Global_PauseGame;
     /// <summary>
     /// Provides access to input actions defined in input action map "Global".
     /// </summary>
@@ -744,6 +788,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Global/EnterExitVehicle".
         /// </summary>
         public InputAction @EnterExitVehicle => m_Wrapper.m_Global_EnterExitVehicle;
+        /// <summary>
+        /// Provides access to the underlying input action "Global/PauseGame".
+        /// </summary>
+        public InputAction @PauseGame => m_Wrapper.m_Global_PauseGame;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -773,6 +821,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @EnterExitVehicle.started += instance.OnEnterExitVehicle;
             @EnterExitVehicle.performed += instance.OnEnterExitVehicle;
             @EnterExitVehicle.canceled += instance.OnEnterExitVehicle;
+            @PauseGame.started += instance.OnPauseGame;
+            @PauseGame.performed += instance.OnPauseGame;
+            @PauseGame.canceled += instance.OnPauseGame;
         }
 
         /// <summary>
@@ -787,6 +838,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @EnterExitVehicle.started -= instance.OnEnterExitVehicle;
             @EnterExitVehicle.performed -= instance.OnEnterExitVehicle;
             @EnterExitVehicle.canceled -= instance.OnEnterExitVehicle;
+            @PauseGame.started -= instance.OnPauseGame;
+            @PauseGame.performed -= instance.OnPauseGame;
+            @PauseGame.canceled -= instance.OnPauseGame;
         }
 
         /// <summary>
@@ -1306,6 +1360,13 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnEnterExitVehicle(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "PauseGame" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPauseGame(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "CharacterControls" which allows adding and removing callbacks.

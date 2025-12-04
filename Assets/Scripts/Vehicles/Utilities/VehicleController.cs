@@ -73,6 +73,9 @@ public class VehicleController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (vehicleLogic == null)
+            return;
+
         var controls = InputManager.controls;
 
         rawThrottle = controls.VehicleControls.Throttle.ReadValue<float>();
