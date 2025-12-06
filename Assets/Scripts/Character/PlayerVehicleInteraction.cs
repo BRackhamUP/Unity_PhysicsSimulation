@@ -15,6 +15,7 @@ public class PlayerVehicleInteraction : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private Speedometer speedometer;
+    [SerializeField] private TractionDisplay tractionDisplay;
 
     private PlayerCharacterController playerController;
     private Collider characterCollider;
@@ -103,6 +104,9 @@ public class PlayerVehicleInteraction : MonoBehaviour
 
         if (speedometer != null)
             speedometer.AttachToVehicle(vehicleController);
+
+        if (tractionDisplay != null)
+            tractionDisplay.AttachToVehicle(vehicleController);
     }
 
     private void ExitVehicle()
@@ -156,6 +160,8 @@ public class PlayerVehicleInteraction : MonoBehaviour
         InputManager.SwitchToCharacter();
 
         if (speedometer != null) speedometer.Detach();
+
+        if (tractionDisplay != null) tractionDisplay.Detach();
 
         nearbyVehicle = null;
         attachTarget = null;

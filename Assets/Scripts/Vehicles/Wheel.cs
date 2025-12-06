@@ -39,6 +39,10 @@ public class Wheel : MonoBehaviour
     [Tooltip("How quickly the wheel brakes")]
     [SerializeField] private float brakeSmooth = 8f;
 
+    public float BaseGrip => grip;
+    public float BaseGripAtStop => gripAtStop;
+    public float BaseSlideResistance => slideResistance;
+
     private float currentBrake = 0f;
     public float SidewaysSlip { get; private set; }
     public bool IsGrounded { get; private set; }
@@ -84,18 +88,26 @@ public class Wheel : MonoBehaviour
         // use spring force as the load on the wheels, more load for more grip
         float normalForce = Mathf.Max(0f, suspension.Load);
 
+        float defaultGrip = 0.85f;
+        float defaultGripAtStop = 0.9f;
+        float defaultSlideResistance = 1.1f;
 
         SurfaceProperties surface = suspension.CurrentSurface;
-        float effectiveGrip = grip;
-        float effectiveGripAtStop = gripAtStop;
-        float effectiveSlideResistance = slideResistance;
+
+        float gripMult = defaultGrip;
+        float gripAtStopMult = defaultGripAtStop;
+        float slideMult = defaultSlideResistance;
 
         if (surface != null)
         {
-            effectiveGrip *= surface.gripMultiplier;
-            effectiveGripAtStop *= surface.gripAtStopMultiplier;
-            effectiveSlideResistance *= surface.slideResistanceMultiplier;
+            gripMult = surface.gripMultiplier;
+            gripAtStopMult = surface.gripAtStopMultiplier;
+            slideMult = surface.slideResistanceMultiplier;
         }
+
+        float effectiveGrip = grip * gripMult;
+        float effectiveGripAtStop = gripAtStop * gripAtStopMult;
+        float effectiveSlideResistance = slideResistance * slideMult;
 
 
         Vector3 lateralForce;
@@ -195,6 +207,39 @@ public class Wheel : MonoBehaviour
         float sign = Mathf.Sign(forwardSpeed);
         Vector3 force = -sign * forward * currentBrake;
         vehicleRigidbody.AddForceAtPosition(force, suspension.Contact, ForceMode.Force);
+    }
+
+    public float GetCurrentTraction()
+    {
+        if (!IsGrounded)
+            return 0f;
+
+        SurfaceProperties surface = suspension.CurrentSurface;
+        float graspMult = (surface != null) ? surface.gripMultiplier : 1f;
+        float stopMult = (surface != null) ? surface.gripAtStopMultiplier : 1f;
+
+        float baseEff = grip * graspMult;
+        float stopEff = gripAtStop * stopMult;
+
+
+        float lowSideThreshold = 0.3f;
+        float baseline = (SidewaysSlip <= lowSideThreshold) ? stopEff : baseEff;
+
+        float slipStart = 0.6f;
+        float slipFull = 2.0f;
+        float minTractionFraction = 0.25f;
+
+        float slip = SidewaysSlip; 
+
+        if (slip <= slipStart)
+            return Mathf.Clamp01(baseline);
+
+        float t = Mathf.Clamp01((slip - slipStart) / (slipFull - slipStart));
+        float fraction = Mathf.Lerp(1f, minTractionFraction, t);
+
+        float traction = baseline * fraction;
+
+        return Mathf.Clamp(traction, 0f, 1.15f);
     }
 
 
