@@ -100,6 +100,23 @@ public class VehicleController : MonoBehaviour
         steerInput = Mathf.Abs(rawSteer) < 0.12f ? 0f : rawSteer;
         brake = (Mathf.Abs(rawBrake) < 0.02f) ? 0f : rawBrake;
 
+        float throttlePlayThreshold = 0.05f;
+        if (AudioManager.Instance != null)
+        {
+            if (smoothedThrottle > throttlePlayThreshold)
+            {
+                AudioManager.Instance.Play("VehicleThrottle", loop: true);
+
+                float basePitch = 1f;
+                float pitchRange = 1.0f;
+                AudioManager.Instance.SetPitch("VehicleThrottle", basePitch + smoothedThrottle * pitchRange);
+            }
+            else
+            {
+                AudioManager.Instance.Stop("VehicleThrottle");
+            }
+        }
+
         switch (vehicleLogic)
         {
             case TrackCar trackCar:

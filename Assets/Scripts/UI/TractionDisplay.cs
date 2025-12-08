@@ -6,6 +6,11 @@ public class TractionDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI tractionText;
     private VehicleController attachedVehicle;
 
+    private void Awake()
+    {
+        gameObject.SetActive(false);
+    }
+
     public void AttachToVehicle(VehicleController vc)
     {
         attachedVehicle = vc;

@@ -107,6 +107,8 @@ public class PlayerVehicleInteraction : MonoBehaviour
 
         if (tractionDisplay != null)
             tractionDisplay.AttachToVehicle(vehicleController);
+
+        AudioManager.Instance?.Play("VehicleIdle", loop: true);
     }
 
     private void ExitVehicle()
@@ -165,6 +167,9 @@ public class PlayerVehicleInteraction : MonoBehaviour
 
         nearbyVehicle = null;
         attachTarget = null;
+
+        AudioManager.Instance?.Stop("VehicleIdle");
+        AudioManager.Instance?.Stop("VehicleThrottle");
     }
 
     private void SetPlayerVisible(bool visible)
