@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Surface properties to showcase effective grip for wheels on different terrains
+/// </summary>
 public class SurfaceProperties : MonoBehaviour
 {
     public enum Surfaces
@@ -20,6 +23,7 @@ public class SurfaceProperties : MonoBehaviour
         ApplySurface(surface);
     }
 
+    // adjusting different multipliers to simulate different errains for my vehicles
     private void ApplySurface(Surfaces type)
     {
         switch (type)

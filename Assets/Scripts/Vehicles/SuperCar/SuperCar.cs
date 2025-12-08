@@ -24,8 +24,9 @@ public class SuperCar : Vehicle
     {
         foreach (var wheels in wheels)
             wheels.UpdateWheel(deltaTime);
-
     }
+
+    //
     public void ApplyInput(float throttle, float steerInput, float brake, float dt)
     {
         float speed = rb.linearVelocity.magnitude;

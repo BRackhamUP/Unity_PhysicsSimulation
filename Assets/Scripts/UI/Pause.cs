@@ -1,6 +1,8 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
+/// <summary>
+///  implementation of simple pause menu, adapted from this tutorial : https://www.youtube.com/watch?v=9dYDBomQpBQ
+/// </summary>
 public class Pause : MonoBehaviour
 {
     public GameObject pauseMenu;
@@ -9,25 +11,29 @@ public class Pause : MonoBehaviour
 
     void Start()
     {
-        ResumeGame(); 
+        ResumeGame();
 
-        if (controlsMenu != null )
+        if (controlsMenu != null)
             controlsMenu.SetActive(false);
     }
 
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Escape))
+        if (Input.GetKeyUp(KeyCode.Escape)) // need to hook up to my input actions
         {
-            if (isPaused) ResumeGame();
-            else PauseGame();
+            if (isPaused)
+                ResumeGame();
+            else
+                PauseGame();
         }
     }
 
     public void PauseGame()
     {
-        if (pauseMenu != null) pauseMenu.SetActive(true);
-        if (controlsMenu != null) controlsMenu.SetActive(false);
+        pauseMenu.SetActive(true);
+
+        controlsMenu.SetActive(false);
+
         pauseMenu.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
@@ -35,8 +41,9 @@ public class Pause : MonoBehaviour
 
     public void ResumeGame()
     {
-        if (pauseMenu != null) pauseMenu.SetActive(false);
-        if (controlsMenu != null) controlsMenu.SetActive(false);
+        pauseMenu.SetActive(false);
+        controlsMenu.SetActive(false);
+
         pauseMenu.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
@@ -44,8 +51,8 @@ public class Pause : MonoBehaviour
 
     public void Controls()
     {
-        if (pauseMenu != null) pauseMenu.SetActive(false);
-        if (controlsMenu != null) controlsMenu.SetActive(true);
+        pauseMenu.SetActive(false);
+        controlsMenu.SetActive(true);
 
         Time.timeScale = 0;
         isPaused = false;
@@ -53,8 +60,8 @@ public class Pause : MonoBehaviour
 
     public void Back()
     {
-        if (controlsMenu != null) controlsMenu.SetActive(false);
-        if (pauseMenu != null) pauseMenu.SetActive(true);
+        controlsMenu.SetActive(false);
+        pauseMenu.SetActive(true);
 
         Time.timeScale = 0f;
         isPaused = true;

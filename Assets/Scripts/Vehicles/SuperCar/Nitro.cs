@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// simple nitrous for supercar, need to make UI element for 
+/// </summary>
 public class Nitro : MonoBehaviour
 {
     public Rigidbody vehicleRb;
@@ -31,6 +34,7 @@ public class Nitro : MonoBehaviour
         }        
     }
 
+    // applying the nitro through a constant acceleration until nitro reaches 0
     public void ApplyBoost()
     {
         vehicleRb.AddForce (transform.forward * nitroForce * Time.fixedDeltaTime, ForceMode.Acceleration);
@@ -43,6 +47,7 @@ public class Nitro : MonoBehaviour
         }
     }
 
+    // increment the nitro back up after its has been used
     private void RechargeNitro()
     {
         nitro += nitroCharge * Time.fixedDeltaTime;
@@ -53,6 +58,7 @@ public class Nitro : MonoBehaviour
         }
     }
 
+    // to use for displaying to the UI
     public float GetNitroPercentage()
     {
         return nitro / maxNitro;

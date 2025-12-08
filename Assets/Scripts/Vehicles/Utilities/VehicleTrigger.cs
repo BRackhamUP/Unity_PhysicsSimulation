@@ -12,6 +12,7 @@ public class VehicleTrigger : MonoBehaviour
         vehicle = GetComponentInParent<VehicleComponent>();
     }
 
+    // Trigger is a sphere collider on each vehicle
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))

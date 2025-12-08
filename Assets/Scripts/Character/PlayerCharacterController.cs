@@ -15,14 +15,8 @@ public class PlayerCharacterController : MonoBehaviour
     [SerializeField] private float acceleration = 50f;               // adjust acceleration
     [SerializeField][Range(0f, 1f)] private float airControl = 0.25f;// controlling in air
 
-    [Header("Ground & Slope")]
+    [Header("Ground")]
     [SerializeField] private float groundCheckDistance = 1.2f;     // checking how far ground is from the player
-    [SerializeField] private float maxGroundAngle = 50f;           // sloope in degrees the player can walk
-    [SerializeField] private float slopeSlideMultiplier = 1.0f;    // how much gravity pulls you down a slope
-
-    [Header("Friction / Drag")]
-    [SerializeField] private float groundFriction = 8f;           // stops the player faster on ground
-    [SerializeField] private float stopThreshold = 0.05f;         // any speed below this is treated as 0 to stop the player
 
     [Header("References")]
     [SerializeField] private Transform rayOriginTransform;
@@ -42,7 +36,6 @@ public class PlayerCharacterController : MonoBehaviour
 
     void Awake()
     {
-
         rb = GetComponent<Rigidbody>();
         rb.mass = mass;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -95,11 +88,10 @@ public class PlayerCharacterController : MonoBehaviour
     private void OnSprintCanceled(InputAction.CallbackContext _) => sprintPressed = false;
     private void OnRagdollPerformed(InputAction.CallbackContext _) => ToggleRagdoll();
 
-
     void Start()
     {
-        // making sure mass matches with inspector
-        rb.mass = mass;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         animator = GetComponent<Animator>();
     }
@@ -108,7 +100,6 @@ public class PlayerCharacterController : MonoBehaviour
         UpdateGroundState();
         HandleMovement();
         HandleJump();
-        HandleGroundStopping();
     }
 
     #region Ground Detection
@@ -136,8 +127,6 @@ public class PlayerCharacterController : MonoBehaviour
             isGrounded = false;
             groundNormal = Vector3.up;
         }
-
-        Debug.DrawRay(origin, Vector3.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
     }
     #endregion
 
@@ -145,10 +134,8 @@ public class PlayerCharacterController : MonoBehaviour
     void HandleMovement()
     {
         if (isRagdolled)
-        {
             return;
-        }
-
+        
         // use camera transform, if not use players
         Transform cam = Camera.main != null ? Camera.main.transform : transform;
 
@@ -163,18 +150,12 @@ public class PlayerCharacterController : MonoBehaviour
         camRight.Normalize();
 
         // using the 2d vecotr from the input actions for forward/backward and left/right
+        float inputMagnitude = Mathf.Clamp01(moveInput.magnitude);
         Vector3 desiredDir = camForward * moveInput.y + camRight * moveInput.x;
-        float inputMagnitude = Mathf.Clamp01(desiredDir.magnitude);              // clamp movement to prevent going faster diagonally
 
-        if (inputMagnitude > 0.01f) // ensure movement magnitude is between 0 and 0.01 to prevent slight jittering with mouse 
-        {
+        if (inputMagnitude > 0.01f) 
             desiredDir.Normalize();
-        }
-        else
-        {
-            desiredDir = Vector3.zero;
-        }
-
+        else desiredDir = Vector3.zero;
 
         float targetSpeed = walkSpeed * (sprintPressed ? sprintMultiplier : 1f);
         animator.SetFloat("speed", rb.linearVelocity.magnitude);
@@ -198,7 +179,6 @@ public class PlayerCharacterController : MonoBehaviour
             {
                 RotateTowards(desiredDir);
             }
-
         }
 
         Vector3 currentVel = rb.linearVelocity;
@@ -206,35 +186,15 @@ public class PlayerCharacterController : MonoBehaviour
 
         Vector3 velocityDelta = desiredVelocity - currentVelOnPlane;
 
-        float resp = Mathf.Max(0.0001f, acceleration);
-        Vector3 force = velocityDelta * mass * resp;
+        float response = Mathf.Max(0.0001f, acceleration);
+        Vector3 force = velocityDelta * mass * response;
 
         if (!isGrounded)
         {
             force *= airControl;
         }
 
-
         rb.AddForce(force, ForceMode.Force);
-
-        if (isGrounded)
-        {
-            float slopeAngle = Vector3.Angle(groundNormal, Vector3.up);
-            if (slopeAngle > maxGroundAngle)
-            {
-                Vector3 downPlane = Vector3.ProjectOnPlane(Physics.gravity, groundNormal).normalized;
-                Vector3 slideForce = downPlane * mass * Physics.gravity.magnitude * slopeSlideMultiplier;
-                rb.AddForce(slideForce, ForceMode.Force);
-            }
-            else
-            {
-                Vector3 downhill = Vector3.ProjectOnPlane(Vector3.down, groundNormal);
-                rb.AddForce(downhill * mass * Physics.gravity.magnitude * slopeSlideMultiplier * 0.1f, ForceMode.Force);
-            }
-
-            Vector3 frictionForce = -currentVelOnPlane * groundFriction * mass * Time.fixedDeltaTime;
-            rb.AddForce(frictionForce, ForceMode.Force);
-        }
     }
     #endregion 
 
@@ -245,6 +205,7 @@ public class PlayerCharacterController : MonoBehaviour
         rb.MoveRotation(newRot);
     }
 
+    // allowing only to jump when grounded, adding an impulse up
     void HandleJump()
     {
         if (isRagdolled)
@@ -254,29 +215,12 @@ public class PlayerCharacterController : MonoBehaviour
 
         if (jumpPressed && isGrounded)
         {
-            float jumpVelocity = Mathf.Sqrt(2f * Mathf.Abs(Physics.gravity.y) * jumpHeight);
-            Vector3 v = rb.linearVelocity;
-
-            float requiredDeltaV = jumpVelocity - v.y;
-            Vector3 impulse = Vector3.up * requiredDeltaV * mass;
-            rb.AddForce(impulse, ForceMode.Impulse);
+            rb.AddForce(Vector3.up * jumpHeight, ForceMode.Impulse);
             jumpPressed = false;
         }
     }
 
-
-    void HandleGroundStopping()
-    {
-        if (!isGrounded) return;
-
-        Vector3 horizontalVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        if (horizontalVel.magnitude < stopThreshold)
-        {
-            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
-        }
-    }
-
-
+    // toggling the ragdoll just removes all constraints allowing the player to fall 
     void ToggleRagdoll()
     {
         isRagdolled = !isRagdolled;
@@ -292,32 +236,5 @@ public class PlayerCharacterController : MonoBehaviour
             else
                 rb.constraints = RigidbodyConstraints.None;
         }
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (rb == null) return;
-
-        Vector3 origin = rayOriginTransform != null ? rayOriginTransform.position : rb.position + Vector3.up * 0.5f;
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(origin, origin + Vector3.down * groundCheckDistance);
-
-        Gizmos.color = Color.green;
-        float arrowLength = 1f;
-        Vector3 normalEnd = origin + groundNormal * arrowLength;
-        Gizmos.DrawLine(origin, normalEnd);
-        DrawArrowHead(normalEnd, groundNormal, 0.2f);
-    }
-
-    private void DrawArrowHead(Vector3 position, Vector3 direction, float size)
-    {
-        Vector3 right = Vector3.Cross(direction, Vector3.up).normalized;
-        Vector3 up = Vector3.Cross(direction, right).normalized;
-
-        Gizmos.DrawLine(position, position - direction * size + right * size * 0.5f);
-        Gizmos.DrawLine(position, position - direction * size - right * size * 0.5f);
-        Gizmos.DrawLine(position, position - direction * size + up * size * 0.5f);
-        Gizmos.DrawLine(position, position - direction * size - up * size * 0.5f);
     }
 }

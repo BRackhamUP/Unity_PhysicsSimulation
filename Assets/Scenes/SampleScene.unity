@@ -9079,16 +9079,12 @@ MonoBehaviour:
   mass: 70
   walkSpeed: 6
   sprintMultiplier: 1.75
-  jumpHeight: 3
+  jumpHeight: 500
   rotationSpeedDegrees: 360
   freezeXZRotation: 1
   acceleration: 75
   airControl: 0.57
   groundCheckDistance: 1.2
-  maxGroundAngle: 50
-  slopeSlideMultiplier: 108
-  groundFriction: 9
-  stopThreshold: 1
   rayOriginTransform: {fileID: 1544269970}
   animator: {fileID: 434302000}
 --- !u!54 &434301995
@@ -9165,7 +9161,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79b3f512f04b3504aa194555412a6712, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactRange: 3
   virtualCamera: {fileID: 1265118002}
   speedometer: {fileID: 746502059}
   tractionDisplay: {fileID: 1307303087}

@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using Unity.Cinemachine;
 
 /// <summary>
-/// NEED To reference the cinemachine tutorial i used...
+/// Adapted from this cinemachine tutorial https://www.youtube.com/watch?v=o7O28SFGWS4&t=523s
 /// </summary>
 public class CameraController : MonoBehaviour
 {

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Get the CODE monkey reference i used...
+/// Speedometer to track my vehicles speed, adapted from this 'Code Monkey' tutorial : https://www.youtube.com/watch?v=3xSYkFdQiZ0&t=541s
 /// </summary>
 [DisallowMultipleComponent]
 public class Speedometer : MonoBehaviour

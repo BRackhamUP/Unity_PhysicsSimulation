@@ -1,15 +1,17 @@
 using UnityEngine;
 
-// adapted off of a tutorial on audio by BRACKEYS : https://www.youtube.com/watch?v=6OT43pvUyfY
+// adapted from a tutorial on audio by BRACKEYS : https://www.youtube.com/watch?v=6OT43pvUyfY
 
 public class AudioManager : MonoBehaviour
 {
-    public static AudioManager Instance { get; private set; }
+    public static AudioManager Instance { get; private set; } 
 
+    // list of sounds to easily add more in inspector
     public Sound[] sounds;
 
     void Awake()
     {
+        // singleton to ensure only first audio manager is present
         if (Instance == null)
             Instance = this;
         else
@@ -20,6 +22,7 @@ public class AudioManager : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
 
+        // creating an audio source for every sound and applying defaults
         foreach (var s in sounds)
         {
             var source = gameObject.AddComponent<AudioSource>();
@@ -34,29 +37,34 @@ public class AudioManager : MonoBehaviour
 
     }
 
+    // play ambient on game start and loop 
     private void Start()
     {
             Play("Ambient", loop: true);
     }
+
+    // Play method to call in vehicle interaction script 
     public void Play(string name, bool loop = false)
     {
         var s = System.Array.Find(sounds, x => x.name == name);
-        if (s == null || s.source == null) return;
+
         s.source.loop = loop;
         if (!s.source.isPlaying) s.source.Play();
     }
 
+    // Stop method to call in vehicle interaction script
     public void Stop(string name)
     {
         var s = System.Array.Find(sounds, x => x.name == name);
-        if (s == null || s.source == null) return;
+
         s.source.Stop();
     }
 
+    // Pitch script to determine ptch base on smoothed throttle amount
     public void SetPitch(string name, float pitch)
     {
         var s = System.Array.Find(sounds, x => x.name == name);
-        if (s == null || s.source == null) return;
+
         s.source.pitch = pitch;
     }
 }
