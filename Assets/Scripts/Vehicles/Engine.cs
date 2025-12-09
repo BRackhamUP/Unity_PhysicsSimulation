@@ -2,7 +2,6 @@ using UnityEngine;
 
 // https://dev.to/arkilis/systemserializable-in-unity-25hm
 [System.Serializable] // using system.Serializable to edit engine values in the inspector even though it is'nt a monbehaviour class
-
 //convert throttle and speed into a drive force
 public class Engine
 {
