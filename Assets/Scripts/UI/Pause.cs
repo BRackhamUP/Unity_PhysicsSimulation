@@ -7,14 +7,18 @@ public class Pause : MonoBehaviour
 {
     public GameObject pauseMenu;
     public GameObject controlsMenu;
-    public static bool isPaused;
+    public static bool isPaused { get; private set; }
 
     void Start()
     {
+        isPaused = false;
+
         ResumeGame();
 
-        if (controlsMenu != null)
-            controlsMenu.SetActive(false);
+        pauseMenu.SetActive(false);
+        controlsMenu.SetActive(false);
+
+        LockCursor();
     }
 
     void Update()
@@ -31,12 +35,12 @@ public class Pause : MonoBehaviour
     public void PauseGame()
     {
         pauseMenu.SetActive(true);
-
         controlsMenu.SetActive(false);
 
-        pauseMenu.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
+
+        UnlockCursor();
     }
 
     public void ResumeGame()
@@ -44,9 +48,10 @@ public class Pause : MonoBehaviour
         pauseMenu.SetActive(false);
         controlsMenu.SetActive(false);
 
-        pauseMenu.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
+
+        LockCursor();
     }
 
     public void Controls()
@@ -55,7 +60,9 @@ public class Pause : MonoBehaviour
         controlsMenu.SetActive(true);
 
         Time.timeScale = 0;
-        isPaused = false;
+        isPaused = true;
+
+        UnlockCursor();
     }
 
     public void Back()
@@ -65,10 +72,24 @@ public class Pause : MonoBehaviour
 
         Time.timeScale = 0f;
         isPaused = true;
+
+        UnlockCursor();
     }
 
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+    private void UnlockCursor()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    private void LockCursor()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }
