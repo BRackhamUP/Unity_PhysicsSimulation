@@ -13,8 +13,9 @@ public class Nitro : MonoBehaviour
     public float nitroCharge = 15f;
     public float nitroForce = 200f;
 
-    public bool boosting;
+    public ParticleSystem nitroEmitter;
 
+    public bool boosting;
     public float nitro;
 
     private void Start()
@@ -25,19 +26,18 @@ public class Nitro : MonoBehaviour
     private void FixedUpdate()
     {
         if (boosting && nitro > 0f)
-        {
             ApplyBoost();
-        }
+
         else
-        {
             RechargeNitro();
-        }        
+
+        UpdateParticles();
     }
 
     // applying the nitro through a constant acceleration until nitro reaches 0
     public void ApplyBoost()
     {
-        vehicleRb.AddForce (transform.forward * nitroForce * Time.fixedDeltaTime, ForceMode.Acceleration);
+        vehicleRb.AddForce(transform.forward * nitroForce * Time.fixedDeltaTime, ForceMode.Acceleration);
 
         nitro -= nitroDrain * Time.fixedDeltaTime;
 
@@ -53,9 +53,17 @@ public class Nitro : MonoBehaviour
         nitro += nitroCharge * Time.fixedDeltaTime;
 
         if (nitro > maxNitro)
-        {
             nitro = maxNitro;
-        }
+    }
+
+    private void UpdateParticles()
+    {
+        bool Playing = boosting && nitro > 0f;
+        
+        nitroEmitter.Play();
+
+        if (!Playing)
+            nitroEmitter.Stop();
     }
 
     // to use for displaying to the UI

@@ -12,7 +12,6 @@ public class VehicleController : MonoBehaviour
     private float rawThrottle;
     private float rawBrake;
     private float rawSteer;
-
     private float smoothedThrottle = 0f;
 
     [Header("Throttle Smoothing (tweak)")]
@@ -100,21 +99,31 @@ public class VehicleController : MonoBehaviour
         steerInput = Mathf.Abs(rawSteer) < 0.12f ? 0f : rawSteer;
         brake = (Mathf.Abs(rawBrake) < 0.02f) ? 0f : rawBrake;
 
-        float throttlePlayThreshold = 0.05f;
-        if (AudioManager.Instance != null)
+        if (AudioManager.Instance != null && vehicleLogic != null && currentVehicle != null)
         {
-            if (smoothedThrottle > throttlePlayThreshold)
+            Rigidbody vehRb = vehicleLogic.body;
+
+            float speed = vehRb.linearVelocity.magnitude;
+
+            float normalised = Mathf.Clamp01(speed / currentVehicle.engineData.topSpeedMPH);
+
+            float playThreshold = 0.01f;
+
+            if (normalised > playThreshold)
             {
                 AudioManager.Instance.Play("VehicleThrottle", loop: true);
 
-                float basePitch = 1f;
-                float pitchRange = 1.0f;
-                AudioManager.Instance.SetPitch("VehicleThrottle", basePitch + smoothedThrottle * pitchRange);
+                float pitch = Mathf.Lerp(0.9f, 1.8f, normalised);
+                AudioManager.Instance.SetPitch("VehicleThrottle", pitch);
+
+                float volume = Mathf.Lerp(0.05f, 1f, normalised);
+                AudioManager.Instance.SetVolume("VehicleThrottle", volume);
             }
-            else
+            else 
             {
                 AudioManager.Instance.Stop("VehicleThrottle");
             }
+
         }
 
         switch (vehicleLogic)

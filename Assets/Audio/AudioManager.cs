@@ -1,5 +1,4 @@
 using UnityEngine;
-
 // adapted from a tutorial on audio by BRACKEYS : https://www.youtube.com/watch?v=6OT43pvUyfY
 
 public class AudioManager : MonoBehaviour
@@ -49,7 +48,9 @@ public class AudioManager : MonoBehaviour
         var s = System.Array.Find(sounds, x => x.name == name);
 
         s.source.loop = loop;
-        if (!s.source.isPlaying) s.source.Play();
+
+        if (!s.source.isPlaying) 
+            s.source.Play();
     }
 
     // Stop method to call in vehicle interaction script
@@ -66,5 +67,12 @@ public class AudioManager : MonoBehaviour
         var s = System.Array.Find(sounds, x => x.name == name);
 
         s.source.pitch = pitch;
+    }
+
+    public void SetVolume(string name, float volume)
+    {
+        var s = System.Array.Find(sounds, x => x.name == name);
+
+        s.source.volume = Mathf.Clamp01(volume);
     }
 }
