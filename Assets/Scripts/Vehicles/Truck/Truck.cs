@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// vehicle subclass that updates wheels, applies drag and distributes drive force amongst wheels
+/// vehicle subclass that updates wheels and distributes drive force amongst wheels
 /// </summary>
 public class Truck : Vehicle
 {

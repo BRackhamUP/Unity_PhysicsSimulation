@@ -47,8 +47,11 @@ public class VehicleComponent : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
-        if (wheels == null || wheels.Count == 0) wheels = new List<Wheel>(GetComponentsInChildren<Wheel>());
-        if (engineData != null) engineData.ApplyInspectorUnits();
+        if (wheels == null || wheels.Count == 0) 
+            wheels = new List<Wheel>(GetComponentsInChildren<Wheel>());
+        
+        if (engineData != null)
+            engineData.ApplyInspectorUnits();
 
         switch (vehicleLogicType)
         {
