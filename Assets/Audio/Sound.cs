@@ -8,9 +8,9 @@ public class Sound
     public string name;
     public  AudioClip clip;
 
+    // ensure pitch and volume can be adjusted in a range from 0-1
     [Range(0f, 1f)] 
     public float volume;
-
     [Range(0.1f, 3f)] 
     public float pitch;
 

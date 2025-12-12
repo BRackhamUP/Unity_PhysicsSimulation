@@ -7,6 +7,7 @@ using Unity.Cinemachine;
 /// </summary>
 public class CameraController : MonoBehaviour
 {
+    // default zoom settings for camera, can be adjusted in inspector
     [Header("Zoom Presets")]
     [SerializeField] private float[] zoomLevels = { 5f, 6f, 8f };
     private int currentZoomIndex = 0;
@@ -18,32 +19,42 @@ public class CameraController : MonoBehaviour
     private void Awake()
     {
         orbital = GetComponent<CinemachineOrbitalFollow>();
-        targetZoom = orbital != null ? orbital.Radius : 5f;
+        targetZoom = orbital.Radius;
     }
 
     private void OnEnable()
     {
+        // accessing and triggering the controls for zooming 
         InputManager.controls.CameraControls.ZoomToggle.performed += OnZoomTogglePerformed;
         InputManager.controls.CameraControls.Enable();
     }
 
     private void OnDisable()
     {
-        if (InputManager.controls == null) return;
+        // null check to prevent error occuring on game end
+        if (InputManager.controls == null)
+            return;
+
         InputManager.controls.CameraControls.ZoomToggle.performed -= OnZoomTogglePerformed;
         InputManager.controls.CameraControls.Disable();
     }
 
     private void Update()
     {
-        if (orbital != null)
-            orbital.Radius = Mathf.Lerp(orbital.Radius, targetZoom, Time.deltaTime * zoomLerpSpeed);
+        // if updating the orbital radius, have it lerp smoothly between target
+        orbital.Radius = Mathf.Lerp(orbital.Radius, targetZoom, Time.deltaTime * zoomLerpSpeed);
     }
 
     private void OnZoomTogglePerformed(InputAction.CallbackContext _)
     {
+        // on zoom increase the zoom index
         currentZoomIndex++;
-        if (currentZoomIndex >= zoomLevels.Length) currentZoomIndex = 0;
+
+        // if zoomindex exceeds the length of amount of zoom reset to 0
+        if (currentZoomIndex >= zoomLevels.Length) 
+            currentZoomIndex = 0;
+
+        // set the target zoom to the current zoom level
         targetZoom = zoomLevels[currentZoomIndex];
     }
 }
