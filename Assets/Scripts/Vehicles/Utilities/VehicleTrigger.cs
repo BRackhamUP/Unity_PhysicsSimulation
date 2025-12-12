@@ -12,9 +12,10 @@ public class VehicleTrigger : MonoBehaviour
         vehicle = GetComponentInParent<VehicleComponent>();
     }
 
-    // Trigger is a sphere collider on each vehicle
+    // Trigger is a sphere collider located on each vehicle where the player can get in the vehicle
     private void OnTriggerEnter(Collider other)
     {
+        // compare player tag to notify vehicle
         if (other.CompareTag("Player"))
         {
             var playerInteraction = other.GetComponent<PlayerVehicleInteraction>();

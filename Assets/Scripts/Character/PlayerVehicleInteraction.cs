@@ -26,9 +26,6 @@ public class PlayerVehicleInteraction : MonoBehaviour
     private Transform originalFollowTarget;
     private Transform originalLookAtTarget;
 
-    private Vector3 seatOffset = new Vector3(0f, 1f, 0f);
-    private Vector3 exitOffset = new Vector3(-3f, 0.5f, 0f);
-
     // get the component references 
     private void Awake()
     {
@@ -83,7 +80,7 @@ public class PlayerVehicleInteraction : MonoBehaviour
 
         // parent the player to the vehicle 
         transform.SetParent(attachTarget, true);
-        transform.localPosition = seatOffset;
+        transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
 
         // switching the camera to follow and look at new target
@@ -117,17 +114,17 @@ public class PlayerVehicleInteraction : MonoBehaviour
         if (!isInVehicle) return;
         isInVehicle = false;
 
-        // find world exit position for player 
-        // Can experience a bug where the player is thrown across the map ? not sure why
-        Vector3 worldExit;
-        Quaternion worldRot;
-        worldExit = transform.position + transform.right * exitOffset.x + Vector3.up * exitOffset.y;
-        worldRot = transform.rotation;
+
+        Transform exitTransform = null;
+        if (nearbyVehicle != null) 
+        {
+            // try to find the vehicles exit location object attached to vehicle
+            exitTransform = nearbyVehicle.transform.Find("ExitLocation");
+        }
 
         // remove parent and place above ground to prevent clipping throught he floor
         transform.SetParent(null, true);
-        transform.position = worldExit + Vector3.up * 0.05f;
-        transform.rotation = worldRot;
+        transform.position = exitTransform.position;
 
         // make visible again and restore parameters
         SetPlayerVisible(true);

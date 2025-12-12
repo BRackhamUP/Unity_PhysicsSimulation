@@ -7,6 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class VehicleComponent : MonoBehaviour
 {
+    // define the names of the types of vehicles
     public enum LogicType 
     { 
         TrackCar, 
