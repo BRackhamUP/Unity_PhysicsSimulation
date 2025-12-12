@@ -17,17 +17,27 @@ public class TruckCargo : MonoBehaviour
     /// </summary>
     public void PickUpRock()
     {
+        // store the hit results in an array 
         Collider[] hits = Physics.OverlapSphere(transform.position, pickupRadius);
 
         foreach (Collider collider in hits)
         {
-
+            // get the rigidbody of the rock 
             Rigidbody rb = collider.attachedRigidbody ?? collider.GetComponentInParent<Rigidbody>();
-            if (rb == null) continue;
-            if (!rb.CompareTag(rockTag)) continue;
 
-            if (truckBed.IsInBed(rb)) continue;
+            // continue if no rocks present
+            if (rb == null) 
+                continue;
 
+            // ignore other objects
+            if (!rb.CompareTag(rockTag)) 
+                continue;
+
+            // ignore rocks already in truck bed
+            if (truckBed.IsInBed(rb)) 
+                continue;
+
+            // teleport rocks to cargopoint
             rb.transform.position = cargoPoint.position;
             rb.transform.rotation = cargoPoint.rotation;
 
@@ -40,9 +50,14 @@ public class TruckCargo : MonoBehaviour
     /// </summary>
     public void DropRock()
     {
+        // get a rock from the truck bed
         Rigidbody rock = truckBed.GetAnyRock();
-        if (rock == null) return;
 
+        // return if no rocks present
+        if (rock == null)
+            return;
+
+        // teleport rock to droppoint
         rock.transform.position = dropPoint.position;
         rock.transform.rotation = dropPoint.rotation;
     }

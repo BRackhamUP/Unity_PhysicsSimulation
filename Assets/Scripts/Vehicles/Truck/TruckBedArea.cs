@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class TruckBedArea : MonoBehaviour
 {
+    // tag for rocks
     public string rockTag = "Rock";
 
     // create a hashset to keep track of the rocks currently within the collider of the truck bed
@@ -41,8 +42,6 @@ public class TruckBedArea : MonoBehaviour
             rb = rockCollider.GetComponentInParent<Rigidbody>();
         }
 
-
-        if (rb == null) return;
         if (!rb.CompareTag(rockTag)) return;
 
         rocksInBed.Add(rb);
@@ -60,8 +59,6 @@ public class TruckBedArea : MonoBehaviour
             rb = rockCollider.GetComponentInParent<Rigidbody>();
         }
 
-
-        if (rb == null) return;
         if (!rb.CompareTag(rockTag)) return;
 
         rocksInBed.Remove(rb);

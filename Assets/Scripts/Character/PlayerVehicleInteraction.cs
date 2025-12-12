@@ -74,11 +74,11 @@ public class PlayerVehicleInteraction : MonoBehaviour
     // using vehicle component, put player into the vehicle
     private void EnterVehicle(VehicleComponent vehicle)
     {
-        if (isInVehicle || vehicle == null) return;
+        if (isInVehicle || vehicle == null) 
+            return;
 
         isInVehicle = true;
         nearbyVehicle = vehicle;
-
         attachTarget = vehicle.AttachTransform;
 
         // parent the player to the vehicle 
@@ -95,7 +95,6 @@ public class PlayerVehicleInteraction : MonoBehaviour
         //disbale player controller and visibility
         playerController.enabled = false;
         SetPlayerVisible(false);
-
         characterRigidbody.isKinematic = true;
         characterRigidbody.detectCollisions = false;
         characterCollider.enabled = false;
@@ -125,15 +124,13 @@ public class PlayerVehicleInteraction : MonoBehaviour
         worldExit = transform.position + transform.right * exitOffset.x + Vector3.up * exitOffset.y;
         worldRot = transform.rotation;
 
-
         // remove parent and place above ground to prevent clipping throught he floor
         transform.SetParent(null, true);
         transform.position = worldExit + Vector3.up * 0.05f;
         transform.rotation = worldRot;
 
-        // make visible again
+        // make visible again and restore parameters
         SetPlayerVisible(true);
-
         characterRigidbody.isKinematic = false;
         characterRigidbody.detectCollisions = true;
         characterRigidbody.linearVelocity = Vector3.zero;

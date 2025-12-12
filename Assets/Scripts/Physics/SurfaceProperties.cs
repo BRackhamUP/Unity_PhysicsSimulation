@@ -12,8 +12,8 @@ public class SurfaceProperties : MonoBehaviour
         Ice
     }
 
+    // surface parameters
     public Surfaces surface;
-
     public float gripMultiplier;
     public float gripAtStopMultiplier;
     public float slideResistanceMultiplier;
@@ -23,7 +23,7 @@ public class SurfaceProperties : MonoBehaviour
         ApplySurface(surface);
     }
 
-    // adjusting different multipliers to simulate different errains for my vehicles
+    // adjusting different multipliers to simulate different terrains for my vehicles
     private void ApplySurface(Surfaces type)
     {
         switch (type)

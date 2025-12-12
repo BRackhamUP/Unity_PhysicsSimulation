@@ -16,13 +16,15 @@ public class Speedometer : MonoBehaviour
     [Tooltip("How quickly the needle follows the actual speed.")]
     [SerializeField] private float needleSmoothSpeed = 6f;
 
+    // degrees determined from rotating the needle ui element, from 0 - 200
     private const float MAX_SPEED_ANGLE = -92f;  // needle at max speed
     private const float ZERO_SPEED_ANGLE = 96f;  // needle at zero
 
     private VehicleController attachedVehicle;
-    private float displayedSpeed = 0f; 
+    private float displayedSpeed = 0f;
     private bool isAttached = false;
 
+    // hide ui on awake as game starts with character
     private void Awake()
     {
         gameObject.SetActive(false);
@@ -33,45 +35,52 @@ public class Speedometer : MonoBehaviour
         if (!isAttached || attachedVehicle == null)
             return;
 
+        // use the current speed MPH variable from vehicle controller to determine the target speed of the needle
         float targetSpeed = attachedVehicle.currentSpeedMPH;
-
         targetSpeed = Mathf.Clamp(targetSpeed, 0f, speedMax);
 
+        // Lerp the needle movement to provide smooth visual
         displayedSpeed = Mathf.Lerp(displayedSpeed, targetSpeed, 1f - Mathf.Exp(-needleSmoothSpeed * Time.deltaTime));
-
         float angle = SpeedToAngle(displayedSpeed, speedMax);
 
-        if (needleTransform != null)
-            needleTransform.localEulerAngles = new Vector3(0f, 0f, angle);
+        // update the angle of the needle
+        needleTransform.localEulerAngles = new Vector3(0f, 0f, angle);
     }
 
     private float SpeedToAngle(float speedValue, float max)
     {
-        float speedNormalized = (max <= 0f) ? 0f : Mathf.Clamp01(speedValue / max);
+        // normalise the speed of th eneedle
+        float speedNormalised = Mathf.Clamp01(speedValue / max);
 
+        // determine the total angle it will travel 
         float totalAngle = ZERO_SPEED_ANGLE - MAX_SPEED_ANGLE;
-        return ZERO_SPEED_ANGLE - speedNormalized * totalAngle;
+        
+        // return the speed the needle will travel through the total angle
+        return ZERO_SPEED_ANGLE - speedNormalised * totalAngle;
     }
 
+    // attach to the specific vehicle to display and set ui object visible
     public void AttachToVehicle(VehicleController vehicle, float overrideMax = -1f)
     {
-        if (vehicle == null) return;
+        if (vehicle == null) 
+            return;
 
         attachedVehicle = vehicle;
         isAttached = true;
         displayedSpeed = 0f;
 
-        if (overrideMax > 0f) speedMax = overrideMax;
+        if (overrideMax > 0f) 
+            speedMax = overrideMax;
 
         gameObject.SetActive(true);
     }
 
+    // call detach when leaving vehicle
     public void Detach()
     {
         attachedVehicle = null;
         isAttached = false;
         displayedSpeed = 0f;
-
         gameObject.SetActive(false);
     }
 

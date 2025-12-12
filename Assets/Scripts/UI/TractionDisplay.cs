@@ -12,12 +12,14 @@ public class TractionDisplay : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    // assiging to the vehicle controller
     public void AttachToVehicle(VehicleController vehicleController)
     {
         attachedVehicle = vehicleController;
         gameObject.SetActive(true);
     }
 
+    // detaching the traction ui from vehicle and display
     public void Detach()
     {
         attachedVehicle = null;
@@ -29,30 +31,16 @@ public class TractionDisplay : MonoBehaviour
         if (attachedVehicle == null) 
             return;
 
+        // get the current vehicle
         var vehicleComp = attachedVehicle.currentVehicle;
-        if (vehicleComp == null || vehicleComp.wheels == null || vehicleComp.wheels.Count == 0)
-        {
-            tractionText.text = "  %";
-            return;
-        }
-
         float sum = 0f;
         int count = 0;
 
         // get the sum of the traction for each wheel 
         foreach (var w in vehicleComp.wheels)
         {
-            if (w == null) 
-                continue;
-
             sum += w.GetCurrentTraction();
             count++;
-        }
-
-        if (count == 0) 
-        { 
-            tractionText.text = "  %"; 
-            return; 
         }
 
         // calculate the average traction for all wheels

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class PhysicsManager
 {
-
+    
     /*      relevent units
        F : Net force vector (N)
        m : mass             (kg)
@@ -20,19 +20,11 @@ public static class PhysicsManager
 
      */
 
-  //  public Vector3 gravity new Vector3(0, -9.81f ,0);
-
-    public static void ApplyGravity(Transform @object)
+    // static method to apply gravity to obejcts without using the rigidbody built in gravity
+    public static void ApplyGravity(Transform gameObject)
     {
-        Rigidbody objectRigidbody = @object.GetComponent<Rigidbody>();
+        Rigidbody objectRigidbody = gameObject.GetComponent<Rigidbody>();
          
          objectRigidbody.AddForce(new Vector3(0, -9.81f, 0), ForceMode.Acceleration);       
-    }
-
-    public static void RemoveGravity(Transform obj)
-    {
-        Rigidbody objRb = obj.GetComponent<Rigidbody>();
-
-        objRb.AddForce(new Vector3(0, 0, 0), ForceMode.Acceleration);
     }
 }
