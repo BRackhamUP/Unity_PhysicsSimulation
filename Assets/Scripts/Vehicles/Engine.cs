@@ -6,7 +6,7 @@ using UnityEngine;
 public class Engine
 {
     [Header("Engine")]
-    public float power = 8000f;          // force of the engine in Newtons
+    public float power = 8000f;          // maximum drive force produced by the engine in Newtons
     public float topSpeedMPH = 100f;     // mph
     [SerializeField]private float topSpeed = 45f;         // m/s
 
@@ -23,7 +23,7 @@ public class Engine
         float inputThrottle = Mathf.Clamp(throttle, -1f, 1f); // clamp to prevent crzy throttle values
         float total = power * inputThrottle;
 
-        // Reduce force as approach topspeed, but are still throttling
+        // Reduce forward drive force as approach topspeed
         if (topSpeed > 0f && inputThrottle > 0)
         {
             // calculate the soeed fraction between 0 and 1,  to determine the taper

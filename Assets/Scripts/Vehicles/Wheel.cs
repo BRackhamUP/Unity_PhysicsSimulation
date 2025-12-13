@@ -3,8 +3,8 @@ using UnityEngine;
 /// <summary>
 ///  wheel is reading the input from the suspension and measuring the wheels motion at the suspensions contact point
 ///  and then applying forces at that point.
-///  - a sideways force to handle lateral motion
-///  - a rolling resistance to bring the vehicle to a natural stop
+///  sideways force to handle lateral motion
+///  rolling resistance to bring the vehicle to a natural stop
 /// </summary>
 public class Wheel : MonoBehaviour
 {
@@ -38,10 +38,6 @@ public class Wheel : MonoBehaviour
     [SerializeField] private float brakeForce = 4000f;
     [Tooltip("How quickly the wheel brakes")]
     [SerializeField] private float brakeSmooth = 8f;
-
-    public float BaseGrip => grip;
-    public float BaseGripAtStop => gripAtStop;
-    public float BaseSlideResistance => slideResistance;
 
     private float currentBrake = 0f;
     public float SidewaysSlip { get; private set; }
@@ -88,15 +84,17 @@ public class Wheel : MonoBehaviour
         // use spring force as the load on the wheels, more load for more grip
         float normalForce = Mathf.Max(0f, suspension.Load);
 
+        // default values when no surface properties are being considered
         float defaultGrip = 0.85f;
-        float defaultGripAtStop = 0.9f;
-        float defaultSlideResistance = 1.1f;
+        float defaultGripAtStop = 0.99f;
+        float defaultSlideMultipler = 1.1f;
 
         SurfaceProperties surface = suspension.CurrentSurface;
 
+        // surface multipliers for the surface properties
         float gripMult = defaultGrip;
         float gripAtStopMult = defaultGripAtStop;
-        float slideMult = defaultSlideResistance;
+        float slideMult = defaultSlideMultipler;
 
         if (surface != null)
         {
@@ -105,15 +103,17 @@ public class Wheel : MonoBehaviour
             slideMult = surface.slideResistanceMultiplier;
         }
 
+        // effective grip used in the calculations
         float effectiveGrip = grip * gripMult;
         float effectiveGripAtStop = gripAtStop * gripAtStopMult;
         float effectiveSlideResistance = slideResistance * slideMult;
 
-
         Vector3 lateralForce;
 
-        float lowSideThreshold = 0.3f; // sideways speed cut off point to be considered nearly stopped
+        // if sideways speed is very small, stop vehicle to hold in place
+        float lowSideThreshold = 0.4f; // sideways speed cut off point to be considered nearly stopped
 
+        // determine how much gravity pulls sideways along plane
         Vector3 downslope = Vector3.ProjectOnPlane(Physics.gravity, suspension.Normal) * vehicleRigidbody.mass;
         float downslopeSideways = Vector3.Dot(downslope, right);
 
@@ -121,8 +121,10 @@ public class Wheel : MonoBehaviour
         {
             // how much gravity is trying to pull the vehicle
             float needed = -downslopeSideways;
+
             // max hold force the tire has when nearly stopped
             float maxHold = effectiveGripAtStop * normalForce;
+
             // apply the amount but clamp to prevent exceeding tire grip
             float appliedHold = Mathf.Clamp(needed * 0.98f, -maxHold, maxHold);
 
@@ -192,12 +194,9 @@ public class Wheel : MonoBehaviour
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, suspension.Normal).normalized;
         Vector3 contactVelocity = vehicleRigidbody.GetPointVelocity(suspension.Contact);
         float forwardSpeed = Vector3.Dot(contactVelocity, forward);
-        float absForward = Mathf.Abs(forwardSpeed);
 
-
+        // lerp brake toward 0 to help smoothing
         currentBrake = Mathf.Lerp(currentBrake, 0f, Time.fixedDeltaTime * brakeSmooth);
-
-
 
         // otherwise target a per-wheel brake force and lerp currentBrake toward it
         float target = Mathf.Clamp01(brakeInput) * brakeForce;
@@ -211,40 +210,47 @@ public class Wheel : MonoBehaviour
 
     public float GetCurrentTraction()
     {
+        // no traction if not grounded
         if (!IsGrounded)
             return 0f;
 
+        // using surface properties when available, else default to 1
         SurfaceProperties surface = suspension.CurrentSurface;
-        float graspMult = (surface != null) ? surface.gripMultiplier : 1f;
-        float stopMult = (surface != null) ? surface.gripAtStopMultiplier : 1f;
+        float surfaceGripMulti = (surface != null) ? surface.gripMultiplier : 1f;
+        float surfaceStopGripMulti = (surface != null) ? surface.gripAtStopMultiplier : 1f;
 
-        float baseEff = grip * graspMult;
-        float stopEff = gripAtStop * stopMult;
+        //determine effctive grip values after applying surface multipliers
+        float movingGrip = grip * surfaceGripMulti;
+        float staticGrip = gripAtStop * surfaceStopGripMulti;
 
+        // threshold to determine when the wheel is stopped whilst moving sideways
+        float staticSlipThreshold = 0.3f;
+        float baseline = (SidewaysSlip <= staticSlipThreshold) ? staticGrip : movingGrip;
 
-        float lowSideThreshold = 0.3f;
-        float baseline = (SidewaysSlip <= lowSideThreshold) ? stopEff : baseEff;
-
-        float slipStart = 0.6f;
-        float slipFull = 2.0f;
+        // defining how traction fades as sideways slip increases 
+        float tractionFadeStartSlip = 0.6f;
+        float slipFullPoint = 2.0f;
         float minTractionFraction = 0.25f;
 
-        float slip = SidewaysSlip; 
 
-        if (slip <= slipStart)
+        // when slip is below the fade start, return to baseline
+        if (SidewaysSlip <= tractionFadeStartSlip)
             return Mathf.Clamp01(baseline);
 
-        float t = Mathf.Clamp01((slip - slipStart) / (slipFull - slipStart));
-        float fraction = Mathf.Lerp(1f, minTractionFraction, t);
+        // normalise the slip into 0-1 value
+        float slipNormalised = Mathf.Clamp01((SidewaysSlip - tractionFadeStartSlip) / (slipFullPoint - tractionFadeStartSlip));
 
-        float traction = baseline * fraction;
+        // scale traction down smoothly as slip increases
+        float tractionScale = Mathf.Lerp(1f, minTractionFraction, slipNormalised);
+        float traction = baseline * tractionScale;
 
-        return Mathf.Clamp(traction, 0f, 1.15f);
+        // final traction value clamped between 0-1
+        return Mathf.Clamp(traction, 0f, 1f);
     }
 
 
     /// <summary>
-    ///  simple steering that will defo be changed in future
+    ///  simple steering to only apply to front wheelss
     /// </summary>
     public void SetSteerAngle(float angle)
     {

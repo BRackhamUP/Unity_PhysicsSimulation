@@ -7,7 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class VehicleComponent : MonoBehaviour
 {
-    // define the names of the types of vehicles
+    // define the names of the types of vehicles for runtime logic
     public enum LogicType 
     { 
         TrackCar, 
@@ -16,31 +16,28 @@ public class VehicleComponent : MonoBehaviour
     }
 
     [Header("Engine")]
-    public Engine engineData = new Engine();
+    public Engine engineData = new Engine(); // tune engine in inspector
 
     [Header("Wheels")]
     public List<Wheel> wheels = new List<Wheel>();
 
     [Header("Reverse speed clamp")]
-    [Tooltip("Maximum allowed reverse speed")]
     public float maxReverseSpeed = 5f;
 
     [Header("Logic")]
-    public LogicType vehicleLogicType = LogicType.TrackCar;
+    public LogicType vehicleLogicType = LogicType.TrackCar; // assign the specific vehicle its logic in the inspector
 
-    public Vehicle CurrentVehicleLogic
-    {
-        get; private set;
-    }
-
+    // vehicle instance reference
+    public Vehicle CurrentVehicleLogic { get; private set; }
     private Rigidbody rb;
 
+    // tranform to attach the camera to, uses vehicle rigidbody or gameobject transform as safety
     public Transform AttachTransform
     {
         get
         {
-            var rigidbody = GetComponent<Rigidbody>();
-            return rigidbody != null ? rigidbody.transform : transform;
+            var rb = GetComponent<Rigidbody>();
+            return rb != null ? rb.transform : transform;
         }
     }
 
@@ -48,18 +45,19 @@ public class VehicleComponent : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
+        // wheels set in inspector, if not take wheel components form children
         if (wheels == null || wheels.Count == 0) 
             wheels = new List<Wheel>(GetComponentsInChildren<Wheel>());
         
+        // enigne unit conversion applied in thr inspector, more readable
         if (engineData != null)
             engineData.ApplyInspectorUnits();
 
+        // creating the instance of the vehicle logic 
         switch (vehicleLogicType)
         {
             case LogicType.TrackCar:
-                var vehicleType = new TrackCar(rb, engineData, wheels);
-
-                CurrentVehicleLogic = vehicleType;
+                CurrentVehicleLogic = new TrackCar(rb, engineData, wheels);
                 break;
 
             case LogicType.Truck:
@@ -72,29 +70,35 @@ public class VehicleComponent : MonoBehaviour
         }
     }
 
+    // to ensure the value changes in the inspector 
     private void OnValidate()
     {
-        if (engineData != null) engineData.ApplyInspectorUnits();
+        if (engineData != null) 
+            engineData.ApplyInspectorUnits();
     }
 
+    // updating the physics of the vehicle and clamping reverse speed
     private void FixedUpdate()
     {
         float deltaTime = Time.fixedDeltaTime;
-
         CurrentVehicleLogic?.UpdatePhysics(deltaTime);
 
+        // clamp reverse speed
         if (rb != null && maxReverseSpeed >= 0f)
             ClampReverseSpeed(rb, maxReverseSpeed);
     }
 
-    private void ClampReverseSpeed(Rigidbody rigidbody, float maxReverse)
+    // prevent the vehicle from being able to reverse at the same acceleration speed
+    private void ClampReverseSpeed(Rigidbody rb, float maxReverse)
     {
-        float forwardVel = Vector3.Dot(rigidbody.linearVelocity, transform.forward);
+        // forward velocity will be positive in forward direction and negative when reversing
+        float forwardVel = Vector3.Dot(rb.linearVelocity, transform.forward);
 
         if (forwardVel < -maxReverse)
         {
-            Vector3 lateral = rigidbody.linearVelocity - transform.forward * forwardVel;
-            rigidbody.linearVelocity = transform.forward * (-maxReverse) + lateral;
+            // only clamp forward/back component and leave lateral motion as is
+            Vector3 lateral = rb.linearVelocity - transform.forward * forwardVel;
+            rb.linearVelocity = transform.forward * (-maxReverse) + lateral;
         }
     }
 }

@@ -1,13 +1,13 @@
 using UnityEngine;
 
 /// <summary>
-/// using a raycast to detect the ground layer and compute, spring and damper forces and apply vertical forces to rigidbody
+/// using a raycast to detect the ground layer and compute spring and damper forces and apply vertical forces to rigidbody
 /// </summary>
 public class Suspension : MonoBehaviour
 {
     [Header("Suspension")]
     [SerializeField] private float restLength = 0.5f;
-    [SerializeField] private float MaxLength = 0.5f;
+    [SerializeField] private float maxLength = 0.5f;
     [SerializeField] private float springStrength = 20000f;
     [SerializeField] private float damperStrength = 4500f;
     [SerializeField] private LayerMask groundMask;
@@ -34,8 +34,9 @@ public class Suspension : MonoBehaviour
         Load = 0f;
 
         //the length of the ray is bigger then the restlength to detect the ground beyond the restlength of suspension
-        float rayLength = MaxLength;
+        float rayLength = maxLength;
         Debug.DrawRay(transform.position, -transform.up * rayLength, Color.red, 0.1f);
+
         // fire the raycast from the wheels transform position downwards, get info at the raylength and detect groundlayer
         if (Physics.Raycast(transform.position, -transform.up, out RaycastHit hit, rayLength, groundMask))
         {

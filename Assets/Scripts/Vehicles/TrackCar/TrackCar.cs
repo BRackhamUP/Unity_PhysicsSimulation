@@ -6,49 +6,50 @@ using UnityEngine;
 /// </summary>
 public class TrackCar : Vehicle
 {
-    public float maxSteerAngle = 30f;
-    public float steerTorque = 200f;
-
-    private Rigidbody rb;
-
-    public TrackCar(Rigidbody body, Engine engineData, List<Wheel> wheelsList)
+    public TrackCar(Rigidbody body, Engine engine, List<Wheel> wheels)
     {
-        rb = body;
-        this.body = rb;
+        // assign vehicle references from base class
+        this.body = body;
+        this.engine = engine;
+        this.wheels = wheels;
 
-        this.engine = engineData;
-        this.wheels = wheelsList;
+        // steering parameters defined in vehicle base class
+        maxSteerAngle = 30f;
+        steerTorque = 200f;
     }
 
-    public override void UpdatePhysics(float dt)
+    // update per wheel physics each physics tick
+    public override void UpdatePhysics(float deltaTime)
     {
-
-        foreach (var wheels in wheels)
-            wheels.UpdateWheel(dt);
-
+        foreach (var wheel in wheels)
+            wheel.UpdateWheel(deltaTime);
     }
 
+    // applying playe rinput to the steering, engine force and braking
     public void ApplyInput(float throttle, float steerInput, float brake, float dt)
     {
-        if (rb == null || engine == null) return;
-
-        float speed = rb.linearVelocity.magnitude;
+        // determine the current vehicle speed for engine force
+        float speed = body.linearVelocity.magnitude;
         float totalDriveForce = engine.GetDriveForce(throttle, speed);
 
+        // determine how many wheels are recieving drive force
         int drivenCount = 0;
         if (wheels != null)
         {
-            foreach (var wheels in wheels) 
-                if (wheels != null && wheels.IsDriven) 
+            foreach (var wheel in wheels)
+                if (wheel != null && wheel.IsDriven)
                     drivenCount++;
         }
+
+        // avoid dividion by ensuring there is atleast 1
         drivenCount = Mathf.Max(1, drivenCount);
 
-
+        // distribute enigne force across all wheels
         float perWheelDrive = totalDriveForce / drivenCount;
 
         if (wheels != null)
         {
+            // applying the steering, drive force and braking per wheel
             foreach (var wheels in wheels)
             {
                 if (wheels == null) continue;
@@ -62,7 +63,7 @@ public class TrackCar : Vehicle
                 wheels.ApplyBrake(brake);
             }
         }
-
-        rb.AddTorque(Vector3.up * steerInput * steerTorque, ForceMode.Force);
+        // applying additonal torque to assit turnign response
+        body.AddTorque(Vector3.up * steerInput * steerTorque, ForceMode.Force);
     }
 }
